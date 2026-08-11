@@ -6,3 +6,11 @@ __pycache__/
 results/*
 !results/comparative/
 results/comparative/models/
+
+# Disposable LaTeX build state; keep manuscript sources and compiled PDFs.
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.toc

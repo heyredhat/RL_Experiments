@@ -87,3 +87,25 @@ regenerated from the manifest.
 - Learned reachability correlates with hitting time (Pearson 0.47) but is
   compressed and miscalibrated (MAE 1.75 interventions). This result argues for
   treating the finite-horizon reachability curve as a first-class object.
+
+## 2026-08-10 — Publication manuscript
+
+- Added `GOAL_GEOMETRY_PAPER.tex`, a self-contained pedagogical manuscript that
+  derives the quantum instrument model, MDP/POMDP formalism, Bellman equations,
+  tabular and recurrent Q-learning, predictive auxiliary learning, evaluation
+  methodology, and three complementary notions of goal geometry.
+- Integrated six figures generated from the comparative study, plus two native
+  TikZ diagrams, a results table, the complete production configuration, and a
+  twenty-item bibliography centered on primary literature.
+- Distinguished symmetric embedding and behavior geometry from directed
+  reachability geometry. The paper explicitly discusses circularity in the
+  policy-regularized embeddings, finite-horizon censoring, seed uncertainty,
+  and the difference between a useful operational representation and a claim
+  about an intrinsic quantum state space.
+- Added a future-research program covering compositional goals, multi-step
+  predictive state, geometry-based planning, distributional reachability,
+  directed non-Euclidean models, intervention selection, cross-world transfer,
+  uncertainty, and hardware validation.
+- Built the manuscript with `latexmk` under TeX Live 2025. The final PDF is 17
+  pages; all citations and cross-references resolve, and representative pages
+  were rendered and visually inspected at publication size.

@@ -11,6 +11,17 @@ in [ARCHITECTURE.md](ARCHITECTURE.md), the reproducible study protocol and
 results are in [EXPERIMENTS.md](EXPERIMENTS.md), and the development record is
 in [PROJECT_LOG.md](PROJECT_LOG.md).
 
+The publication-style account is available as both
+[LaTeX source](GOAL_GEOMETRY_PAPER.tex) and a
+[compiled paper](GOAL_GEOMETRY_PAPER.pdf). It develops the quantum and
+reinforcement-learning background from first principles, states the evaluation
+protocol and limitations, and interprets the learned goal geometry using the
+saved comparative-study figures. Rebuild it with:
+
+```bash
+latexmk -pdf -interaction=nonstopmode -halt-on-error GOAL_GEOMETRY_PAPER.tex
+```
+
 ## Quick start
 
 ```bash
@@ -108,4 +119,3 @@ from them. Tests may inspect private simulator state solely to verify quantum
 validity. Offline scientific analysis may compare a learned representation to
 hidden physics only when explicitly labeled as privileged analysis; the
 current geometry pipeline does not do so.
-
