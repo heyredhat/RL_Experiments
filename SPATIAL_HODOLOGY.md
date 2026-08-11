@@ -387,9 +387,14 @@ evidence for Einstein dynamics.
 
 ### Remove explicit localization
 
-Replace destination symbols with weak, aliased, or noisy observations and use
-a recurrent predictive-state learner. Measure how much memory and sensor
-informativeness are required before 2D stress returns.
+**Implemented in the predictive-atlas successor study.** The exact online place
+probe was replaced by four ambiguous binary QND beacons and blind movement
+reports. A GRU integrates repeated scans, a learned outcome-conditioned model
+propagates its belief, and a terminal landmark probe supplies delayed labels
+without informing a later navigation action. Across three seeds the agent
+reaches (0.973\pm0.004) all-pairs success, 2D stress
+(0.075\pm0.005), and Procrustes (R^2=0.987\pm0.005). See
+`PREDICTIVE_ATLAS.md` for theory, controls, and artifacts.
 
 ### Optimize the quantum channel rather than one probability
 
@@ -443,3 +448,37 @@ metric. CSV files retain design-search values, exact matrices, learned cost and
 success matrices, Q tables, and example policy trajectories. PNG files are
 generated from those recorded data; the separately labeled fiber-bundle
 schematic is generated directly by the same script.
+
+---
+
+## 12. Successor result and revised interpretation
+
+The predictive-atlas experiment changes one conclusion of this document. An
+exact observed place symbol is not necessary for the (3\times3) geometry.
+What is necessary is an operationally sufficient predictive state. Twelve
+cycles of overlapping beacon evidence allow a recurrent localizer to approach
+its exact Bayes ceiling, and belief-space planning preserves most oracle
+performance. A matched single-cycle control and a place-independent null
+control fail both navigation and metric recovery.
+
+The successor strengthens the existence claim in three respects:
+
+1. **Place is predicted, not reported.** The online state is a distribution
+   over possible future landmark experiences.
+2. **Movement is filtered, not observed.** Binary outcomes update the place
+   belief through an empirically learned joint transition model.
+3. **Motion is agent-relative.** Saved paths can be drawn through coordinates
+   inferred from goal costs while the controller itself operates only on
+   histories, beliefs, and goal labels.
+
+It also reveals a new limitation. The full-history 2D stress of 0.075 falls to
+0.043 in 3D, a larger residual gain than in the sharp-place existence proof.
+Imperfect localization introduces nonspatial metric distortion. Low-dimensional
+space should therefore be evaluated as a joint property of dynamics, sensor
+design, memory, and policy—not dynamics alone.
+
+The sharp landmark remains present as delayed supervision, transition surveys
+are landmark-anchored, and the scan costs 48 interventions. The revised next
+objective is an active, self-calibrating atlas in which sensing competes with
+movement under the same cost-to-go. Only after this should landmarks
+themselves be discovered from predictive and controllability structure.

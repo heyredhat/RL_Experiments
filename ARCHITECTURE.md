@@ -25,7 +25,7 @@ Use `conda activate qbist_spacetime`.
 ### Current shared infrastructure
 
 - `quantum_environments.py`
-  - validated catalog of qubit and qutrit instruments;
+  - validated catalog of qubit, qutrit, and nine-level spatial instruments;
   - environment-specific hidden states, action labels, outcome alphabets, and
     goal repertoires;
   - keeps density matrices and Kraus operators private to the simulator.
@@ -87,6 +87,17 @@ Use `conda activate qbist_spacetime`.
   - random-source place-goal Q-learning study and matched ablations;
   - all-pairs cost evaluation, intrinsic-dimension tests, policy trajectories,
     and fiber-bundle outlook figures.
+
+- `predictive_atlas.py`
+  - delayed-landmark GRU localizer for ambiguous weak-beacon histories;
+  - landmark-anchored blind-transition survey and Bellman planner;
+  - outcome-conditioned belief filtering, terminal commitment, controls, and
+    all-pairs geometric validation.
+
+- `plot_predictive_atlas.py`
+  - dependency-light renderer for the saved predictive-atlas artifact;
+  - produces sensor, confusion, learning, performance, geometry, and
+    belief-trajectory figures without loading model checkpoints.
 
 ### Focused / compatibility entry points
 
@@ -1142,3 +1153,134 @@ python spatial_hodology.py \
 
 The interpretation, equations, failures, and research ladder are in
 `SPATIAL_HODOLOGY.md`.
+
+---
+
+# 19. Predictive-atlas pipeline
+
+`predictive_atlas.py` is the successor to the sharp-place spatial experiment.
+It is separate from the generic backend suite because it combines delayed
+supervised prediction, empirical transition survey, belief-state planning,
+all-pairs evaluation, and geometric validation in one controlled protocol.
+`PREDICTIVE_ATLAS.md` supplies the full theory and scientific interpretation.
+
+## 19.1 Environment interface
+
+`quantum_environments.py` now includes two thirteen-action spatial worlds:
+
+- `qudit-grid-3x3-beacons`: eight blind movement instruments, four
+  place-dependent binary QND beacons, and one nine-outcome landmark probe;
+- `qudit-grid-3x3-null-beacons`: identical except every beacon has response
+  probability (1/2) at every site.
+
+The beacon helper builds diagonal Kraus operators. QND here means that a
+localized site is unchanged by either beacon outcome. The fields overlap so a
+single sample is ambiguous, but their joint Bernoulli fingerprints distinguish
+the nine sites. The terminal-probe rule belongs to the experimental protocol:
+the general environment can execute further actions, while
+`predictive_atlas.py` ends navigation immediately after action 12.
+
+## 19.2 Data flow and information boundary
+
+The implementation separates four phases:
+
+```text
+weak scan --terminal label--> GRU localizer
+verified source --blind move/outcome--terminal label--> transition survey
+weak scan --> initial belief --blind move outcomes--> filtered belief
+frozen navigation --> all-pairs cost matrix --> MDS geometry
+```
+
+The first two phases construct an atlas from operational landmark experiences.
+The third phase uses no current-place label before acting. The fourth phase
+compares learned geometry with concealed coordinates only offline.
+
+Private simulator access occurs in exactly two roles:
+
+- `_set_site` prepares controlled source ensembles for calibration and
+  all-pairs evaluation;
+- `_true_site` records offline trajectory audits and is never passed to policy
+  or belief update.
+
+Beacon fields and exact movement costs are read only for Bayes-ceiling,
+transition-TV, and coordinate-validation metrics. They do not train the GRU,
+fit the empirical transition table, or select a navigation action.
+
+## 19.3 Recurrent localizer
+
+`BeaconGRULocalizer` embeds the combined action/outcome token, applies a GRU,
+and classifies the delayed landmark. `collect_localization_dataset` generates
+balanced site-conditioned scans and applies the landmark probe only after the
+history is complete. `train_localizer` uses cross entropy and records epoch
+curves. `evaluate_localizer` reports accuracy, NLL, Brier score, confidence,
+entropy, and a row-normalized confusion matrix.
+
+The same class implements three conditions:
+
+- `full-history`: all twelve four-beacon cycles;
+- `last-cycle`: the identical collected sensor budget but only the final cycle
+  is passed to the model;
+- `null`: all cycles from the place-independent environment.
+
+This is a matched ablation of temporal evidence and sensor informativeness,
+not a comparison of differently sized networks.
+
+## 19.4 Empirical transition model and planner
+
+`learned_transition_model` estimates a joint tensor with axes
+
+```text
+[action, observed outcome, source landmark, destination landmark]
+```
+
+and additive smoothing. Retaining outcome and destination jointly lets
+`update_belief` condition on the binary movement report. Summing over outcomes
+produces the unconditional kernel used by `planning_values`. Value iteration
+solves every landmark goal simultaneously and returns belief-independent
+state/action costs. `evaluate_atlas` makes these costs belief-sensitive by
+averaging over the current posterior before selecting an action.
+
+The oracle condition differs only in localization: it starts navigation from a
+one-hot current-place belief. All conditions share the same empirically
+surveyed transition model and planning implementation. This isolates the cost
+of predictive localization.
+
+## 19.5 Geometry and artifact contract
+
+`evaluate_atlas` writes one movement-cost and success matrix for every
+condition/seed. Fixed scan and terminal costs are excluded from geometry but
+retained in `mean_total_interventions`. The existing audited MDS functions in
+`spatial_hodology.py` calculate stress, spectrum diagnostics, directionality,
+distance correlations, and privileged Procrustes recovery.
+
+`plot_predictive_atlas.py` is intentionally lightweight and reads only saved
+CSV/JSON artifacts. It produces:
+
+- beacon fields and held-out confusion matrices;
+- localization learning curves;
+- competence and geometry comparisons;
+- 2D atlas reconstructions;
+- belief-state trajectory examples.
+
+The stable production directory is `results/predictive-atlas/`. The manifest
+specifies seeds, sample counts, scan length, deadline, device, received
+information, and withheld information. Checkpoint names and matrix names carry
+both condition and seed, so reruns are inspectable rather than silently
+averaged.
+
+## 19.6 Test coverage
+
+`tests/test_predictive_atlas.py` checks properties at the boundary between the
+physics and learning code:
+
+- beacon fingerprints overlap individually but distinguish sites jointly;
+- delayed landmark labels agree with QND scan histories;
+- GRU output shapes cover both full and truncated histories;
+- the exact movement tensor reproduces analytic stochastic-shortest-path
+  costs;
+- outcome-conditioned filtering tracks successful blind displacement.
+
+`tests/test_environments.py` additionally verifies QND action, completeness via
+the general environment validator, and exact place independence of the null
+fields. These tests complement end-to-end production metrics; neither replaces
+the other.

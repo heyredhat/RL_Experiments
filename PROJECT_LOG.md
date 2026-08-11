@@ -252,3 +252,129 @@ The revised source is 2,337 lines. It compiles successfully to a 44-page PDF
 with all citations and cross-references resolved; only harmless underfull
 bibliography lines remain. Representative pages and the full test suite were
 checked after the final editorial pass.
+
+---
+
+## 2026-08-11 — Predictive atlas without online place symbols
+
+### Research decision
+
+The sharp place observation was identified as the most important scientific
+bottleneck in the first spatial construction. Scaling the grid while retaining
+that signal would enlarge the demonstration without addressing whether the
+agent constructs its own notion of place. The selected successor therefore
+replaces online place reports with ambiguous temporal evidence.
+
+The chosen design combines four elements:
+
+1. four overlapping binary QND beacon instruments;
+2. a delayed landmark label supplied only by a terminal commitment;
+3. a GRU that predicts the landmark from a weak scan history;
+4. a learned joint movement-outcome transition model for belief-state
+   stochastic-shortest-path planning.
+
+This direction was preferred because it makes a single, testable change to the
+information boundary while preserving the earlier goal repertoire and exact
+geometry baseline.
+
+### Simulator and implementation
+
+- Added `qudit-grid-3x3-beacons` and
+  `qudit-grid-3x3-null-beacons` to `quantum_environments.py`.
+- Implemented diagonal beacon Kraus operators and documented their QND,
+  overlapping, and place-independent properties.
+- Added `predictive_atlas.py`, including balanced calibration collection,
+  delayed terminal labeling, GRU training, exact Bayes ceiling, empirical
+  transition survey, total-variation audit, Bellman value iteration,
+  outcome-conditioned belief filtering, all-pairs evaluation, MDS analysis,
+  and workspace-bounded artifact output.
+- Added `plot_predictive_atlas.py` as a PyTorch-free artifact reader and
+  renderer.
+- Added environment and atlas tests for quantum behavior, data boundaries,
+  recurrent shapes, exact planning, and Bayesian movement updates.
+
+### Information audit
+
+The navigation controller receives the goal landmark, chosen action, observed
+binary movement report, initial weak scan, and terminal outcome after it has
+committed. It does not receive density matrices, Kraus operators, beacon
+likelihoods, coordinates, or an exact current-place label before commitment.
+
+Two kinds of supervision remain and are recorded rather than hidden. A
+terminal landmark labels calibration histories, and transition surveys begin
+from previously verified landmarks. Concealed site decoding is used only to
+audit saved trajectories. The correct claim is learned predictive
+localization, not unsupervised discovery of the place basis.
+
+### First pilot and failure
+
+The first pilot used eight scan cycles, 200 calibration histories per site,
+and 20 epochs. Full-history landmark accuracy was 0.865 and all-pairs success
+was 0.887, but 2D stress was 0.184. The agent could often reach goals while
+still warping the metric badly. This falsified the implicit assumption that
+moderate navigation success was sufficient for geometric recovery.
+
+### Corrective pilot
+
+The scan was increased to twelve cycles and calibration to 300 histories per
+site for 30 epochs. Full-history localization rose to 0.971, navigation to
+0.977, 2D stress fell to 0.079, and Procrustes recovery rose to 0.984. The
+last-cycle control remained at 0.463 localization, while the null control
+remained near chance. These results justified freezing the production design.
+
+### Production run
+
+Production used seeds 0--2, 400 calibration and 200 held-out histories per
+site, 35 epochs, 100 transition trials per source/action, 100 navigation
+episodes per ordered pair, and a 12-move deadline. It contains 21,600
+transition surveys and 97,200 navigation episodes; the latter include
+4,665,600 weak-beacon outcomes. Nine model checkpoints and all per-seed
+matrices were retained.
+
+Mean ± sample standard deviation:
+
+- full-history localization: (0.964\pm0.008), versus Bayes
+  (0.977\pm0.004);
+- last-cycle localization: (0.463\pm0.006), equal to its Bayes ceiling;
+- null localization: (0.114\pm0.008), versus (1/9) chance;
+- learned transition total-variation error: (0.0144\pm0.0008);
+- full-history all-pairs success: (0.973\pm0.004), versus oracle
+  (1.000\pm0.001);
+- full-history 1D/2D/3D stress: (0.407/0.075/0.043);
+- full-history exact-cost correlation: (0.948\pm0.013);
+- full-history coordinate Procrustes (R^2=0.987\pm0.005).
+
+The last-cycle controller achieved only 0.614 success and its learned costs had
+correlation (-0.054) with the exact map. Null sensing achieved 0.484 success.
+The null embedding sometimes aligned with the small symmetric grid despite
+poor control, reinforcing the rule that competence and stress must precede any
+visual alignment claim.
+
+### Interpretation and next boundary
+
+The experiment demonstrates that place can function as an anticipated future
+landmark experience encoded by recurrent history, rather than as a supplied
+online symbol. It also shows that the goal-cost geometry survives this weaker
+information interface with only a modest gap to an oracle.
+
+Residual 2D-to-3D stress improvement reveals nonspatial distortion from
+localization errors. The fixed 48-probe scan dominates the approximately 50.5
+total interventions per episode. The most promising next step is therefore an
+active predictive atlas that assigns costs to sensing, moving, and committing,
+and learns when additional localization is valuable for a particular goal.
+Longer-term work should remove landmark-anchored supervision, introduce
+noncommuting/coherent sensors, scale topology, and add internal quantum fibers.
+
+### Research record
+
+The full derivation and artifact guide are in `PREDICTIVE_ATLAS.md`.
+`README.md`, `VISION.md`, `ARCHITECTURE.md`, `EXPERIMENTS.md`,
+`SPATIAL_HODOLOGY.md`, and the LaTeX manuscript were expanded to carry the new
+result and its limits forward. The raw production bundle is
+`results/predictive-atlas/`; pilot bundles were removed after their diagnostic
+numbers were recorded here and in `EXPERIMENTS.md`.
+
+The final manuscript is 2,854 lines and compiles to 53 pages. All
+cross-references and citations resolve; only harmless underfull bibliography
+lines remain. The new result pages and all five atlas figures were visually
+inspected before LaTeX intermediates were removed.

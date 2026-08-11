@@ -6,10 +6,14 @@ Agents should depend only on ``n_actions``, ``n_outcomes``, ``reset()``, and
 private implementation details.
 
 The catalog spans several operationally different worlds: sharp and unsharp
-qubit measurements, a four-outcome qubit SIC measurement, and mutually
-unbiased qutrit measurements.  This makes it possible to ask whether learned
-predictive states and goal geometries change with the agent's intervention
-repertoire rather than merely with its random seed.
+qubit measurements, a four-outcome qubit SIC measurement, mutually unbiased
+qutrit measurements, and nine-level quantum walks used to test emergent
+hodological space.  The spatial family includes place-reporting, blind,
+cardinal-only, weak-beacon, and place-independent null-beacon variants.  This
+makes it possible to ask whether learned predictive states and goal geometries
+change with the agent's intervention repertoire rather than merely with its
+random seed, and whether a recurrent agent can construct a useful spatial
+atlas without receiving an exact online place symbol.
 """
 
 from __future__ import annotations
@@ -297,6 +301,54 @@ def _grid_probe(size: int) -> Measurement:
     )
 
 
+def _grid_beacon_measurement(
+    name: str,
+    size: int,
+    outcome_one_probabilities: Array,
+) -> Measurement:
+    """Binary QND sensor with an overlapping, place-dependent response field.
+
+    For localized site ``s`` the outcome-one probability is ``q_s``, but both
+    outcomes leave ``|s><s|`` unchanged.  No single binary result identifies a
+    place.  A recurrent predictive state must integrate repeated observations
+    from several such instruments.
+    """
+    probabilities = np.asarray(outcome_one_probabilities, dtype=float).reshape(-1)
+    dimension = size * size
+    if len(probabilities) != dimension:
+        raise ValueError("a grid beacon needs one probability per site")
+    if np.any(probabilities < 0.0) or np.any(probabilities > 1.0):
+        raise ValueError("grid beacon probabilities must lie in [0, 1]")
+    k_zero = np.diag(np.sqrt(1.0 - probabilities)).astype(complex)
+    k_one = np.diag(np.sqrt(probabilities)).astype(complex)
+    return Measurement(name, (k_zero, k_one))
+
+
+def _grid_beacons(size: int, informative: bool = True) -> tuple[Measurement, ...]:
+    """Four overlapping binary fields whose joint statistics distinguish sites."""
+    if informative:
+        fields = []
+        for kind in ("horizontal", "vertical", "diagonal", "anti-diagonal"):
+            values = []
+            for y in range(size):
+                for x in range(size):
+                    if kind == "horizontal":
+                        values.append(0.05 + 0.45 * x)
+                    elif kind == "vertical":
+                        values.append(0.05 + 0.45 * y)
+                    elif kind == "diagonal":
+                        values.append(0.05 + 0.225 * (x + y))
+                    else:
+                        values.append(0.05 + 0.225 * ((size - 1 - x) + y))
+            fields.append(np.asarray(values, dtype=float))
+    else:
+        fields = [np.full(size * size, 0.5, dtype=float) for _ in range(4)]
+    return tuple(
+        _grid_beacon_measurement(f"weak-beacon-{index}", size, field)
+        for index, field in enumerate(fields)
+    )
+
+
 def _qudit_grid_3x3(diagonal_q: float) -> EnvironmentDefinition:
     """Open 2D lattice with four axial and four cost-matched diagonal moves."""
     size = 3
@@ -380,6 +432,53 @@ def _qudit_grid_3x3_blind(diagonal_q: float) -> EnvironmentDefinition:
     )
 
 
+def _qudit_grid_3x3_beacons(diagonal_q: float) -> EnvironmentDefinition:
+    """Blind motion plus weak, overlapping QND fields and a terminal landmark probe."""
+    size = 3
+    directions = (
+        ("north", 0, -1, 1.0),
+        ("east", 1, 0, 1.0),
+        ("south", 0, 1, 1.0),
+        ("west", -1, 0, 1.0),
+        ("north-east", 1, -1, diagonal_q),
+        ("south-east", 1, 1, diagonal_q),
+        ("south-west", -1, 1, diagonal_q),
+        ("north-west", -1, -1, diagonal_q),
+    )
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-beacons",
+        description=(
+            "Nine-level lattice with blind movement, four overlapping binary "
+            "QND beacon instruments, and a common nine-outcome landmark probe."
+        ),
+        measurements=tuple(
+            _grid_move_measurement(name, size, dx, dy, probability)
+            for name, dx, dy, probability in directions
+        )
+        + _grid_beacons(size, informative=True)
+        + (_grid_probe(size),),
+        initial_states=_grid_states(size),
+        default_initial_state="center",
+    )
+
+
+def _qudit_grid_3x3_null_beacons(diagonal_q: float) -> EnvironmentDefinition:
+    """Matched negative control whose four beacon outcomes are fair coins."""
+    definition = _qudit_grid_3x3_beacons(diagonal_q)
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-null-beacons",
+        description=(
+            "Matched blind lattice whose four binary QND beacons are "
+            "place-independent fair coins."
+        ),
+        measurements=definition.measurements[:8]
+        + _grid_beacons(3, informative=False)
+        + (definition.measurements[-1],),
+        initial_states=definition.initial_states,
+        default_initial_state=definition.default_initial_state,
+    )
+
+
 _BUILDERS: dict[str, Callable[[float], EnvironmentDefinition]] = {
     "qubit-zx-weak": _qubit_zx_weak,
     "qubit-pauli": _qubit_pauli,
@@ -389,6 +488,8 @@ _BUILDERS: dict[str, Callable[[float], EnvironmentDefinition]] = {
     "qudit-grid-3x3": _qudit_grid_3x3,
     "qudit-grid-3x3-cardinal": _qudit_grid_3x3_cardinal,
     "qudit-grid-3x3-blind": _qudit_grid_3x3_blind,
+    "qudit-grid-3x3-beacons": _qudit_grid_3x3_beacons,
+    "qudit-grid-3x3-null-beacons": _qudit_grid_3x3_null_beacons,
 }
 
 
@@ -421,6 +522,12 @@ DEFAULT_GOALS_BY_ENVIRONMENT: dict[str, str] = {
     ),
     "qudit-grid-3x3-blind": ";".join(
         f"place-{letter}=8:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-beacons": ";".join(
+        f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-null-beacons": ";".join(
+        f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
     ),
 }
 

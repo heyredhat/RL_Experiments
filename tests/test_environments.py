@@ -69,6 +69,38 @@ class EnvironmentCatalogTests(unittest.TestCase):
         self.assertEqual(env.step(0), 0)  # center -> north succeeds
         self.assertEqual(env.step(0), 1)  # open boundary cannot move farther
 
+    def test_weak_beacons_are_qnd_and_overlap(self) -> None:
+        definition = environment_definition("qudit-grid-3x3-beacons", weak_q=0.715)
+        beacon = definition.measurements[8]
+        probabilities = np.diag(
+            beacon.outcome_kraus[1][0].conj().T @ beacon.outcome_kraus[1][0]
+        ).real
+        self.assertTrue(np.allclose(probabilities[:3], (0.05, 0.50, 0.95)))
+        self.assertTrue(np.all((probabilities > 0.0) & (probabilities < 1.0)))
+
+        env = QuantumEnvironment(
+            environment="qudit-grid-3x3-beacons",
+            initial_state="site-0",
+            weak_q=0.715,
+            seed=13,
+        )
+        for _ in range(50):
+            env.step(8)
+            rho = env._rho
+            assert rho is not None
+            self.assertAlmostEqual(float(rho[0, 0].real), 1.0, places=10)
+
+    def test_null_beacons_are_place_independent(self) -> None:
+        definition = environment_definition(
+            "qudit-grid-3x3-null-beacons", weak_q=0.715
+        )
+        for beacon in definition.measurements[8:12]:
+            probabilities = np.diag(
+                beacon.outcome_kraus[1][0].conj().T
+                @ beacon.outcome_kraus[1][0]
+            ).real
+            self.assertTrue(np.allclose(probabilities, 0.5))
+
     def test_invalid_configuration_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown environment"):
             QuantumEnvironment(environment="not-a-world")

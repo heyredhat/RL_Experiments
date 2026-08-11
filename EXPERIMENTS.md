@@ -238,3 +238,136 @@ channels. It proves that quantum-operational goal difficulty can recover a
 concealed 2D space under controlled conditions. It does not show that space
 generically emerges from coherent quantum dynamics, nor does it yet supply a
 continuum, curvature dynamics, Lorentzian causality, or general relativity.
+
+---
+
+## Predictive atlas without online place symbols
+
+This study attacks the strongest limitation of the first spatial result. The
+controller receives no exact current-place symbol before movement. It must
+infer a distribution over possible landmark outcomes from weak quantum beacon
+histories and propagate that belief through blind actions.
+
+Full mathematical and conceptual details are in `PREDICTIVE_ATLAS.md`. The
+production command is:
+
+```bash
+conda run --no-capture-output -n qbist_spacetime \
+  python predictive_atlas.py \
+  --output results/predictive-atlas \
+  --seeds 0,1,2 --scan-cycles 12 \
+  --calibration-per-site 400 --test-per-site 200 --epochs 35 \
+  --transition-trials 100 --pair-episodes 100 \
+  --max-moves 12 --device cpu
+python plot_predictive_atlas.py results/predictive-atlas
+```
+
+### Frozen production questions
+
+1. Can a GRU predict a delayed terminal landmark from individually ambiguous
+   QND beacon outcomes?
+2. Does using all twelve scan cycles outperform an equal-budget control that
+   retains only the last cycle?
+3. Does a place-independent null sensor remain at chance despite receiving the
+   same architecture, number of tokens, and delayed labels?
+4. Can an outcome-conditioned empirical transition model support successful
+   belief-state navigation?
+5. Do frozen all-pairs policy costs recover the designed stochastic map and a
+   low-dimensional Euclidean geometry?
+6. How much performance and geometric fidelity are lost relative to an oracle
+   that knows the current landmark online?
+
+### Protocol and scale
+
+- Quantum system: the same nine-level hidden walk and (p_d=0.715) diagonal
+  movement used by the earlier optimized spatial world.
+- Sensors: four binary diagonal QND instruments with overlapping horizontal,
+  vertical, diagonal, and anti-diagonal response fields.
+- Goal set: nine outcomes of one shared terminal landmark probe.
+- Calibration: 3,600 scan/terminal-label examples per condition and seed;
+  held-out localization test: 1,800 per condition and seed.
+- Transition learning: 100 landmark-anchored trials for each of 9 sources and
+  8 moves, or 21,600 survey trials across three seeds.
+- Navigation: 100 episodes for every one of 81 ordered pairs, four conditions,
+  and three seeds, or 97,200 episodes.
+- Scan: 48 weak observations per navigation episode, totaling 4,665,600 held-
+  out navigation sensor outcomes.
+- Geometry: frozen-policy restricted movement cost, with fixed scan and
+  terminal overhead removed; success is always reported alongside censored
+  cost.
+
+The transition model's mean privileged total-variation error is
+(0.0144\pm0.0008), so model-estimation noise is small relative to the
+localization ablations.
+
+### Localization results
+
+Mean ± sample standard deviation across three seeds:
+
+| condition | accuracy | exact Bayes accuracy | negative log likelihood | Brier score | entropy |
+|---|---:|---:|---:|---:|---:|
+| full history | **0.964 ± 0.008** | 0.977 ± 0.004 | 0.112 ± 0.017 | 0.055 ± 0.010 | 0.144 ± 0.008 |
+| last cycle | 0.463 ± 0.006 | 0.463 ± 0.006 | 1.386 ± 0.025 | 0.685 ± 0.006 | 1.374 ± 0.024 |
+| null beacons | 0.114 ± 0.008 | 0.111 | 2.229 ± 0.005 | 0.896 ± 0.001 | 2.166 ± 0.003 |
+
+The full recurrent model almost saturates the information-theoretic ceiling.
+The last-cycle model also reaches its much lower ceiling, demonstrating that
+its limitation is missing evidence rather than failed optimization. Null
+performance remains at (1/9) chance.
+
+### Navigation and geometry results
+
+| condition | success | mean movement cost | exact-cost (r) | directionality | stress 1D | stress 2D | stress 3D | Procrustes (R^2) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| online oracle | 1.000 ± 0.001 | 1.485 ± 0.006 | 0.998 ± 0.001 | 0.024 ± 0.006 | 0.418 ± 0.012 | 0.040 ± 0.006 | 0.039 ± 0.005 | 1.000 ± 0.000 |
+| full history | **0.973 ± 0.004** | 1.742 ± 0.033 | **0.948 ± 0.013** | 0.086 ± 0.016 | 0.407 ± 0.021 | **0.075 ± 0.005** | 0.043 ± 0.004 | **0.987 ± 0.005** |
+| last cycle | 0.614 ± 0.005 | 5.223 ± 0.021 | -0.054 ± 0.020 | 0.254 ± 0.008 | 0.412 ± 0.013 | 0.192 ± 0.013 | 0.112 ± 0.008 | 0.451 ± 0.014 |
+| null beacons | 0.484 ± 0.014 | 6.887 ± 0.133 | 0.628 ± 0.079 | 0.088 ± 0.013 | 0.456 ± 0.006 | 0.214 ± 0.009 | 0.102 ± 0.009 | 0.856 ± 0.108 |
+
+For the full-history condition, 2D positive-spectrum fraction is
+(0.870\pm0.017), negative-spectrum fraction is (0.085\pm0.011), and
+concealed Euclidean-distance correlation is (0.942\pm0.012). The large
+1D-to-2D stress reduction supports two-dimensional organization. The further
+2D-to-3D reduction shows residual localization-induced distortion, so the
+claim is strong recovery of a 2D spatial base, not exact rank-two geometry.
+
+The null condition warns against reading Procrustes alignment alone. A small,
+symmetric, censored world can sometimes align a poor matrix with the hidden
+grid. Its low success, large cost, high stress, and high seed variance reject a
+spatial-competence interpretation. Competence is evaluated before geometry.
+
+### Recorded pilot and correction
+
+The initial eight-cycle pilot reached 0.865 localization accuracy, 0.887
+navigation success, and 0.184 2D stress. It showed that moderately successful
+control can still destroy metric fidelity. Increasing to twelve scan cycles
+and a larger calibration set raised the revised pilot to 0.971 localization,
+0.977 navigation, 0.079 stress, and Procrustes (R^2=0.984). The production
+configuration was frozen after that correction. Pilot directories are not part
+of the retained result bundle; their numbers remain in this log for audit.
+
+### Interpretation limits
+
+- Delayed landmark outcomes supervise the localizer.
+- Transition surveys start from previously verified landmarks.
+- Coordinates and exact quantum variables are withheld online but the latent
+  place basis and goal count were designed.
+- Movement is entanglement-breaking and beacon instruments commute with place.
+- The 48-probe fixed scan dominates total intervention count
+  (approximately 50.5 per episode) and is omitted only from the relative
+  movement geometry, not from reporting.
+- Censored costs cannot be interpreted without the paired success matrix.
+- Three seeds and nine places are sufficient for a controlled existence study,
+  not formal universality or continuum claims.
+
+### Figures and artifacts
+
+- `beacon_fields_and_confusions.png`: sensor design and held-out predictions;
+- `localization_learning_curves.png`: optimization behavior;
+- `predictive_atlas_performance.png`: competence and metric diagnostics;
+- `predictive_atlas_geometries.png`: oracle, predictive, and control maps;
+- `belief_state_trajectories.png`: inferred motion with offline audit overlays.
+
+The result bundle also retains every per-seed cost/success/confusion matrix,
+the learned transition tables, nine GRU checkpoints, trajectories, summary
+CSVs, and the exact run manifest.

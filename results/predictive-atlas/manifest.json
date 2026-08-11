@@ -1,0 +1,31 @@
+{
+  "created_utc": "2026-08-11T07:45:55.128347+00:00",
+  "method": "weak-QND-beacon predictive atlas",
+  "diagonal_success": 0.715,
+  "scan_cycles": 12,
+  "calibration_per_site": 400,
+  "test_per_site": 200,
+  "epochs": 35,
+  "transition_trials_per_source_action": 100,
+  "pair_episodes": 100,
+  "max_moves": 12,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "device": "cpu",
+  "agent_information": [
+    "goal landmark label",
+    "chosen movement and success/failure",
+    "weak beacon action/outcome history",
+    "terminal landmark outcome after commitment"
+  ],
+  "withheld_online": [
+    "density matrix",
+    "Kraus operators",
+    "beacon likelihoods",
+    "lattice coordinates",
+    "exact current place label before commitment"
+  ]
+}

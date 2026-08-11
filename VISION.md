@@ -1644,3 +1644,92 @@ space emerges from generic coherent quantum dynamics. The next ladder is:
 5. study holonomy and stochastic curvature;
 6. replace Euclidean time with causal reachability before making any spacetime
    or gravitational claim.
+
+---
+
+# 35. Implemented predictive atlas: place as anticipated experience
+
+The first item on that ladder has now been implemented. The successful spatial
+agent no longer receives an exact current-place outcome before choosing a
+movement. Instead, four weak binary QND instruments provide overlapping,
+place-dependent evidence. A recurrent model integrates twelve scans and
+predicts the outcome of a sharp landmark probe that the agent could perform
+next. During navigation that probe is terminal: its outcome can validate a
+commitment but cannot serve as a place report for a later decision.
+
+This changes the interpretation of operational place. A place is no longer
+merely the latest observed symbol. It is a distribution over possible future
+landmark experiences,
+
+\[
+b_t(s)=P(\text{terminal landmark }s\mid h_t),
+\]
+
+maintained from the agent's history. Blind movement outcomes update this
+distribution through a learned joint model
+
+\[
+\widehat P(o,s'\mid s,a).
+\]
+
+Goal-directed behavior then takes place in belief space. For a goal (g), the
+agent chooses the movement minimizing its belief-weighted stochastic
+shortest-path cost. The resulting all-pairs empirical costs, not the beliefs or
+concealed coordinates, define the hodological distance matrix.
+
+The production result across three seeds is:
+
+- delayed landmark accuracy (0.964\pm0.008), near the Bayes ceiling
+  (0.977\pm0.004);
+- held-out all-pairs success (0.973\pm0.004), versus
+  (1.000\pm0.001) for an online-localization oracle;
+- 1D/2D/3D MDS stress (0.407/0.075/0.043);
+- exact stochastic-cost correlation (0.948\pm0.013);
+- concealed-coordinate Procrustes (R^2=0.987\pm0.005).
+
+A control allowed the same 48 observations but retained only the last four. It
+localized at (0.463) accuracy and navigated at (0.614) success; its learned
+costs were uncorrelated with the exact map. A second control made every beacon
+place-independent. It localized at (0.114), indistinguishable from (1/9)
+chance, and navigated at (0.484). These comparisons show that temporal
+integration of informative evidence is the operative resource.
+
+The conceptual gain is important. The agent's “where” is now a predictive
+hypothesis that earns its role by supporting future goal achievement. This is
+closer to the desired view of space as an organization of possible action than
+a state-estimation problem with supplied coordinates.
+
+The remaining assumptions must stay visible. The nine landmark alternatives,
+their delayed labels, and landmark-anchored transition surveys are designed;
+movement is entanglement-breaking; beacons commute with the place basis; and a
+fixed scan costs 48 interventions. The experiment therefore demonstrates
+learned operational localization, not spontaneous discovery of a place basis.
+Its complete derivation, protocol, controls, results, and artifacts are in
+`PREDICTIVE_ATLAS.md`.
+
+## The revised research frontier
+
+The next step should make localization itself goal-directed. Sensing, moving,
+and committing should compete under a common intervention cost. The agent
+should request a beacon observation only when its expected reduction in
+goal-relevant uncertainty exceeds its cost. This creates an active predictive
+atlas in which “where am I?” is answered only to the resolution demanded by
+present aims.
+
+After active sensing, the most consequential sequence is:
+
+1. learn sensing and movement models jointly from uninterrupted experience;
+2. replace labeled landmarks with operationally discovered predictive tests;
+3. inverse-design noncommuting quantum instruments and goal repertoires under
+   locality, sensing-cost, and low-dimensionality constraints;
+4. scale to multiple topologies and test dimensional stability out of sample;
+5. introduce local internal quantum degrees of freedom and ask whether the
+   predictive state factors into spatial base and internal fiber;
+6. study path-dependent transport and holonomy before introducing curvature;
+7. derive causal rather than Euclidean temporal organization before pursuing
+   an emergent spacetime interpretation.
+
+The key methodological standard remains unchanged: geometry has emerged only
+to the extent that it predicts and improves independent behavior. A map-like
+picture, a decodable hidden coordinate, or a low stress number without
+competence and controls is insufficient.

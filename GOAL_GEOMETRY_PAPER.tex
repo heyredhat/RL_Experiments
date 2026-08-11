@@ -33,7 +33,7 @@
 \allowdisplaybreaks
 
 \title{\textbf{Learning an Agent-Centered Geometry of Quantum Possibility}\\
-\large Predictive State, Goal-Conditioned Control, and Directed Reachability
+\large Predictive State, Goal-Conditioned Control, and Emergent Spatial Atlases
 from Measurement Experience Alone}
 \author{RL Experiments Project\\
 \small Author information omitted for review}
@@ -87,6 +87,21 @@ Manhattan controls identify operational localization and isotropic action cost
 as necessary ingredients. This constitutes a limited existence proof for
 stochastic motion in an agent's emergent hodological space and motivates a
 spatial-base/internal-fiber research program.
+
+Finally, we remove the exact online place report. Four individually ambiguous
+binary quantum-nondemolition beacons provide a 48-outcome scan history; a GRU
+predicts a delayed terminal landmark, and an empirically learned transition
+model supports belief-state planning through blind movements. Across three
+seeds, delayed-landmark accuracy is $0.964\pm0.008$ and held-out all-pairs
+navigation is $0.973\pm0.004$, compared with $1.000\pm0.001$ for an online
+localization oracle. Policy costs have 2D stress $0.075\pm0.005$, correlate
+$0.948\pm0.013$ with exact stochastic costs, and recover concealed coordinates
+with Procrustes $R^2=0.987\pm0.005$. Equal-budget short-memory and
+place-independent-sensor controls fail. This predictive atlas strengthens the
+existence result: place can be an anticipated future experience maintained
+from history rather than a supplied current symbol. Delayed landmark
+supervision, landmark-anchored surveys, commuting sensors, and expensive fixed
+scans remain explicit limitations.
 \end{abstract}
 
 \noindent\textbf{Keywords:} reinforcement learning; quantum measurement;
@@ -145,6 +160,9 @@ the value functions, Bellman recursions, temporal-difference update, recurrent
 state construction, and evaluation criteria used below. Likewise, the spatial
 study in \cref{sec:spatial} derives the Kraus instruments, exact hitting costs,
 multidimensional-scaling test, and every reported geometric diagnostic.
+The successor in \cref{sec:predictive-atlas} then derives weak-beacon
+localization, delayed predictive supervision, Bayesian belief filtering, and
+model-based navigation without an exact online place symbol.
 
 The stronger motivation is hodological: for an agent, goals that require few
 reliable interventions are near and difficult goals are far. Lewin introduced
@@ -1953,6 +1971,456 @@ observations, learned recurrent localization, larger and topologically varied
 systems, coherent channels, held-out landmarks, and geometry that remains
 stable when no privileged place basis is built into the simulator.
 
+\section{A predictive spatial atlas without online place symbols}
+\label{sec:predictive-atlas}
+
+\subsection{The information-boundary problem}
+
+The existence construction in \cref{sec:spatial} gives its controller a sharp
+place symbol before each decision. This is weaker than providing a coordinate:
+the labels $A,\ldots,I$ carry no adjacency or metric semantics. Nevertheless,
+the observation already answers the question ``where am I?'' in a discrete
+operational sense. If space is to be constructed from an agent's own
+goal-directed experience, localization should itself be learned.
+
+We therefore retain the same hidden movement geometry and place goals while
+changing the observation interface. Movement reports only success or failure.
+Four weak binary probes provide overlapping evidence about place, and a sharp
+landmark probe is available only as a terminal commitment. The agent must turn
+the weak history into a predictive belief, propagate that belief through blind
+motion, and decide when it is ready to claim the goal. This creates a finite
+partially observable stochastic-shortest-path problem
+\cite{kaelbling1998}. It also makes the word \emph{place} operational: place is
+represented by predictions of possible future landmark experiences rather
+than by a current simulator label.
+
+The online information boundary is
+\begin{equation}
+ \mathcal I_t=\{g,(a_1,o_1),\ldots,(a_t,o_t)\}.
+ \label{eq:atlas-information}
+\end{equation}
+The controller is not given $ho_t$, any Kraus operator, response
+probabilities, lattice coordinates, or the exact landmark that the terminal
+probe would report. Source preparation and hidden-state decoding are used only
+to construct balanced experiments and audit results. The terminal report can
+label a completed calibration scan or score a navigation commitment, but it
+cannot inform a later action in that episode.
+
+\subsection{Weak quantum beacons}
+
+Let the concealed site basis again be
+$\{|s\rangle:s=0,\ldots,8\}$. Beacon action $b\in\{1,\ldots,4\}$ is a binary
+quantum instrument with diagonal Kraus operators
+\begin{align}
+ B^{(b)}_0&=\sum_{s=0}^{8}\sqrt{1-q_{bs}}\,
+ |s\rangle\langle s|,\\
+ B^{(b)}_1&=\sum_{s=0}^{8}\sqrt{q_{bs}}\,
+ |s\rangle\langle s|.
+ \label{eq:beacon-kraus}
+\end{align}
+The validity calculation is immediate but worth stating:
+\begin{equation}
+ B^{(b)\dagger}_0B^{(b)}_0+B^{(b)\dagger}_1B^{(b)}_1
+ =\sum_s[(1-q_{bs})+q_{bs}]|s\rangle\langle s|=I.
+ \label{eq:beacon-complete}
+\end{equation}
+For a localized input $\rho_s=|s\rangle\langle s|$, the probability of report
+one is
+\begin{equation}
+ \Prob(O=1\mid s,b)=\Tr(B^{(b)}_1\rho_sB^{(b)\dagger}_1)=q_{bs},
+\end{equation}
+and the normalized posterior quantum state remains $\rho_s$ for either report.
+The beacon is consequently quantum nondemolition (QND) on the localized
+states: it acquires noisy information without moving the system.
+
+The four fields vary horizontally, vertically, diagonally, and
+anti-diagonally. Their response probabilities lie between 0.05 and 0.95. No
+single binary report identifies one of nine alternatives; even one complete
+four-beacon cycle is strongly ambiguous. Yet the response vectors
+\begin{equation}
+ q_s=(q_{1s},q_{2s},q_{3s},q_{4s})
+\end{equation}
+are distinct. Repetition accumulates statistical evidence while leaving the
+localized state fixed. This is the simplest controlled realization of a weak
+landmark field.
+
+For comparison, the null environment sets $q_{bs}=1/2$ for every $b,s$. Its
+scan has identical length, alphabet, model capacity, optimization, and delayed
+labels, but
+\begin{equation}
+ \Prob(h\mid s)=\Prob(h)
+\end{equation}
+for every scan history $h$. No classifier can exceed the uniform-prior Bayes
+accuracy $1/9$ in expectation.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/predictive-atlas/beacon_fields_and_confusions.png}
+\caption{\textbf{Weak sensing and delayed landmark prediction.} Top: the four
+place-dependent Bernoulli response fields; each sample is ambiguous and the
+coordinates shown are privileged design labels. Bottom: mean row-normalized
+held-out confusion matrices. Twelve-cycle history nearly resolves the nine
+landmarks, one retained cycle preserves broad aliases, and place-independent
+beacons remain at chance.}
+\label{fig:atlas-beacons}
+\end{figure}
+
+\subsection{Delayed landmark prediction as predictive-state learning}
+
+A scan applies the action sequence $(1,2,3,4)^{12}$ and records the 48
+action/outcome pairs
+\begin{equation}
+ h=((b_1,o_1),\ldots,(b_{48},o_{48})).
+\end{equation}
+Only after the scan does the common sharp instrument
+\begin{equation}
+ L_s=|s\rangle\langle s|,
+ \qquad s=0,\ldots,8,
+ \label{eq:atlas-landmark}
+\end{equation}
+provide the target. The desired output is
+\begin{equation}
+ \widehat b_0(s\mid h)\approx
+ \Prob(\text{terminal landmark }s\mid h).
+ \label{eq:atlas-posterior}
+\end{equation}
+This is not density-matrix regression. It predicts an intervention/outcome
+counterfactual that the agent can operationally test. In the language of
+predictive-state representations, histories are equivalent insofar as they
+support the same future-test predictions \cite{littman2001}.
+
+Each observed pair is converted to a learned token vector $x_t$. A GRU updates
+its hidden memory according to
+\begin{align}
+ r_t&=\sigma(W_rx_t+U_rh_{t-1}+b_r),\\
+ u_t&=\sigma(W_ux_t+U_uh_{t-1}+b_u),\\
+ \widetilde h_t&=\tanh[W_hx_t+U_h(r_t\odot h_{t-1})+b_h],\\
+ h_t&=(1-u_t)\odot h_{t-1}+u_t\odot\widetilde h_t.
+ \label{eq:atlas-gru}
+\end{align}
+The reset gate $r_t$ controls how much previous memory enters the candidate;
+the update gate $u_t$ interpolates between old and proposed memory. A
+softmax classifier maps the final state to nine probabilities,
+\begin{equation}
+ \widehat b_0(s\mid h)=
+ \frac{\exp(w_s^\top h_{48}+c_s)}
+ {\sum_j\exp(w_j^\top h_{48}+c_j)}.
+ \label{eq:atlas-softmax}
+\end{equation}
+Minimizing negative log likelihood,
+\begin{equation}
+ \mathcal L_{\rm loc}=-\frac1N\sum_{i=1}^N
+ \log \widehat b_0(s_i\mid h_i),
+ \label{eq:atlas-nll}
+\end{equation}
+is proper: in the population limit it is uniquely minimized by the true
+conditional distribution. Accuracy tests the maximum-probability decision,
+whereas NLL strongly penalizes confident mistakes. We also report the
+multiclass Brier score
+\begin{equation}
+ \operatorname{Brier}=\frac1N\sum_i\sum_s
+ [\widehat b_0(s\mid h_i)-\mathbf1\{s_i=s\}]^2,
+ \label{eq:atlas-brier}
+\end{equation}
+posterior confidence, and entropy. These metrics distinguish useful
+uncertainty estimates from merely correct class labels.
+
+Because the simulator's $q_{bs}$ are known to the offline analyst, an exact
+Bayes ceiling can be computed by multiplying Bernoulli likelihoods. It is not
+used for training. Agreement between the learned and Bayes accuracies tells us
+whether residual error comes from insufficient observations or failed
+optimization.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.91\textwidth]{results/predictive-atlas/localization_learning_curves.png}
+\caption{Training and held-out delayed-landmark performance across three
+seeds. Full-history prediction rapidly exploits accumulated evidence. The
+last-cycle and null controls plateau near their respective Bayes limits, so
+their poor localization is not plausibly explained by undertraining.}
+\label{fig:atlas-learning}
+\end{figure}
+
+\subsection{Learning a movement model from landmark-anchored surveys}
+
+Localization alone is not navigation. The agent must know how its
+interventions transform the predictive place distribution. For each previously
+verified landmark $s$ and blind movement $a$, a survey records the binary
+movement outcome $o$ and then terminates with landmark $s'$. Repeated trials
+estimate the joint controlled kernel
+\begin{equation}
+ \widehat T_a(o,s'\mid s)
+ =\widehat\Prob(O_t=o,S_{t+1}=s'\mid S_t=s,A_t=a).
+ \label{eq:atlas-joint-transition}
+\end{equation}
+The destination probe is delayed until after the move, so coordinates and
+Kraus events are unnecessary. However, the verified source and destination
+landmarks are supervision. This phase is best understood as empirical chart
+calibration, not autonomous discovery of the chart's labels.
+
+Marginalizing the report yields the planning transition model,
+\begin{equation}
+ \widehat P_a(s'\mid s)=\sum_o\widehat T_a(o,s'\mid s).
+ \label{eq:atlas-transition}
+\end{equation}
+Retaining the joint tensor remains essential at execution time. Given belief
+$b_t(s)$, selected movement $a_t$, and observed report $o_t$, Bayes filtering
+gives
+\begin{equation}
+ b_{t+1}(s')=
+ \frac{\sum_s b_t(s)\widehat T_{a_t}(o_t,s'\mid s)}
+ {\sum_{j,s}b_t(s)\widehat T_{a_t}(o_t,j\mid s)}.
+ \label{eq:atlas-filter}
+\end{equation}
+Thus a success report and a failure report generally produce different
+predictive positions even though neither names a destination. The mean
+total-variation discrepancy between the empirical and privileged exact
+kernels is only $0.0144\pm0.0008$, indicating that transition-estimation error
+is small in the production regime.
+
+\subsection{Belief-state stochastic-shortest-path planning}
+
+For every goal landmark $g$, value iteration solves
+\begin{align}
+ V_g(g)&=0,\\
+ V_g(s)&=\min_a\left[1+\sum_{s'}
+ \widehat P_a(s'\mid s)V_g(s')\right],\qquad s\ne g,
+ \label{eq:atlas-bellman}
+\end{align}
+with action cost
+\begin{equation}
+ Q_g(s,a)=1+\sum_{s'}\widehat P_a(s'\mid s)V_g(s').
+ \label{eq:atlas-qcost}
+\end{equation}
+These are stochastic-shortest-path rather than discounted-reward equations.
+One unit is charged for every movement; the absorbing goal has zero future
+movement cost. The online action rule averages over uncertainty,
+\begin{equation}
+ a_t^*=\argmin_a\sum_s b_t(s)Q_g(s,a).
+ \label{eq:atlas-belief-action}
+\end{equation}
+When the posterior mode equals $g$, the controller invokes the terminal probe.
+A correct outcome succeeds and an incorrect outcome fails immediately.
+
+Equation~\eqref{eq:atlas-belief-action} is a tractable approximation to exact
+belief-MDP planning. Exact planning would assign a value directly to every
+continuous belief and account for the future informational value of movement
+outcomes. Here state-level costs are computed first and linearly averaged. The
+approximation is appropriate when initial beliefs are sharp and dynamics are
+nearly deterministic, but it is not generally optimal. Its empirical success
+is therefore evaluated rather than assumed.
+
+The controller performs no further beacon scans after its initial scan. New
+uncertainty enters only through blind movements and is propagated by
+\cref{eq:atlas-filter}. This makes saved paths sequences of predictive beliefs,
+not privileged state labels.
+
+\subsection{Experimental design and matched controls}
+
+The production study uses three fixed seeds. For each neural condition and
+seed, 400 calibration and 200 held-out scans are generated per landmark and
+the GRU is trained for 35 epochs. Each scan contains twelve cycles. Movement
+surveys use 100 trials for every one of nine sources and eight actions.
+Frozen navigation uses 100 episodes for each of 81 ordered source--goal pairs
+with at most twelve movements.
+
+The resulting scale is 21,600 transition-survey trials and 97,200 navigation
+episodes. Navigation alone contains 4,665,600 weak-beacon outcomes. Nine model
+checkpoints, all per-seed confusion/cost/success/transition matrices, and
+complete trajectory audits are retained.
+
+Four navigation conditions isolate distinct questions:
+\begin{description}[style=nextline]
+ \item[Online oracle] Starts from a one-hot exact-place belief but uses the same
+ learned transition model and planner. It estimates the loss due specifically
+ to predictive localization.
+ \item[Full history] Uses all 48 weak outcomes. This is the proposed atlas.
+ \item[Last cycle] Collects the same 48 outcomes but discards the first 44
+ before inference. Architecture and sensor cost are matched while usable
+ temporal evidence is ablated.
+ \item[Null fields] Uses all 48 outcomes from place-independent beacons. This
+ tests whether recurrence, labels, or grid symmetry can produce the result in
+ the absence of localization information.
+\end{description}
+
+The movement-cost matrix excludes the fixed 48-probe scan and one terminal
+commitment because those add common overhead to every pair and would compress
+relative spatial variation. Total interventions are nevertheless reported:
+the full-history agent uses approximately 50.5 interventions per episode while
+its mean movement cost is 1.74. Removing common overhead from geometry is not a
+claim that sensing is free; it exposes a major efficiency limitation.
+
+\subsection{Localization results}
+
+\begin{table}[t]
+\centering
+\caption{Delayed landmark prediction, mean $\pm$ sample standard deviation
+over three seeds. Bayes accuracy uses privileged beacon likelihoods only as an
+offline information ceiling. Lower NLL and Brier score are better.}
+\label{tab:atlas-localization}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Condition & cycles used & accuracy & Bayes accuracy & NLL & Brier\\
+\midrule
+Full history & 12 & $\mathbf{0.964\pm0.008}$ & $0.977\pm0.004$ & $0.112\pm0.017$ & $0.055\pm0.010$\\
+Last cycle & 1 & $0.463\pm0.006$ & $0.463\pm0.006$ & $1.386\pm0.025$ & $0.685\pm0.006$\\
+Null fields & 12 & $0.114\pm0.008$ & $0.111$ & $2.229\pm0.005$ & $0.896\pm0.001$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full-history classifier reaches 96.4\% held-out accuracy, within 1.3
+percentage points of the exact Bayes classifier. Its mean posterior confidence
+is $0.961\pm0.003$, close to its accuracy, and its mean entropy is
+$0.144\pm0.008$ nats. The recurrent representation therefore extracts most of
+the place information actually present in the finite scan and is not simply
+memorizing calibration examples.
+
+The last-cycle accuracy of 46.3\% equals its Bayes ceiling. This is especially
+diagnostic: the model has learned as much as it can from four retained samples,
+but one cycle does not sufficiently distinguish the landmarks. The null model
+obtains 11.4\%, statistically consistent with the $1/9$ ceiling. Long memory is
+useful only when the history contains place-dependent evidence.
+
+\subsection{Navigation, dimension, and geometric fidelity}
+
+\begin{table}[t]
+\centering
+\caption{Frozen all-pairs navigation and geometry, mean $\pm$ sample standard
+deviation across three seeds. Cost correlations and Procrustes scores use
+privileged exact quantities only after learning. Geometry is interpreted only
+after success.}
+\label{tab:atlas-navigation}
+\scriptsize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lccccccc}
+\toprule
+Condition & success & move cost & exact-cost $r$ & stress 1D & stress 2D & stress 3D & Procrustes $R^2$\\
+\midrule
+Oracle & $1.000\pm.001$ & $1.485\pm.006$ & $0.998\pm.001$ & $0.418\pm.012$ & $0.040\pm.006$ & $0.039\pm.005$ & $1.000\pm.000$\\
+Full history & $\mathbf{0.973\pm.004}$ & $1.742\pm.033$ & $\mathbf{0.948\pm.013}$ & $0.407\pm.021$ & $\mathbf{0.075\pm.005}$ & $0.043\pm.004$ & $\mathbf{0.987\pm.005}$\\
+Last cycle & $0.614\pm.005$ & $5.223\pm.021$ & $-0.054\pm.020$ & $0.412\pm.013$ & $0.192\pm.013$ & $0.112\pm.008$ & $0.451\pm.014$\\
+Null fields & $0.484\pm.014$ & $6.887\pm.133$ & $0.628\pm.079$ & $0.456\pm.006$ & $0.214\pm.009$ & $0.102\pm.009$ & $0.856\pm.108$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The full-history atlas succeeds on $97.3\pm0.4$\% of held-out ordered pairs,
+closing most of the gap to the oracle. Its movement cost is correspondingly
+only 0.26 actions above the oracle average. More importantly, the learned cost
+matrix correlates $0.948\pm0.013$ with the exact stochastic-shortest-path
+matrix. The agent has not merely learned to stop near likely goals; its
+relative goal difficulties closely recover the designed intervention
+structure.
+
+The dimension test shows a large stress reduction from one dimension
+($0.407$) to two ($0.075$). Two coordinates capture
+$0.870\pm0.017$ of the positive classical-MDS spectrum, concealed Euclidean
+distance correlation is $0.942\pm0.012$, and coordinate alignment reaches
+Procrustes $R^2=0.987\pm0.005$. These independent diagnostics support the
+interpretation of a recovered two-dimensional spatial base.
+
+The further reduction from 2D stress $0.075$ to 3D stress $0.043$ is not
+negligible. Unlike the near-perfect oracle plateau, predictive localization
+errors induce extra nonspatial distortion. The proper statement is therefore
+that the atlas strongly recovers a designed 2D organization, not that its
+finite-sample dissimilarity matrix has exact Euclidean rank two. This residual
+provides a quantitative target for better filters and active sensing.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.98\textwidth]{results/predictive-atlas/predictive_atlas_performance.png}
+\caption{Competence and geometric diagnostics for the oracle, predictive
+atlas, memory-limited control, and null-sensor control. Error bars show one
+sample standard deviation across three seeds. The full history nearly matches
+the oracle; the controls separate accumulated evidence from architecture and
+computation.}
+\label{fig:atlas-performance}
+\end{figure}
+
+The last-cycle condition reaches only 61.4\% success and its cost correlation
+with the exact map is slightly negative. Its coordinate recovery falls to
+$R^2=0.451$. The null condition reaches 48.4\% success with a mean movement
+cost of 6.89. Its apparently moderate exact-cost correlation and occasionally
+high Procrustes score are cautionary rather than positive: boundary effects,
+censoring, and the symmetry of a nine-point grid can imprint structure on an
+incompetent policy. Its 2D stress is high, success is low, and Procrustes
+variance is large. A recognizable picture is never accepted without
+competence, metric fit, and controls.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/predictive-atlas/predictive_atlas_geometries.png}
+\caption{Two-dimensional MDS reconstructions from empirical movement costs.
+Point locations are fitted from goal difficulty; concealed coordinates are
+used only to align orientation for evaluation. The full-history atlas retains
+the lattice organization, while the equal-budget memory control is badly
+warped.}
+\label{fig:atlas-geometries}
+\end{figure}
+
+\subsection{Trajectories as motion through a predictive atlas}
+
+An MDS plot of pairwise goals does not by itself show that an individual agent
+moves through the space. For representative center-to-corner tasks we save,
+after every blind action, the full belief $b_t$, its maximum-probability
+landmark, the movement report, and the concealed simulator site for offline
+audit. We then locate the belief mode in coordinates inferred solely from the
+full-history cost matrix.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/predictive-atlas/belief_state_trajectories.png}
+\caption{Representative belief-state trajectories. Arrows connect successive
+maximum-posterior landmarks in the learned goal-cost embedding. The offline
+true-site trace audits localization but is never supplied to the controller.
+For these examples, blind outcome filtering produces coherent center-to-corner
+motion through the predictive atlas.}
+\label{fig:atlas-trajectories}
+\end{figure}
+
+The result makes ``trajectory'' explicitly agent-relative. The physically
+privileged trace exists inside the simulator; the operational trajectory is a
+sequence of changing expectations about future landmark reports. Agreement
+between them validates the atlas. Disagreement remains meaningful uncertainty,
+not an undefined agent position.
+
+\subsection{The failed pilot and why it matters}
+
+The first pilot used eight scan cycles, 200 calibration examples per landmark,
+and 20 epochs. It obtained 86.5\% localization and 88.7\% navigation, but 2D
+stress remained 0.184. Moderate competence did not preserve the metric. This
+failure motivated a longer scan and independently confirms that success and
+geometric fidelity are different tests.
+
+A second pilot used twelve cycles, 300 examples per landmark, and 30 epochs. It
+reached 97.1\% localization, 97.7\% navigation, 2D stress 0.079, and Procrustes
+$R^2=0.984$. Only then was the three-seed production protocol frozen, with 400
+calibration examples and 35 epochs. Pilot outputs are not mixed into the
+production aggregate; their diagnostic values are retained in the project
+log.
+
+\subsection{What the predictive atlas establishes}
+
+The predictive atlas strengthens the earlier existence proof. There exists a
+valid weak-instrument interface for which an agent can learn an operational
+place posterior from temporal evidence, propagate it through blind stochastic
+actions, achieve arbitrary landmark goals, and recover an approximately
+two-dimensional Euclidean goal-cost geometry without receiving an exact online
+place report. The memory and null controls identify accumulated informative
+evidence as a necessary causal ingredient.
+
+Several primitives remain designed. The simulator contains nine localized
+basis states; the terminal outcome supplies supervised landmark identity;
+transition surveys begin from verified landmarks; beacon instruments commute
+with the place basis; and movement is entanglement breaking. Hence the agent
+learns to localize within a supplied landmark vocabulary rather than
+discovering an unforeseen decomposition of Hilbert space. The fixed scan also
+costs 48 interventions, far more than the typical journey. The result should be
+read as the first learned predictive atlas, not as generic emergence of
+physical space from arbitrary quantum dynamics.
+
 \section{Discussion and limitations}
 \label{sec:discussion}
 
@@ -1969,6 +2437,14 @@ difficulty selects two dimensions, recovers a concealed lattice, and turns
 observed action sequences into spatial paths. Its controls show that hidden
 connectivity, coordinate recovery, control success, and Euclidean metric fit
 are distinct requirements.
+
+The predictive-atlas successor weakens the observation assumption
+substantially. Exact online place is replaced by anticipated landmark
+experience inferred from weak history. Near-oracle navigation and geometric
+recovery show that a supplied current-state symbol is not necessary on this
+world. The residual 2D-to-3D stress improvement is equally informative:
+representation error appears as nonspatial metric distortion, making emergent
+dimension a joint property of dynamics, sensing, memory, and control.
 
 These results do not show that a Bloch sphere, Hilbert space, or uniquely
 quantum geometry spontaneously emerged. Such a claim would require latent-state
@@ -1999,6 +2475,17 @@ decoding of quantum invariants. Other limitations are:
  \item symmetrizing learned hitting costs is appropriate for testing a
  Euclidean hypothesis but discards directed information that a more general
  hodological geometry must retain.
+ \item the predictive atlas uses delayed landmark supervision and
+ landmark-anchored transition surveys; it does not discover its place
+ vocabulary without labels;
+ \item its diagonal QND beacons commute with the latent place basis and its
+ movement channels remain entanglement breaking, so no specifically coherent
+ quantum resource is responsible for localization;
+ \item every navigation episode pays for a fixed 48-probe scan, which is
+ omitted from relative movement geometry but dominates the reported total
+ intervention count;
+ \item belief-weighted state costs approximate rather than solve the full
+ belief-MDP, and the controller does not actively choose additional sensing.
 \end{itemize}
 
 \section{Outlook}
@@ -2039,11 +2526,17 @@ trilateration, penalizing nonlocal teleportation and goal-specific actions.
 Evolutionary search is a robust first outer loop; differentiable meta-learning
 becomes attractive once the inner planner is model-based.
 
-\paragraph{Remove explicit place localization.}
-Alias, weaken, or noise destination outcomes and require a recurrent predictive
-state to recover location. Scaling from grids to tori, cylinders, spheres, and
-defected graphs should be evaluated with out-of-sample stress, local dimension,
-neighborhood preservation, and topology, not only global MDS
+\paragraph{From predictive to active localization.}
+Explicit online place localization has now been removed in
+\cref{sec:predictive-atlas}. The next controller should jointly choose sensing,
+movement, and commitment under a common cost. Information gain
+$H(b)-\sum_oP(o\mid b,a)H(b'_{a,o})$ supplies a useful diagnostic, but sensing
+should ultimately be valued by how much it lowers goal-conditioned cost rather
+than by entropy alone. The agent should learn its observation and transition
+models from uninterrupted experience, eliminating separated
+landmark-anchored surveys. Scaling from grids to tori, cylinders, spheres, and
+defected graphs should then be evaluated with out-of-sample stress, local
+dimension, neighborhood preservation, and topology, not only global MDS
 \cite{tenenbaum2000}.
 
 \paragraph{Spatial base and internal fiber.}
@@ -2109,6 +2602,16 @@ grid-like embedding is not enough. Broad source coverage, operational
 localization or memory, and approximately isotropic movement costs are jointly
 required.
 
+The predictive atlas advances that result from reported place to inferred
+place. Weak, individually ambiguous quantum beacons are integrated into a
+distribution over future landmark experiences; blind movement reports update
+that distribution; and belief-state policies recover a two-dimensional
+goal-cost map with 97.3\% all-pairs success. The short-memory and null-sensor
+controls show that the map depends on accumulated operational evidence rather
+than network capacity or a hidden grid alone. Space in this construction is
+therefore closer to a learned organization of action and anticipation, though
+delayed labels and a designed place basis remain.
+
 The geometry-aware agent is competitive but not universally superior. Its
 embedding has measurable, seed-dependent strategic meaning; its directed cost
 orders some goals but is not accurate in absolute units. These shortcomings
@@ -2133,6 +2636,14 @@ python plot_results.py results/comparative
 python spatial_hodology.py --output results/spatial-hodology \
   --seeds 0,1,2 --episodes 6000 --pair-episodes 100 \
   --max-steps 12
+
+conda run --no-capture-output -n qbist_spacetime \
+  python predictive_atlas.py --output results/predictive-atlas \
+  --seeds 0,1,2 --scan-cycles 12 \
+  --calibration-per-site 400 --test-per-site 200 --epochs 35 \
+  --transition-trials 100 --pair-episodes 100 \
+  --max-moves 12 --device cpu
+python plot_predictive_atlas.py results/predictive-atlas
 \end{verbatim}
 
 The manifest records exact runs; episode CSVs retain raw outcomes; geometry
@@ -2141,6 +2652,10 @@ displacements; and the plot tree contains 51 figures.
 The spatial bundle separately retains its 81-point instrument search, exact and
 learned all-pairs matrices, text Q-tables, trajectory records, manifest, and
 five figures.
+The predictive-atlas bundle adds three localization summaries/curves, per-seed
+confusion and transition matrices, four sets of navigation matrices, nine GRU
+checkpoints, belief trajectories, a manifest that records the online
+information boundary, and five figures.
 
 \section{Goal repertoires}
 
@@ -2152,6 +2667,8 @@ five figures.
 \item[qutrit-mub] $Z0,Z1,Z2,F0,F1,Z0\_F0,F0\_Z0,Z0\_F0\_P0$.
 \item[spatial worlds] $A,B,C,D,E,F,G,H,I$, each denoting one outcome of the
 same common place probe.
+\item[predictive-atlas worlds] The same nine terminal landmark goals, reached
+using eight blind movements and inferred from four weak binary beacon fields.
 \end{description}
 
 \section{Worked examples for the new reader}

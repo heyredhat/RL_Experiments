@@ -1,11 +1,13 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
-# Keep the documented comparative data/figures, but omit disposable smoke runs
-# and binary neural checkpoints.
+# Keep documented production bundles, but omit disposable smoke runs and the
+# large comparative-study checkpoint directory. The compact predictive-atlas
+# checkpoints are retained because they are part of its auditable artifact.
 results/*
 !results/comparative/
 !results/spatial-hodology/
+!results/predictive-atlas/
 results/comparative/models/
 
 # Disposable LaTeX build state; keep manuscript sources and compiled PDFs.

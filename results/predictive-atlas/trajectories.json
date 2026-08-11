@@ -1,0 +1,1434 @@
+[
+  {
+    "seed": 0,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      0
+    ],
+    "map_path": [
+      4,
+      0
+    ],
+    "confidence": [
+      1.0,
+      0.9944789510006902
+    ],
+    "actions": [
+      7
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 0,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      2
+    ],
+    "confidence": [
+      1.0,
+      0.994240460763139
+    ],
+    "actions": [
+      4
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 0,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      4,
+      4,
+      6
+    ],
+    "confidence": [
+      1.0,
+      0.9848771266540641,
+      0.9445614010668762,
+      0.9829004827025088
+    ],
+    "actions": [
+      6,
+      6,
+      6
+    ],
+    "outcomes": [
+      1,
+      1,
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 0,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8
+    ],
+    "map_path": [
+      4,
+      8
+    ],
+    "confidence": [
+      1.0,
+      0.9938884644766998
+    ],
+    "actions": [
+      5
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 0,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      1,
+      0
+    ],
+    "map_path": [
+      4,
+      1,
+      0
+    ],
+    "confidence": [
+      0.5580010414123535,
+      0.606131400274336,
+      0.9864915268191944
+    ],
+    "actions": [
+      0,
+      3
+    ],
+    "outcomes": [
+      0,
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 0,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      2
+    ],
+    "confidence": [
+      0.9394614100456238,
+      0.9366129591976009
+    ],
+    "actions": [
+      4
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 0,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      6
+    ],
+    "confidence": [
+      0.9608141779899597,
+      0.9735672600689551
+    ],
+    "actions": [
+      6
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 0,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8
+    ],
+    "map_path": [
+      4,
+      8
+    ],
+    "confidence": [
+      0.966250479221344,
+      0.9875183913037732
+    ],
+    "actions": [
+      5
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 0,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 0,
+    "success": false,
+    "true_path": [
+      4,
+      3,
+      3
+    ],
+    "map_path": [
+      2,
+      1,
+      0
+    ],
+    "confidence": [
+      0.47277215123176575,
+      0.48179745064368934,
+      0.7860204637570147
+    ],
+    "actions": [
+      3,
+      3
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 3
+  },
+  {
+    "seed": 0,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 2,
+    "success": false,
+    "true_path": [
+      4
+    ],
+    "map_path": [
+      2
+    ],
+    "confidence": [
+      0.491315633058548
+    ],
+    "actions": [],
+    "outcomes": [],
+    "terminal_outcome": 4
+  },
+  {
+    "seed": 0,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      3,
+      6,
+      6
+    ],
+    "map_path": [
+      5,
+      4,
+      7,
+      6
+    ],
+    "confidence": [
+      0.2965700328350067,
+      0.30913985201495126,
+      0.4685160833732274,
+      0.8656346743657153
+    ],
+    "actions": [
+      3,
+      2,
+      3
+    ],
+    "outcomes": [
+      0,
+      0,
+      1
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 0,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      8,
+      8,
+      8
+    ],
+    "map_path": [
+      0,
+      0,
+      4,
+      7,
+      8
+    ],
+    "confidence": [
+      0.46352455019950867,
+      0.468968496258488,
+      0.5116885997562943,
+      0.5075826237875353,
+      0.9827864274902262
+    ],
+    "actions": [
+      5,
+      5,
+      2,
+      1
+    ],
+    "outcomes": [
+      1,
+      0,
+      1,
+      1
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 0,
+    "condition": "null",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      1,
+      0,
+      0
+    ],
+    "map_path": [
+      7,
+      4,
+      3,
+      0
+    ],
+    "confidence": [
+      0.15836814045906067,
+      0.2248879017392936,
+      0.327287300588275,
+      0.5415562864826132
+    ],
+    "actions": [
+      0,
+      3,
+      0
+    ],
+    "outcomes": [
+      0,
+      0,
+      1
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 0,
+    "condition": "null",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      5,
+      2,
+      2,
+      2
+    ],
+    "map_path": [
+      6,
+      7,
+      4,
+      5,
+      2
+    ],
+    "confidence": [
+      0.13660766184329987,
+      0.19759424977753817,
+      0.2859722893743785,
+      0.5818261909727878,
+      0.9848944712025359
+    ],
+    "actions": [
+      1,
+      0,
+      1,
+      0
+    ],
+    "outcomes": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 0,
+    "condition": "null",
+    "source": 4,
+    "goal": 6,
+    "success": false,
+    "true_path": [
+      4,
+      7
+    ],
+    "map_path": [
+      3,
+      6
+    ],
+    "confidence": [
+      0.15196898579597473,
+      0.2131743940298147
+    ],
+    "actions": [
+      2
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 7
+  },
+  {
+    "seed": 0,
+    "condition": "null",
+    "source": 4,
+    "goal": 8,
+    "success": false,
+    "true_path": [
+      4
+    ],
+    "map_path": [
+      8
+    ],
+    "confidence": [
+      0.1406608521938324
+    ],
+    "actions": [],
+    "outcomes": [],
+    "terminal_outcome": 4
+  },
+  {
+    "seed": 1,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      0
+    ],
+    "map_path": [
+      4,
+      0
+    ],
+    "confidence": [
+      1.0,
+      0.9946984758117959
+    ],
+    "actions": [
+      7
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 1,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      4,
+      2
+    ],
+    "confidence": [
+      1.0,
+      0.9872813990461048,
+      0.9891900745229713
+    ],
+    "actions": [
+      4,
+      4
+    ],
+    "outcomes": [
+      1,
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 1,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      4,
+      6
+    ],
+    "confidence": [
+      1.0,
+      0.9756838905775075,
+      0.9871720991326715
+    ],
+    "actions": [
+      6,
+      6
+    ],
+    "outcomes": [
+      1,
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 1,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8
+    ],
+    "map_path": [
+      4,
+      8
+    ],
+    "confidence": [
+      1.0,
+      0.9941563184806429
+    ],
+    "actions": [
+      5
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 1,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      0
+    ],
+    "map_path": [
+      4,
+      0
+    ],
+    "confidence": [
+      0.9704419374465942,
+      0.9684669201997645
+    ],
+    "actions": [
+      7
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 1,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      2
+    ],
+    "confidence": [
+      0.8086955547332764,
+      0.98871708748231
+    ],
+    "actions": [
+      4
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 1,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      6
+    ],
+    "confidence": [
+      0.9856148958206177,
+      0.9906773989447775
+    ],
+    "actions": [
+      6
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 1,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8
+    ],
+    "map_path": [
+      4,
+      8
+    ],
+    "confidence": [
+      0.9646508693695068,
+      0.960897673175247
+    ],
+    "actions": [
+      5
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 1,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 0,
+    "success": false,
+    "true_path": [
+      4,
+      3,
+      3
+    ],
+    "map_path": [
+      2,
+      1,
+      0
+    ],
+    "confidence": [
+      0.5041884779930115,
+      0.5126018067031224,
+      0.7288033775644952
+    ],
+    "actions": [
+      3,
+      3
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 3
+  },
+  {
+    "seed": 1,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 2,
+    "success": false,
+    "true_path": [
+      4,
+      5,
+      5
+    ],
+    "map_path": [
+      0,
+      1,
+      2
+    ],
+    "confidence": [
+      0.5192053318023682,
+      0.5363259000923786,
+      0.7667943122236833
+    ],
+    "actions": [
+      1,
+      1
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 5
+  },
+  {
+    "seed": 1,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 6,
+    "success": false,
+    "true_path": [
+      4,
+      3,
+      3
+    ],
+    "map_path": [
+      8,
+      7,
+      6
+    ],
+    "confidence": [
+      0.49704721570014954,
+      0.4992581822611368,
+      0.48233155388373705
+    ],
+    "actions": [
+      3,
+      3
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 3
+  },
+  {
+    "seed": 1,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8,
+      8
+    ],
+    "map_path": [
+      3,
+      7,
+      8
+    ],
+    "confidence": [
+      0.4453267753124237,
+      0.5443445183146974,
+      0.6453529446977337
+    ],
+    "actions": [
+      5,
+      1
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 1,
+    "condition": "null",
+    "source": 4,
+    "goal": 0,
+    "success": false,
+    "true_path": [
+      4,
+      3
+    ],
+    "map_path": [
+      1,
+      0
+    ],
+    "confidence": [
+      0.14663481712341309,
+      0.22079649398070242
+    ],
+    "actions": [
+      3
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 3
+  },
+  {
+    "seed": 1,
+    "condition": "null",
+    "source": 4,
+    "goal": 2,
+    "success": false,
+    "true_path": [
+      4
+    ],
+    "map_path": [
+      2
+    ],
+    "confidence": [
+      0.14964145421981812
+    ],
+    "actions": [],
+    "outcomes": [],
+    "terminal_outcome": 4
+  },
+  {
+    "seed": 1,
+    "condition": "null",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      6,
+      6
+    ],
+    "map_path": [
+      1,
+      3,
+      6
+    ],
+    "confidence": [
+      0.15495754778385162,
+      0.28836467331924687,
+      0.5676403867825802
+    ],
+    "actions": [
+      6,
+      2
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 1,
+    "condition": "null",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      7,
+      8
+    ],
+    "map_path": [
+      4,
+      7,
+      8
+    ],
+    "confidence": [
+      0.15100441873073578,
+      0.2245419421751222,
+      0.32147320147750164
+    ],
+    "actions": [
+      2,
+      1
+    ],
+    "outcomes": [
+      0,
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 2,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      0
+    ],
+    "map_path": [
+      4,
+      0
+    ],
+    "confidence": [
+      1.0,
+      0.9945541184479237
+    ],
+    "actions": [
+      7
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 2,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      4,
+      2
+    ],
+    "confidence": [
+      1.0,
+      0.9880418535127055,
+      0.9890518075340793
+    ],
+    "actions": [
+      4,
+      4
+    ],
+    "outcomes": [
+      1,
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 2,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      4,
+      6
+    ],
+    "confidence": [
+      1.0,
+      0.9876733436055469,
+      0.9891247288835273
+    ],
+    "actions": [
+      6,
+      6
+    ],
+    "outcomes": [
+      1,
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 2,
+    "condition": "oracle",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      8
+    ],
+    "map_path": [
+      4,
+      8
+    ],
+    "confidence": [
+      1.0,
+      0.9950279676817899
+    ],
+    "actions": [
+      5
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 2,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      0
+    ],
+    "map_path": [
+      4,
+      4,
+      0
+    ],
+    "confidence": [
+      0.6061777472496033,
+      0.5754069210093946,
+      0.6011750552250993
+    ],
+    "actions": [
+      7,
+      7
+    ],
+    "outcomes": [
+      1,
+      0
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 2,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 2,
+    "success": true,
+    "true_path": [
+      4,
+      2
+    ],
+    "map_path": [
+      4,
+      2
+    ],
+    "confidence": [
+      0.9931566119194031,
+      0.9910181642995303
+    ],
+    "actions": [
+      4
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 2
+  },
+  {
+    "seed": 2,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      6
+    ],
+    "map_path": [
+      4,
+      6
+    ],
+    "confidence": [
+      0.9926304817199707,
+      0.9874362892513501
+    ],
+    "actions": [
+      6
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 2,
+    "condition": "full-history",
+    "source": 4,
+    "goal": 8,
+    "success": true,
+    "true_path": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      8
+    ],
+    "map_path": [
+      4,
+      4,
+      4,
+      4,
+      4,
+      5,
+      8
+    ],
+    "confidence": [
+      0.9824752807617188,
+      0.9542179457208836,
+      0.8688422746478375,
+      0.624892223869215,
+      0.266431788626413,
+      0.4244783792490328,
+      0.8842771397140232
+    ],
+    "actions": [
+      5,
+      5,
+      5,
+      5,
+      1,
+      2
+    ],
+    "outcomes": [
+      1,
+      1,
+      1,
+      1,
+      0,
+      0
+    ],
+    "terminal_outcome": 8
+  },
+  {
+    "seed": 2,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      3,
+      0,
+      0
+    ],
+    "map_path": [
+      5,
+      4,
+      1,
+      0
+    ],
+    "confidence": [
+      0.3706822693347931,
+      0.3797415755527264,
+      0.5285856853885914,
+      0.8675150507751581
+    ],
+    "actions": [
+      3,
+      0,
+      3
+    ],
+    "outcomes": [
+      0,
+      0,
+      1
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 2,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 2,
+    "success": false,
+    "true_path": [
+      4,
+      5,
+      5
+    ],
+    "map_path": [
+      0,
+      1,
+      2
+    ],
+    "confidence": [
+      0.4967818856239319,
+      0.5166579816441875,
+      0.7444427379771286
+    ],
+    "actions": [
+      1,
+      1
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 5
+  },
+  {
+    "seed": 2,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      3,
+      6,
+      6
+    ],
+    "map_path": [
+      5,
+      4,
+      7,
+      6
+    ],
+    "confidence": [
+      0.3812260329723358,
+      0.388940054111558,
+      0.5148986372593779,
+      0.8947542927772567
+    ],
+    "actions": [
+      3,
+      2,
+      3
+    ],
+    "outcomes": [
+      0,
+      0,
+      1
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 2,
+    "condition": "last-cycle",
+    "source": 4,
+    "goal": 8,
+    "success": false,
+    "true_path": [
+      4,
+      7,
+      7
+    ],
+    "map_path": [
+      2,
+      5,
+      8
+    ],
+    "confidence": [
+      0.43646764755249023,
+      0.44969574857490996,
+      0.7759503603997854
+    ],
+    "actions": [
+      2,
+      2
+    ],
+    "outcomes": [
+      0,
+      1
+    ],
+    "terminal_outcome": 7
+  },
+  {
+    "seed": 2,
+    "condition": "null",
+    "source": 4,
+    "goal": 0,
+    "success": true,
+    "true_path": [
+      4,
+      3,
+      0,
+      0,
+      0
+    ],
+    "map_path": [
+      2,
+      1,
+      1,
+      3,
+      0
+    ],
+    "confidence": [
+      0.1645740419626236,
+      0.23711357866034127,
+      0.2893887098016523,
+      0.5649518656854764,
+      0.9862487159190716
+    ],
+    "actions": [
+      3,
+      0,
+      3,
+      0
+    ],
+    "outcomes": [
+      0,
+      0,
+      1,
+      1
+    ],
+    "terminal_outcome": 0
+  },
+  {
+    "seed": 2,
+    "condition": "null",
+    "source": 4,
+    "goal": 2,
+    "success": false,
+    "true_path": [
+      4,
+      1
+    ],
+    "map_path": [
+      5,
+      2
+    ],
+    "confidence": [
+      0.13651378452777863,
+      0.1992743675607666
+    ],
+    "actions": [
+      0
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 1
+  },
+  {
+    "seed": 2,
+    "condition": "null",
+    "source": 4,
+    "goal": 6,
+    "success": true,
+    "true_path": [
+      4,
+      7,
+      6,
+      6
+    ],
+    "map_path": [
+      2,
+      5,
+      4,
+      6
+    ],
+    "confidence": [
+      0.148116335272789,
+      0.21472852470809192,
+      0.3144109715503845,
+      0.6406448611657245
+    ],
+    "actions": [
+      2,
+      3,
+      2
+    ],
+    "outcomes": [
+      0,
+      0,
+      1
+    ],
+    "terminal_outcome": 6
+  },
+  {
+    "seed": 2,
+    "condition": "null",
+    "source": 4,
+    "goal": 8,
+    "success": false,
+    "true_path": [
+      4,
+      7
+    ],
+    "map_path": [
+      5,
+      8
+    ],
+    "confidence": [
+      0.13999181985855103,
+      0.19853284223518866
+    ],
+    "actions": [
+      2
+    ],
+    "outcomes": [
+      0
+    ],
+    "terminal_outcome": 7
+  }
+]

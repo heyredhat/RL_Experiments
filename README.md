@@ -15,12 +15,22 @@ The first inverse-designed emergent-space study, including its quantum
 instruments, failures, dimensional tests, and fiber-bundle research program, is
 in [SPATIAL_HODOLOGY.md](SPATIAL_HODOLOGY.md).
 
+The current research frontier is the
+[predictive-atlas study](PREDICTIVE_ATLAS.md). It removes exact online place
+reports: a GRU integrates ambiguous weak-beacon outcomes, a learned transition
+model propagates its belief through blind movements, and goal-conditioned
+planning reconstructs a two-dimensional cost geometry. The three-seed
+production agent achieves 97.3% all-pairs success and recovers the concealed
+arrangement with Procrustes \(R^2=0.987\), while memory-limited and
+place-independent controls fail.
+
 The publication-style account is available as both
 [LaTeX source](GOAL_GEOMETRY_PAPER.tex) and a
 [compiled paper](GOAL_GEOMETRY_PAPER.pdf). It develops the quantum and
 reinforcement-learning background from first principles, states the evaluation
 protocol and limitations, and interprets the learned goal geometry using the
-saved comparative-study figures. Rebuild it with:
+saved comparative, inverse-design, and predictive-atlas figures. Rebuild it
+with:
 
 ```bash
 latexmk -pdf -interaction=nonstopmode -halt-on-error GOAL_GEOMETRY_PAPER.tex
@@ -65,6 +75,19 @@ python spatial_hodology.py \
   --seeds 0,1,2 --episodes 6000 --pair-episodes 100 --max-steps 12
 ```
 
+Reproduce the predictive atlas without online place symbols:
+
+```bash
+conda run --no-capture-output -n qbist_spacetime \
+  python predictive_atlas.py \
+  --output results/predictive-atlas \
+  --seeds 0,1,2 --scan-cycles 12 \
+  --calibration-per-site 400 --test-per-site 200 --epochs 35 \
+  --transition-trials 100 --pair-episodes 100 \
+  --max-moves 12 --device cpu
+python plot_predictive_atlas.py results/predictive-atlas
+```
+
 `plot_results.py` deliberately has no PyTorch dependency. It can run in any
 Python environment containing NumPy and Matplotlib.
 
@@ -80,6 +103,8 @@ Python environment containing NumPy and Matplotlib.
 | `qudit-grid-3x3` | nine-level qudit | eight place-reporting moves plus a common place probe | `center` |
 | `qudit-grid-3x3-blind` | nine-level qudit | eight success/failure moves plus a common place probe | `center` |
 | `qudit-grid-3x3-cardinal` | nine-level qudit | four place-reporting moves plus a common place probe | `center` |
+| `qudit-grid-3x3-beacons` | nine-level qudit | eight blind moves, four overlapping binary QND beacons, terminal place probe | `center` |
+| `qudit-grid-3x3-null-beacons` | nine-level qudit | same, but place-independent beacon fields | `center` |
 
 Qubit states include `zero`, `one`, `plus`, `minus`, `plus-i`, `minus-i`, and
 `mixed`. Qutrit states include `zero`, `one`, `two`, `plus`, and `mixed`. Each
@@ -91,6 +116,12 @@ identities contain no coordinates. The optimized world uses stochastic
 diagonal Kraus maps whose success probability is chosen by a low-dimensional
 geometry objective; the blind and cardinal variants isolate observability and
 metric anisotropy.
+
+The beacon world weakens the observation boundary further. Its movement
+reports are binary, each beacon sample is ambiguous, and the sharp place probe
+is terminal during atlas evaluation. Exact landmark outcomes may label a past
+scan or score a commitment but never inform a later action in the same
+navigation episode.
 
 ## Backends
 
@@ -133,6 +164,12 @@ embedding projections, independent strategy-distance comparisons, trajectory
 signatures, reachability calibration plots, and action/outcome displacement
 maps.
 
+`predictive_atlas.py` writes a separate auditable bundle under
+`results/predictive-atlas/`: calibration and navigation summaries, epoch-level
+curves, per-seed confusion/cost/success/transition matrices, nine GRU
+checkpoints, belief trajectories, a manifest, and five figures. The companion
+`plot_predictive_atlas.py` has no PyTorch dependency.
+
 ## Scientific boundary
 
 Agent code must not inspect `env._rho`, `env._kraus`, or any quantity derived
@@ -140,3 +177,12 @@ from them. Tests may inspect private simulator state solely to verify quantum
 validity. Offline scientific analysis may compare a learned representation to
 hidden physics only when explicitly labeled as privileged analysis; the
 current geometry pipeline does not do so.
+
+The predictive atlas obeys a stricter online boundary. The controller receives
+only its goal, chosen actions, binary outcomes, weak scan histories, and a
+terminal landmark report after commitment. Its density matrix, Kraus
+operators, response likelihoods, coordinates, and exact current landmark are
+withheld. Offline tests and figures may decode those variables only when
+explicitly labeled. Landmark-delayed training and landmark-anchored transition
+surveys remain supervision; the experiment is not described as fully
+unsupervised discovery.
