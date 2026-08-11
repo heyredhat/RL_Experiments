@@ -27,6 +27,10 @@
 \newcommand{\softmax}{\operatorname{softmax}}
 \newcommand{\JS}{D_{\mathrm{JS}}}
 \newcommand{\doi}[1]{\href{https://doi.org/#1}{doi:#1}}
+\newcommand{\argmin}{\operatorname*{arg\,min}}
+\newcommand{\argmax}{\operatorname*{arg\,max}}
+\newcommand{\diag}{\operatorname{diag}}
+\allowdisplaybreaks
 
 \title{\textbf{Learning an Agent-Centered Geometry of Quantum Possibility}\\
 \large Predictive State, Goal-Conditioned Control, and Directed Reachability
@@ -131,6 +135,17 @@ Euclidean goal embeddings with held-out policy behavior, trajectory
 signatures, empirical hitting times, finite-horizon success curves, and
 intervention-induced changes in all goal distances.
 
+The paper is written to serve two audiences. Readers primarily interested in
+reinforcement learning may regard the quantum simulator as an unusual partially
+observed environment and begin with \cref{sec:rl}. Readers primarily interested
+in quantum foundations may use \cref{sec:quantum} to see exactly which
+quantities are available to the external simulator and which are withheld from
+the agent. No prior knowledge of reinforcement learning is assumed: we derive
+the value functions, Bellman recursions, temporal-difference update, recurrent
+state construction, and evaluation criteria used below. Likewise, the spatial
+study in \cref{sec:spatial} derives the Kraus instruments, exact hitting costs,
+multidimensional-scaling test, and every reported geometric diagnostic.
+
 The stronger motivation is hodological: for an agent, goals that require few
 reliable interventions are near and difficult goals are far. Lewin introduced
 path-structured ``life space'' as a formal language for goal-directed behavior
@@ -140,6 +155,28 @@ place-like goals admits a common low-stress 2D or 3D embedding and learned
 action histories become trajectories through it. We treat that as an inverse
 problem over initial states, Kraus instruments, observation coarse-grainings,
 and goal repertoires, not as an assumption.
+
+It is useful to state the logical order of the claim at the outset. The hidden
+simulator defines quantum transitions; interaction produces an empirical
+control problem; successful control defines all-pairs goal costs; those costs
+are tested for low-dimensional Euclidean structure; and only then are learned
+policy histories plotted as spatial trajectories. A visually attractive plot
+at the last stage cannot substitute for competence or metric validation at the
+earlier stages.
+
+\subsection*{Notation and reading guide}
+
+Upper-case random variables such as $S_t,A_t,O_t$ distinguish random
+quantities from realizations $s_t,a_t,o_t$. A policy is denoted $\pi$; the
+expectation and probability under it are $\E_\pi$ and $\Prob_\pi$. The hidden
+quantum state is $\rho_t$, the observable interaction history is $h_t$, and a
+learned or hand-constructed operational state is $z_t=F(h_t)$. Reward value is
+$Q$; positive intervention cost is $C$ or $d$; a goal is $g$; and an embedding
+coordinate is $x_i$. The word \emph{state} is consequently qualified whenever
+ambiguity matters: quantum state, Markov state, recurrent state, or goal
+progress state. Distances between goals are symmetric only when explicitly
+symmetrized. This distinction is central because goal reachability is generally
+directed.
 
 \begin{figure}[t]
 \centering
@@ -172,34 +209,84 @@ reachability from experienced action/outcome pairs.}
 
 \subsection{Quantum instruments and backaction}
 
-A finite-dimensional quantum state is externally represented by a positive
-semidefinite unit-trace density operator $\rho$. A measurement action $a$ has a
-Kraus operator $K_o^{(a)}$ for each classical outcome $o$, with physical
-completeness \cite{kraus1983,nielsen2010}
+A finite-dimensional Hilbert space $\mathcal H\simeq\mathbb C^d$ is the
+external modeler's state space. A pure state is a unit ray represented by
+$|\psi\rangle$; uncertainty or classical mixing is represented by a density
+operator $\rho$ satisfying
 \begin{equation}
- \sum_o K_o^{(a)\dagger}K_o^{(a)}=I. \label{eq:complete}
+ \rho=\rho^\dagger,\qquad \rho\succeq0,\qquad \Tr\rho=1.
 \end{equation}
-The hidden simulator samples and updates by
+The notation $\rho\succeq0$ means
+$\langle\phi|\rho|\phi\rangle\geq0$ for every $|\phi\rangle$. A pure state has
+$\rho=|\psi\rangle\!\langle\psi|$ and $\Tr\rho^2=1$; a genuinely mixed state
+has $\Tr\rho^2<1$. These facts are used by the simulator and its tests, but
+never supplied as features to the learner.
+
+A measurement action is more completely described by a \emph{quantum
+instrument} than by a probability distribution. For action $a$ and observed
+outcome $o$, let $\mathcal I_o^{(a)}$ be a completely positive,
+trace-nonincreasing map. A Kraus representation is
+\begin{equation}
+ \mathcal I_o^{(a)}(\rho)=\sum_{\mu}
+ K_{o\mu}^{(a)}\rho K_{o\mu}^{(a)\dagger}.
+ \label{eq:instrument-map}
+\end{equation}
+The index $\mu$ labels physical branches that need not be distinguished by the
+classical apparatus. Trace preservation after outcomes are forgotten requires
+\cite{kraus1983,nielsen2010}
+\begin{equation}
+ \sum_{o,\mu} K_{o\mu}^{(a)\dagger}K_{o\mu}^{(a)}=I. \label{eq:complete}
+\end{equation}
+The positive operators
+$E_o^{(a)}=\sum_\mu K_{o\mu}^{(a)\dagger}K_{o\mu}^{(a)}$ form a POVM, because
+$E_o^{(a)}\succeq0$ and $\sum_oE_o^{(a)}=I$. They determine outcome
+probabilities but not, by themselves, the post-measurement state. The latter
+depends on the full instrument. The hidden simulator samples and updates by
 \begin{align}
- p(o|\rho,a)&=\Tr(K_o^{(a)}\rho K_o^{(a)\dagger}), \label{eq:born}\\
- \rho'&=\frac{K_o^{(a)}\rho K_o^{(a)\dagger}}{p(o|\rho,a)}. \label{eq:update}
+ p(o|\rho,a)&=\Tr\!\left[\mathcal I_o^{(a)}(\rho)\right]
+             =\Tr(E_o^{(a)}\rho), \label{eq:born}\\
+ \rho'&=\frac{\mathcal I_o^{(a)}(\rho)}{p(o|\rho,a)}. \label{eq:update}
 \end{align}
-Measurement therefore both supplies information and changes the conditions
-governing future experiences. This backaction is why reachability is naturally
-directed. The learner never evaluates \cref{eq:born,eq:update}; it receives only
-the sampled integer outcome.
+The normalization follows immediately because
+$\Tr\rho'=\Tr\mathcal I_o^{(a)}(\rho)/p(o|\rho,a)=1$. Completeness gives
+$\sum_op(o|\rho,a)=\Tr\rho=1$. These elementary checks matter computationally:
+failure of either condition would turn apparent learning behavior into a
+simulator artifact.
+
+Measurement therefore does two logically separate things. It produces an
+experience $o$, which may inform the agent, and it changes the hidden state,
+which changes future outcome statistics. The second effect is measurement
+backaction. If action $a$ makes goal $g$ easy but destroys the preparation
+needed for goal $g'$, then going from $g'$ toward $g$ need not have the same
+cost as returning. This is the operational origin of directed reachability in
+\cref{sec:geometry}. The learner never evaluates
+\cref{eq:instrument-map,eq:born,eq:update}; it receives only the action label it
+chose and the sampled outcome label.
+
+\subsection{Projective, unsharp, and informationally complete measurements}
 
 For a projective basis $\{|b_o\rangle\}$, one may take
-$K_o=|b_o\rangle\langle b_o|$. The qubit worlds use Pauli $Z$, $X$, and $Y$
-bases. Their noncommutativity creates incompatible preparation strategies.
+$K_o=|b_o\rangle\langle b_o|$. An immediate repetition returns the same
+outcome with certainty, whereas a measurement in an incompatible basis can
+erase that certainty. The qubit worlds use Pauli $Z$, $X$, and $Y$ bases. For
+example, $|0\rangle,|1\rangle$ are $Z$ eigenstates and
+$|\pm\rangle=(|0\rangle\pm|1\rangle)/\sqrt2$ are $X$ eigenstates, so
+$|\langle0|+\rangle|^2=1/2$. An $X$ measurement after a known $Z$ outcome is
+therefore uniformly random and prepares a new $X$ eigenstate. Their
+noncommutativity creates incompatible preparation strategies and makes action
+order relevant.
+
 The unsharp binary instruments use axis projectors $P_+,P_-$ and strength
 $q\in(1/2,1)$:
 \begin{align}
  K_0&=\sqrt q\,P_+ +\sqrt{1-q}\,P_-,&
  K_1&=\sqrt{1-q}\,P_+ +\sqrt q\,P_- . \label{eq:weak}
 \end{align}
-At $q=0.5$ the outcome is uninformative; as $q\to1$ the operation approaches a
-projective measurement. We use $q=0.8$.
+Because $P_+P_-=0$ and $P_++P_-=I$,
+$K_0^\dagger K_0+K_1^\dagger K_1=I$. At $q=0.5$, both effects equal $I/2$:
+the outcome is uninformative and the state change is correspondingly weak. As
+$q\to1$, the operation approaches a projective measurement. We use $q=0.8$ to
+create repeated, noisy evidence rather than one-shot certainty.
 
 A SIC-POVM in dimension $d$ contains $d^2$ equiangular rank-one effects and is
 informationally complete \cite{renes2004}. For the qubit tetrahedral SIC,
@@ -209,11 +296,43 @@ informationally complete \cite{renes2004}. For the qubit tetrahedral SIC,
 where $\bm r_i$ are tetrahedral Bloch vectors; we use the positive square-root
 instrument $K_i=\sqrt{E_i}$. This tests mixed outcome alphabets: projective
 actions have two outcomes while the SIC has four. Invalid logits are masked.
+Informational completeness means that the probabilities
+$p_i=\Tr(E_i\rho)$ determine $\rho$ uniquely for an external observer with
+enough identically prepared samples. It does \emph{not} mean that a single
+outcome reveals the state, nor does it remove backaction. In the present online
+problem the learner receives one outcome and the same system continues from
+the resulting conditional state.
 
 Two bases $\{|e_j\rangle\}$ and $\{|f_k\rangle\}$ are mutually unbiased when
 $|\langle e_j|f_k\rangle|^2=1/d$ for all $j,k$. Certainty in one becomes a
 uniform distribution in the other. MUBs formalize complementarity and support
 tomography \cite{durt2010}. The qutrit world uses three projective MUBs.
+
+\subsection{From hidden quantum state to an observable control process}
+
+Combining \cref{eq:born,eq:update} over time yields a classical distribution
+over complete interaction histories. If the initial state is $\rho_0$ and a
+fixed action sequence is $a_{1:T}$, then the probability of outcomes
+$o_{1:T}$ is
+\begin{equation}
+ \Prob(o_{1:T}\mid a_{1:T},\rho_0)
+ =\Tr\!\left(M_T\rho_0M_T^\dagger\right),\qquad
+ M_T=K_{o_T}^{(a_T)}\cdots K_{o_1}^{(a_1)},
+ \label{eq:history-prob}
+\end{equation}
+for one Kraus operator per observed outcome; with coarse-grained branches one
+sums the corresponding terms. A policy makes the actions themselves depend on
+past outcomes. The result is an adaptive experiment: by selecting $a_t$ as a
+function of $h_t$, the agent changes both what it can learn and what future it
+creates.
+
+Two hidden density operators are operationally indistinguishable to this agent
+when they induce the same distribution for every experiment constructible from
+the available action repertoire. Thus the physically convenient coordinate
+$\rho$ may contain distinctions irrelevant to the agent, while a short history
+may omit distinctions essential for future control. The representation problem
+is to find the quotient between these extremes: enough memory to predict and
+act, without importing the simulator's private state description.
 
 \subsection{Environment catalog}
 
@@ -244,108 +363,348 @@ representation. This motivates varying worlds rather than only random seeds.
 \section{Reinforcement learning from first principles}
 \label{sec:rl}
 
-\subsection{MDPs, return, and value}
+\subsection{The agent--environment loop}
 
-Reinforcement learning concerns sequential decisions with delayed consequences
-\cite{sutton2018}. A finite Markov decision process is
-$(\mathcal S,\mathcal A,P,R,\gamma)$: states, actions, a transition/reward law,
-and discount $\gamma\in[0,1]$. The Markov property says the present state
-contains all past information needed to predict the next transition. A policy
-$\pi(a|s)$ is a distribution over actions. The discounted return is
+Reinforcement learning (RL) studies how an agent can improve sequential
+decisions from experience rather than from a supplied transition model
+\cite{sutton2018}. At time $t$ the agent has some information state $S_t$, draws
+an action $A_t$ from a policy, the environment produces reward $R_{t+1}$ and a
+new information state $S_{t+1}$, and the cycle repeats. An episode is a random
+trajectory
 \begin{equation}
- G_t=R_{t+1}+\gamma R_{t+2}+\gamma^2R_{t+3}+\cdots.
+ \Xi=(S_0,A_0,R_1,S_1,A_1,R_2,\ldots,S_T).
+ \label{eq:rl-trajectory}
 \end{equation}
-The action value is $Q^\pi(s,a)=\E_\pi[G_t|S_t=s,A_t=a]$. Optimal value obeys
-the Bellman equation
+The essential difficulty is delayed consequence. A measurement may have small
+or negative immediate reward yet prepare a state from which the desired
+outcome becomes likely several interventions later. Assigning credit only to
+the final action would miss the preparation strategy.
+
+A policy $\pi(a|s)$ is a conditional probability distribution over actions:
+$\pi(a|s)\geq0$ and $\sum_a\pi(a|s)=1$. A deterministic policy is the special
+case in which one action has probability one. During training we distinguish
+the \emph{behavior policy}, which generates data and deliberately explores,
+from the \emph{target policy}, whose value is being estimated. At evaluation
+time exploration is disabled so that performance measures the learned
+decision rule rather than random experimentation.
+
+\subsection{Markov decision processes}
+
+A finite Markov decision process (MDP) is a tuple
 \begin{equation}
- Q^*(s,a)=\E[R_{t+1}+\gamma\max_{a'}Q^*(S_{t+1},a')|s,a]. \label{eq:bellman}
+ (\mathcal S,\mathcal A,p,r,\gamma),
 \end{equation}
-The value of acting now is immediate reward plus the best discounted value
-available afterward.
-
-\subsection{Q-learning and exploration}
-
-Q-learning estimates \cref{eq:bellman} without knowing $P$ or $R$
-\cite{watkins1992}. From transition $(s_t,a_t,r_t,s_{t+1})$, it forms target
-$y_t=r_t+\gamma\max_{a'}Q(s_{t+1},a')$ (or $r_t$ at termination) and updates
+where $\mathcal S$ and $\mathcal A$ are state and action sets,
 \begin{equation}
- Q(s_t,a_t)\leftarrow Q(s_t,a_t)+\alpha[y_t-Q(s_t,a_t)]. \label{eq:qlearn}
+ p(s',r\mid s,a)
+ =\Prob(S_{t+1}=s',R_{t+1}=r\mid S_t=s,A_t=a)
+ \label{eq:mdp-kernel}
 \end{equation}
-The bracket is the temporal-difference error. Q-learning is off-policy: the
-target assumes a greedy continuation even when behavior explores. With
-$\epsilon$-greedy behavior, a uniformly random action is chosen with
-probability $\epsilon$ and a maximizing action otherwise. Classical convergence
-guarantees require finite tabular state/action spaces, suitable learning rates,
-and sufficient visitation \cite{watkins1992}; they do not automatically extend
-to nonlinear recurrent networks.
+is the time-homogeneous transition/reward kernel, and
+$\gamma\in[0,1]$ is a discount factor. The Markov property asserts that once
+$S_t$ and $A_t$ are known, earlier history supplies no further information
+about the next transition. It is a sufficiency claim, not a claim that the
+state is directly visible or ontologically fundamental.
 
-\subsection{Partial observability and predictive state}
-
-Here the simulator's $\rho_t$ could be Markov, but is hidden. The problem is a
-POMDP \cite{kaelbling1998}; the policy is $\pi(a_t|h_t)$, not
-$\pi(a_t|\rho_t)$. The tabular baseline truncates experience to
+The discounted return from time $t$ is
 \begin{equation}
- s_t^{(L)}=(g,j_t,(a_{t-L},o_{t-L}),\ldots,(a_{t-1},o_{t-1})), \label{eq:tabstate}
+ G_t=\sum_{k=0}^{T-t-1}\gamma^kR_{t+k+1}
+ =R_{t+1}+\gamma G_{t+1}.
+ \label{eq:return}
 \end{equation}
-where $g$ is the goal and $j_t$ its progress. This is transparent, but $L$ is
-arbitrary, its state count grows exponentially, and similar histories share no
-strength unless identical.
+Discounting makes near rewards count more strongly and ensures a finite sum in
+continuing problems with bounded rewards. In finite episodic problems it also
+expresses a preference for earlier completion. It should not be confused with
+the undiscounted intervention count used later for hodological distance.
 
-Predictive-state representations instead characterize state by
-action-conditional predictions \cite{littman2001}. Ideally,
+For a fixed policy, the state and action values are
+\begin{align}
+ V^\pi(s)&=\E_\pi[G_t\mid S_t=s],\\
+ Q^\pi(s,a)&=\E_\pi[G_t\mid S_t=s,A_t=a].
+ \label{eq:value-defs}
+\end{align}
+Conditioning on the first transition and substituting
+\cref{eq:return} gives the Bellman expectation equations:
+\begin{align}
+ V^\pi(s)
+ &=\sum_a\pi(a|s)\sum_{s',r}p(s',r|s,a)
+       [r+\gamma V^\pi(s')],\\
+ Q^\pi(s,a)
+ &=\sum_{s',r}p(s',r|s,a)
+       \left[r+\gamma\sum_{a'}\pi(a'|s')Q^\pi(s',a')\right].
+ \label{eq:bellman-expectation}
+\end{align}
+These are consistency equations: the value of the whole future equals the
+one-step reward plus the value of the remaining future.
+
+The optimal values $V^*(s)=\max_\pi V^\pi(s)$ and
+$Q^*(s,a)=\max_\pi Q^\pi(s,a)$ satisfy Bellman's principle of optimality
+\cite{bellman1957}:
+\begin{align}
+ V^*(s)&=\max_a\sum_{s',r}p(s',r|s,a)[r+\gamma V^*(s')],\\
+ Q^*(s,a)&=\sum_{s',r}p(s',r|s,a)
+ [r+\gamma\max_{a'}Q^*(s',a')]. \label{eq:bellman}
+\end{align}
+Once $Q^*$ is known, any maximizing action is optimal. Dynamic programming
+would solve these equations using a known $p$. Model-free RL instead estimates
+their solution from sampled transitions.
+
+\subsection{From Monte Carlo returns to temporal differences}
+
+One could wait until an episode ends and use the observed $G_t$ as a noisy
+target for $Q(S_t,A_t)$. This Monte Carlo estimator is unbiased for the value
+of the behavior policy, but it has high variance and delays learning. A
+temporal-difference (TD) method instead \emph{bootstraps}: it uses a current
+estimate of the remaining value before the episode ends. For Q-learning the
+one-step target and TD error are
+\begin{align}
+ Y_t^Q&=R_{t+1}+\gamma(1-D_{t+1})max_{a'}Q(S_{t+1},a'),\\
+ \delta_t^Q&=Y_t^Q-Q(S_t,A_t),
+ \label{eq:td-error}
+\end{align}
+where $D_{t+1}=1$ indicates termination and prevents value from leaking beyond
+the episode. The tabular update is
 \begin{equation}
- h\sim_{\rm pred}h'\Longleftrightarrow
- \Prob(o_{1:k}|a_{1:k},h)=\Prob(o_{1:k}|a_{1:k},h')
+ Q(S_t,A_t)\leftarrow Q(S_t,A_t)+\alpha\delta_t^Q.
+ \label{eq:qlearn}
 \end{equation}
-for every future test. Our recurrent vector is only an approximation, trained
-for control and one-step prediction. The predictive-state view supplies the
-interpretation and a future validation standard.
+Thus $\alpha\in(0,1]$ controls how far the old estimate moves toward the new
+sample target. The update is a stochastic approximation to
+\cref{eq:bellman} \cite{watkins1992}.
 
-\subsection{GRU memory and deep temporal-difference learning}
-
-A recurrent network maintains fixed-size memory
+Q-learning is \emph{off-policy}: the maximum in \cref{eq:td-error} evaluates a
+greedy continuation even when the behavior policy chose a non-greedy action.
+In our epsilon-greedy behavior policy,
 \begin{equation}
- z_{t+1}=F_\theta(z_t,a_t,o_t). \label{eq:memory}
+ \pi_\epsilon(a|s)=
+ \begin{cases}
+  1-\epsilon+\epsilon/|\mathcal A|,&
+     a\in\argmax_bQ(s,b)\quad\text{(with tie handling)},\\
+  \epsilon/|\mathcal A|,&\text{otherwise}.
+ \end{cases}
+ \label{eq:epsilon-greedy}
 \end{equation}
-With $x_t$ the concatenated action/outcome embedding, a GRU
-\cite{cho2014} can be written
+Large early $\epsilon$ discovers interventions whose long-term value was
+initially unknown; decay later exploits accumulated knowledge. Too little
+exploration leaves goals unvisited, whereas too much late exploration obscures
+competence and lengthens paths.
+
+For a finite tabular MDP, bounded rewards, sufficient visitation, and learning
+rates satisfying standard stochastic-approximation conditions, Q-learning
+converges to $Q^*$ with probability one \cite{watkins1992}. Fixed learning
+rates, finite data, partial observability, and nonlinear recurrent
+approximation weaken these guarantees. Our results are therefore empirical and
+must be checked across held-out episodes and seeds.
+
+\subsection{Goal conditioning and sparse success signals}
+
+Ordinary RL learns one reward problem. Here a single agent faces a family of
+goals $g\in\mathcal G$. Goal conditioning augments the information state and
+value function:
+\begin{equation}
+ Q^\pi(s,g,a)=\E_\pi[G_t\mid S_t=s,G=g,A_t=a].
+ \label{eq:goal-conditioned-q}
+\end{equation}
+This permits experience about common dynamics to be shared while retaining
+different policies for different aims. It also makes geometry meaningful: the
+goals are compared through behavior learned in the same environment and model,
+rather than through unrelated specialist agents.
+
+Sparse terminal rewards are conceptually clean but hard to discover by random
+exploration. The sequence experiments therefore add checkpoint rewards and a
+small per-step penalty. Reward shaping changes the finite-data learning
+problem, so success and unshaped intervention counts are still evaluated
+directly. In the spatial experiment all goals have the same terminal form and
+the central geometric quantity is not discounted return; it is empirical
+first-passage cost after training.
+
+\subsection{Partial observability, beliefs, and histories}
+
+In a partially observable MDP (POMDP), the environment has a latent Markov
+state $X_t$, but the agent observes only $O_t$ generated from it
+\cite{kaelbling1998}. The exact Bayesian information state is the belief
+\begin{equation}
+ b_t(x)=\Prob(X_t=x\mid h_t),
+ \label{eq:belief}
+\end{equation}
+which is a probability distribution over hidden states. Given a known model,
+the belief update combines prediction under the chosen action with Bayes'
+rule. In our setting the quantum state and instrument are unknown, so the agent
+cannot perform that privileged update. It must act from history,
+$\pi(a_t|h_t,g)$, or learn a compressed substitute.
+
+The finite-history baseline uses
+\begin{equation}
+ s_t^{(L)}=(g,j_t,(a_{t-L},o_{t-L}),\ldots,(a_{t-1},o_{t-1})),
+ \label{eq:tabstate}
+\end{equation}
+padding short histories at episode start. This representation is transparent
+and works well when the relevant memory is genuinely short. Its number of
+possible suffixes grows roughly as $(|\mathcal A||\mathcal O|)^L$, however,
+and two histories share statistical strength only if their suffixes are
+identical. A long literal suffix can also be \emph{too discriminating}: it may
+treat two routes to the same operational place as different states. That issue
+becomes decisive in \cref{sec:spatial-failures}.
+
+\subsection{Predictive state as an operational equivalence class}
+
+Predictive-state representations replace beliefs about a privileged latent
+variable by predictions of observable future tests \cite{littman2001}. A test
+$q=(a_1,o_1,\ldots,a_k,o_k)$ asks for the probability that outcomes
+$o_{1:k}$ occur if interventions $a_{1:k}$ are imposed. Define
+\begin{equation}
+ h\sim_{\rm pred}h'
+ \quad\Longleftrightarrow\quad
+ \Prob(q\mid h)=\Prob(q\mid h')\ \text{for every feasible future test }q.
+ \label{eq:predictive-equivalence}
+\end{equation}
+Histories in the same equivalence class have identical future affordances and
+need not be distinguished for prediction or control. This is precisely the
+agent-centered notion of state needed here: it is defined by possible future
+experience, not by access to $\rho$.
+
+Exact predictive equivalence is demanding because there are arbitrarily long
+tests. We approximate it with a recurrent vector $z_t=F_\theta(h_t)$ trained
+jointly for reward and one-step outcome prediction. One-step accuracy alone
+does not prove sufficiency for long-horizon control; it is an inductive bias and
+diagnostic. Stronger future work should test multi-step predictions and whether
+histories with similar $z$ remain interchangeable under novel intervention
+sequences.
+
+\subsection{GRU memory and function approximation}
+
+A recurrent network recursively maintains fixed-size memory
+\begin{equation}
+ z_{t+1}=F_\theta(z_t,a_t,o_t),\qquad z_0=\bm0.
+ \label{eq:memory}
+\end{equation}
+With $x_t$ the learned embedding of the action/outcome pair, a gated recurrent
+unit (GRU) \cite{cho2014} can be written
 \begin{align}
  r_t&=\sigma(W_rx_t+U_rz_t+b_r),&
  u_t&=\sigma(W_ux_t+U_uz_t+b_u),\\
  \widetilde z_{t+1}&=\tanh(W_hx_t+U_h(r_t\odot z_t)+b_h),&
  z_{t+1}&=(1-u_t)\odot\widetilde z_{t+1}+u_t\odot z_t.
+ \label{eq:gru}
 \end{align}
-Reset and update gates learn what to forget and retain. Complete episodes are
-replayed through the GRU so late losses can alter earlier encoding:
-backpropagation through time. A slowly moving target network stabilizes TD
-targets, following deep Q-learning practice \cite{mnih2015}:
+Here $\sigma(v)=1/(1+e^{-v})$ is applied coordinatewise and $\odot$ denotes
+coordinatewise multiplication. The reset gate $r_t$ controls which previous
+features enter the candidate memory; the update gate $u_t$ interpolates between
+old and candidate memory. Unlike a fixed suffix, the same vector can learn to
+retain an old decisive outcome while forgetting many irrelevant recent events.
+
+The value table is replaced by a neural function $Q_\theta(z,g,j,a)$. Given
+target $Y_t^Q$, the squared TD loss is
 \begin{equation}
- \theta^-\leftarrow(1-\tau)\theta^-+\tau\theta. \label{eq:target}
+ \mathcal L_Q(\theta)=\frac1B\sum_{t\in\mathcal B}
+ [Y_t^Q-Q_\theta(z_t,g,j_t,a_t)]^2.
+ \label{eq:q-loss}
 \end{equation}
+The target depends on a second parameter vector $\theta^-$, held fixed while
+differentiating the loss, because otherwise the network would chase a target
+that moves in the same gradient step. Following deep Q-learning practice
+\cite{mnih2015}, it is updated softly:
+\begin{equation}
+ \theta^-\leftarrow(1-\tau)\theta^-+\tau\theta.
+ \label{eq:target}
+\end{equation}
+Complete episodes are unrolled and replayed so losses at late time steps can
+alter earlier memory updates through backpropagation through time. Gradient
+clipping limits rare unstable updates. None of these devices restores the
+tabular convergence theorem; they are practical stabilizers.
 
-\subsection{Evaluation principles}
+\subsection{How an RL claim should be evaluated}
 
-RL evaluation is difficult because training changes the data distribution and
-results vary across seeds. Reproducibility studies warn that few-run point
-estimates can reverse rankings \cite{henderson2018,agarwal2021}. Evaluation
-should separate exploratory training from held-out greedy behavior, show
-per-task and aggregate results, and distinguish success probability from speed.
-Conditional duration can reward a reckless policy because failures are
-excluded. We therefore treat success as primary, label conditional steps, and
-retain full finite-horizon success curves. With two seeds, this study is
-exploratory rather than inferential.
+An RL result combines at least three random sources: stochastic environment
+outcomes, exploratory action choices, and parameter initialization or data
+order. Training also changes its own data distribution. Consequently, a single
+learning curve is not a stable estimate of an algorithm's expected
+performance. Reproducibility studies document ranking reversals and unreliable
+uncertainty estimates from small seed counts \cite{henderson2018,agarwal2021}.
+
+We separate the following questions.
+\begin{description}[style=nextline]
+ \item[Did the policy achieve the task?]
+ Held-out success probability estimates
+ $\Prob_\pi(\tau_g\leq T)$. It is the primary competence measure.
+ \item[How quickly did successful trials finish?]
+ Conditional mean duration estimates
+ $\E[\tau_g\mid\tau_g\leq T]$. It must never be read alone, because a policy
+ that succeeds only on easy random outcomes can look artificially fast.
+ \item[How does reliability accumulate with time?]
+ The curve $T\mapsto\Prob(\tau_g\leq T)$ reveals whether two policies with the
+ same eventual success differ at useful deadlines.
+ \item[Did a representation acquire the intended meaning?]
+ Embeddings are compared with held-out policy and trajectory distances rather
+ than judged by appearance. Learned costs are compared with empirical hitting
+ times rather than accepted as distances by construction.
+ \item[Does the conclusion survive nuisance variation?]
+ We report environments, goals, and random seeds separately before aggregates.
+ Sample standard deviations describe the observed runs but, with two or three
+ seeds, do not provide precise population uncertainty.
+\end{description}
+
+Finite horizons create right censoring: failure tells us only that
+$\tau_g>T$, not its actual value. One response is a restricted mean
+$\E[\min(\tau_g,T)]$, which keeps failures in the quantity but depends on the
+chosen horizon. Another is to report the entire success curve. We use both
+ideas where appropriate and explicitly label conditional quantities. These
+evaluation distinctions will later prevent geometric quality from being
+confused with mere navigation success.
 
 \section{Sequence goals and three geometries}
 \label{sec:geometry}
 
-\subsection{Goal-conditioned control}
+The word \emph{geometry} is used in three related but nonidentical senses. A
+strategic geometry compares two goals with each other. A trajectory geometry
+compares the long-run behaviors used to pursue them. A reachability geometry
+compares the current operational state with each goal. The first two are
+symmetric dissimilarities; the third is naturally directed. Keeping these
+objects separate prevents a common category error: two goals can require
+similar actions without either being easy from the present state.
 
-A goal is an ordered sequence
-$g=((a_1^g,o_1^g),\ldots,(a_m^g,o_m^g))$. Other events may occur between
-checkpoints. Progress $j_t$ is allowed because it is computed from the
-experienced history. Rewards are 10 for completion, 1 for an intermediate
-checkpoint, and $-0.01$ otherwise. A goal-conditioned value
-$Q(z,g,j,a)$ lets the same remembered history support different policies.
+\subsection{Goals as finite-state recognition problems}
+
+A sequence goal is an ordered list of action/outcome checkpoints
+\begin{equation}
+ g=((a_1^g,o_1^g),\ldots,(a_{m_g}^g,o_{m_g}^g)).
+ \label{eq:sequence-goal}
+\end{equation}
+Other events may occur between checkpoints. Progress $J_t\in\{0,\ldots,m_g\}$
+is the number of checkpoints already matched. It updates deterministically:
+\begin{equation}
+ J_{t+1}=J_t+mathbb 1\{(A_t,O_t)=(a_{J_t+1}^g,o_{J_t+1}^g)\},
+ \label{eq:progress-update}
+\end{equation}
+with $J=m_g$ absorbing. Thus each goal defines a small deterministic automaton
+driven by observable experiences. Including $J_t$ in the agent's input does not
+leak quantum state; it is a lossless computation from history and the stated
+task.
+
+Rewards are 10 for completion, 1 for an intermediate checkpoint, and $-0.01$
+otherwise. The completion bonus emphasizes success, checkpoint reward helps
+credit assignment, and step penalty weakly prefers shorter solutions. A
+goal-conditioned value $Q(z,g,j,a)$ lets the same remembered history support
+different actions for different desired futures. The spatial study later uses
+a simpler family of one-checkpoint goals, all expressed through the same probe
+action.
+
+\subsection{What properties make a distance?}
+
+A mathematical metric $d$ obeys nonnegativity, identity of indiscernibles,
+symmetry, and the triangle inequality:
+\begin{equation}
+ d(x,y)\geq0,\quad d(x,y)=0\Leftrightarrow x=y,\quad
+ d(x,y)=d(y,x),\quad d(x,z)\leq d(x,y)+d(y,z).
+ \label{eq:metric-axioms}
+\end{equation}
+Operational goal costs need not satisfy every axiom. Distinct goals can be
+behaviorally interchangeable; quantum backaction can violate symmetry; finite
+sampling and imperfect policies can violate the triangle inequality. We use
+\emph{geometry} broadly for structured relations among goals, while reserving
+\emph{Euclidean-compatible metric} for a symmetric matrix that is well
+represented by ordinary Euclidean distances. Section~\ref{sec:spatial}
+subjects that stronger claim to explicit tests.
 
 \subsection{Symmetric strategic similarity}
 
@@ -357,48 +716,82 @@ At encountered state $z$, define
 \end{equation}
 For policies $p,q$, Jensen--Shannon divergence is
 \begin{equation}
+ D_{\rm KL}(p\|q)=\sum_a p(a)\log\frac{p(a)}{q(a)},\qquad
  \JS(p,q)=\tfrac12D_{\rm KL}(p\|m)+\tfrac12D_{\rm KL}(q\|m),
  \quad m=\tfrac12(p+q).
 \end{equation}
-Its square root is a metric \cite{endres2003}. The regularizer is
+Mixing through $m$ keeps the Jensen--Shannon divergence finite when one policy
+assigns zero probability to an action favored by the other. It is symmetric,
+bounded, and its square root is a metric \cite{endres2003}. If two goals induce
+nearly identical soft action preferences at many encountered states, they are
+strategically close even when their textual labels differ. The regularizer is
 \begin{equation}
  \mathcal L_{\rm geom}=\frac1{|\mathcal P|}\sum_{g<h}
  [\|e_g-e_h\|_2-c\sqrt{\JS(\pi_g,\pi_h)}]^2. \label{eq:geoloss}
 \end{equation}
-The policy target is detached. Geometry is therefore partly imposed. Held-out
-agreement tests generalization; it is not spontaneous emergence without bias.
+where $c$ sets units and $\mathcal P$ is a sampled set of goal pairs. The policy
+target is detached: gradients change embeddings to reflect current policy
+dissimilarity but do not distort the policy merely to make the geometry easy.
+Geometry is nevertheless partly imposed by this loss. Agreement on held-out
+states tests whether that inductive bias captures persistent strategy; it is
+not evidence of spontaneous emergence without bias.
 
 \subsection{Trajectory similarity}
 
 Local policy similarity may miss long-horizon differences. From held-out
 rollouts we build
 \begin{equation}
- \phi(g)=[\text{action frequencies},\text{ action/outcome frequencies},
- \text{ normalized duration},\text{ success rate}]
+ \phi(g)=\bigl[\widehat f_g(a),\widehat f_g(a,o),
+ \widehat{\E}(\tau_g/T),\widehat{\Prob}(\tau_g\leq T)\bigr]
+ \label{eq:trajectory-signature}
 \end{equation}
 and $D_{\rm traj}(g,h)=\|\phi(g)-\phi(h)\|_2$. This resembles successor
 features, which describe policies by expected future features and support
 transfer \cite{barreto2017}, although our signature is diagnostic rather than a
 learned successor model.
 
+The distinction is important. $D_{\rm policy}$ compares action distributions
+at a common collection of local states. $D_{\rm traj}$ compares the visitation
+distributions those policies actually induce over complete rollouts. Two goals
+may choose the same first action and then diverge; conversely, different local
+choices may lead to similar aggregate frequencies. Correlation with both
+quantities is stronger evidence than correlation with the training target
+alone.
+
 \subsection{Directed reachability and displacement}
 
 Let $\tau_g$ be first completion time. The ideal intervention-count distance is
 \begin{equation}
+ \tau_g=\inf\{k\geq0:J_{t+k}=m_g\},\qquad
  d^*(z,g,j)=\min_\pi\E_\pi[\tau_g|z,j]. \label{eq:hitting}
 \end{equation}
 This is a stochastic shortest-path problem \cite{bertsekas1991} with Bellman
 form
 \begin{equation}
- d^*(z,g,j)=1+\min_a\sum_oP(o|z,a)
- d^*(F(z,a,o),g,j'(a,o)). \label{eq:costbellman}
+ d^*(z,g,j)=
+ \begin{cases}
+ 0,&j=m_g,\\
+ 1+\displaystyle\min_a\sum_oP(o|z,a)
+ d^*(F(z,a,o),g,j'(a,o)),&j<m_g.
+ \end{cases}
+ \label{eq:costbellman}
 \end{equation}
+Every nonterminal intervention contributes one unit; the expectation averages
+over measurement outcomes; and minimization chooses the best first action.
+Unlike discounted return, this quantity is expressed directly in
+interventions. It can be infinite when a goal is unreachable, which is why
+finite-horizon empirical estimates require careful failure handling.
+
 The network learns positive action cost $C(z,g,j,a)$ and sets
 $d(z,g,j)=\min_a C(z,g,j,a)$. Its target is 1 on completion and otherwise
 \begin{equation}
  y_t^C=1+\min_{a'}C_{\theta^-}(z_{t+1},g,j_{t+1},a'). \label{eq:costtarget}
 \end{equation}
-This is directed: measurement can destroy conditions needed to return.
+This target bootstraps exactly as Q-learning does, but minimizes positive cost
+rather than maximizing reward. It is directed: measurement can destroy
+conditions needed to return. It is also policy-sensitive in finite data,
+because samples come from reward-oriented exploratory behavior rather than a
+separate cost-optimal policy.
 
 For $N$ goals, the agent's goal-relative position is
 \begin{equation}
@@ -412,6 +805,14 @@ positive farther. With the learned predictor, a contemplated action has
 \end{equation}
 which provides a route to model-based planning.
 
+The vector $\bm D(z)$ behaves like an agent-centered coordinate chart: it says
+where the present lies relative to a fixed landmark set of goals. These are
+not Cartesian coordinates. They can be redundant, curved, asymmetric, and
+high-dimensional. If sufficiently many landmark distances obey a common low-
+dimensional Euclidean model, one may subsequently recover Cartesian-like
+coordinates by multidimensional scaling. That additional step is the central
+subject of \cref{sec:spatial}.
+
 A scalar mean hides risk, so we also estimate
 \begin{equation}
  R_g(z,T)=\Prob(\tau_g\le T|z,\pi_g). \label{eq:curve}
@@ -419,23 +820,74 @@ A scalar mean hides risk, so we also estimate
 This parallels distributional RL's emphasis on distributions rather than only
 expected return \cite{bellemare2017}.
 
+For example, a deterministic three-step route and a one-step gamble that
+succeeds with probability one half and otherwise takes a long detour can have
+similar means but very different deadline reliability. A full first-passage
+distribution distinguishes them. The present work records empirical success
+curves; learning calibrated distributions directly is left to future work.
+
 \section{Architecture and experimental protocol}
 \label{sec:methods}
 
 All agents share one interaction protocol and receive only goal ID, progress,
-action, outcome, reward, and termination. The \textbf{tabular} state is
-\cref{eq:tabstate} with $L=4$. The \textbf{GRU} concatenates memory, a learned
-goal embedding, and one-hot progress before an MLP Q-head. The
-\textbf{predictive geometry GRU} adds a goal-independent outcome head,
-goal-conditioned cost head, and \cref{eq:geoloss}. Its prediction loss is
+action, outcome, reward, and termination. They never receive a density matrix,
+state fidelity, target-state overlap, Born probability, or hidden coordinate.
+This common interface makes architectural comparisons meaningful: differences
+come from memory and auxiliary learning objectives rather than extra physical
+information.
+
+\subsection{Three learner families}
+
+The \textbf{finite-history tabular agent} uses \cref{eq:tabstate} with $L=4$.
+It stores one scalar per state--action pair and applies
+\cref{eq:qlearn}. It is statistically efficient when the relevant suffixes are
+few and frequently revisited, interpretable because every entry can be
+inspected, and incapable of generalization between distinct keys.
+
+The \textbf{reward-only GRU agent} applies \cref{eq:gru} to the complete
+interaction sequence. At each decision it concatenates recurrent memory
+$z_t$, a learned goal embedding $e_g$, and one-hot goal progress, then feeds
+that vector to a multilayer perceptron producing one Q-value per legal action.
+The embedding is simply a trainable lookup vector in this baseline; no
+geometric loss constrains it.
+
+The \textbf{predictive geometry GRU} shares the same recurrent trunk but has
+four coupled outputs: reward value, one-step outcome prediction, positive
+cost-to-go, and goal embedding. Parameter sharing asks the memory to retain
+features useful across control, prediction, and reachability. It is a
+multi-task inductive bias, not a guarantee that a unique latent state will be
+identified.
+
+\subsection{Auxiliary objectives and their roles}
+
+Before the current outcome is incorporated, the outcome head predicts
+$\widehat P_\theta(o_t|z_t,a_t)$. Its categorical negative log likelihood is
 \begin{equation}
  \mathcal L_{\rm pred}=-\log\widehat P_\theta(o_t|z_t,a_t),
 \end{equation}
-computed before incorporating $o_t$. The full loss is
+with impossible outcomes masked from the softmax. Predicting after ingesting
+$o_t$ would permit trivial copying; the temporal ordering is therefore part of
+the scientific validity of the auxiliary task.
+
+For the selected action, reward and cost losses are squared temporal-
+difference residuals,
+\begin{align}
+ \mathcal L_Q&=(Y_t^Q-Q_\theta(z_t,g,j_t,a_t))^2,\\
+ \mathcal L_C&=(Y_t^C-C_\theta(z_t,g,j_t,a_t))^2.
+ \label{eq:td-losses}
+\end{align}
+The cost output is transformed to remain positive. The geometry loss is
+\cref{eq:geoloss}. The full per-batch objective is
 \begin{equation}
  \mathcal L=\mathcal L_Q+\lambda_P\mathcal L_{\rm pred}
  +\lambda_C\mathcal L_C+\lambda_G\mathcal L_{\rm geom}. \label{eq:loss}
 \end{equation}
+The coefficients are necessary because the losses have different numerical
+scales. A large prediction weight can improve next-outcome modeling while
+diverting capacity from reward; a large geometry weight can make embeddings
+faithful to a transient, inaccurate policy. We therefore treat the full model
+as a testable architectural proposal rather than presuming that more auxiliary
+objectives must improve control.
 
 \begin{figure}[t]
 \centering
@@ -463,6 +915,14 @@ Goals are sampled uniformly. Each episode resets hidden state, memory, and
 progress. Trajectories are replayed once for backpropagation through time;
 reward and cost use \cref{eq:target}; gradients are clipped to norm 5.
 
+Uniform goal sampling makes the optimization objective a macro-average over
+the declared repertoire rather than a frequency-weighted average favoring easy
+or common goals. At each environment step, action masks prevent selecting an
+outcome logit or action that does not exist in a variable-alphabet instrument.
+Random-number generators for environment, exploration, and neural
+initialization are seeded by run; evaluation uses separate deterministic seed
+streams so that training and test trajectories do not overlap.
+
 \begin{table}[t]
 \centering
 \caption{Production configuration.}
@@ -487,6 +947,14 @@ blank-history cost to hitting time, estimate \cref{eq:curve}, and group
 displacements by action/outcome. PCA is used only to visualize embeddings; all
 distance comparisons use original dimensions.
 
+PCA deserves a caution. It selects orthogonal directions of greatest sample
+variance in $e_g$, not directions that best preserve pairwise distance or
+control meaning. A two-dimensional PCA panel is therefore an illustration.
+Reported embedding correlations always use the original six-dimensional
+distances. The later spatial study instead uses MDS because its scientific
+question is explicitly whether pairwise costs admit low-dimensional Euclidean
+coordinates.
+
 The study contains 14,400 training episodes (107,804 interventions), 26,400
 evaluation episodes (179,342 interventions), and 3,520 geometry episodes. An
 exact manifest, tidy CSVs, model weights, and plots are saved. Eighteen tests
@@ -497,6 +965,14 @@ semantics, every agent, and geometry utilities.
 \label{sec:results}
 
 \subsection{Control performance}
+
+Control competence must be established before representation quality is
+interpreted. An embedding learned by an agent that seldom reaches its goals
+mostly describes erroneous action values. We therefore begin with held-out
+greedy success and only then ask whether internal quantities have geometric
+meaning. Success is averaged equally over goals within a scenario and then
+equally over scenarios for the macro-average; this avoids allowing an
+environment with more goals to dominate the headline number.
 
 \begin{figure}[p]
 \centering
@@ -533,11 +1009,38 @@ $|1\rangle$ scenarios; tabular learning leads on Pauli, unsharp, and Pauli+SIC;
 the full model is strongest from $|+\rangle$. Macro conditional steps are 4.62
 (tabular), 4.55 (GRU), and 4.41 (full), but success remains primary.
 
+The macro differences are small: the full model exceeds tabular success by
+1.4 percentage points and the plain GRU by 2.8 points. These values do not
+justify a universal superiority claim. They show that adding predictive,
+cost, and geometry objectives is compatible with competitive control at this
+scale. The scenario-level reversals are scientifically more informative.
+Short finite histories are a strong bias in small measurement worlds, where
+the same exact suffix recurs often. Recurrent compression becomes more useful
+as the qutrit alphabet and possible histories grow, but its larger parameter
+space also increases optimization variance.
+
+Conditional intervention counts answer a secondary question: among trials
+that finish, how direct are the successful paths? The full agent's value of
+4.41 is numerically lowest, but it cannot compensate for a lower success rate
+on a particular task. For illustration, a policy that succeeds in one step on
+10\% of trials and fails otherwise has conditional duration one, yet is worse
+for most purposes than a policy that reliably succeeds in five steps. This is
+why \cref{fig:performance} juxtaposes rather than combines the two metrics.
+
 Neural instability is substantial. Mean absolute seed gaps are 2.1 percentage
 points for tabular, 8.2 for GRU, and 11.0 for the full model; the largest full
 gap is 24.3. Both recurrent agents have zero success on the three-checkpoint
 qutrit goal, while tabular reaches 15\%. The plain GRU also has zero success on
 the two-step $Z0\_SIC0$ goal.
+
+These failures are consistent with a sparse-credit problem. A long sequence
+goal is completed only when several ordered events occur within a short
+horizon; early in training, its terminal bonus is rarely observed. The
+tabular agent can preserve a lucky exact suffix once encountered, whereas the
+recurrent learner must alter a distributed representation without corrupting
+other goals. More episodes, curriculum learning, eligibility traces, or
+demonstrations could change the ranking. The present comparison evaluates the
+specified finite-budget learners, not their asymptotic capacities.
 
 \begin{figure}[p]
 \centering
@@ -548,6 +1051,21 @@ only two seeds and is descriptive, not a reliable interval.}
 \end{figure}
 
 \subsection{Goal-geometry validation}
+
+The embedding loss explicitly encourages policy similarity, so training-loss
+fit would be circular evidence. We instead compute pairwise distances from
+held-out greedy behavior. Spearman rank correlation is chosen because the
+embedding scale is arbitrary and the most defensible first claim is ordinal:
+goals represented as nearer should generally require more similar strategies.
+If $r_i$ and $s_i$ are the ranks of two lists of pairwise distances, Spearman
+correlation is simply their Pearson correlation,
+\begin{equation}
+ \rho_S=\frac{\sum_i(r_i-\bar r)(s_i-\bar s)}
+ {\sqrt{\sum_i(r_i-\bar r)^2\sum_i(s_i-\bar s)^2}}.
+ \label{eq:spearman}
+\end{equation}
+It is invariant under monotone rescaling and therefore does not claim metric
+calibration.
 
 \begin{figure}[p]
 \centering
@@ -565,6 +1083,22 @@ trajectory distance is weaker: mean $0.311$, median $0.274$, standard deviation
 $0.303$, range $-0.091$--$0.786$. Geometry is not yet a unique robust object.
 The first two PCA axes explain 77.3\% of embedding variance on average.
 
+The gap between policy and trajectory correlations has a useful
+interpretation. The regularizer observes local soft policies at sampled
+states, so $\rho=0.537$ indicates moderate out-of-sample persistence of its
+intended relation. Trajectory signatures additionally incorporate the states
+the policy visits, stochastic outcomes, duration, and success. Their weaker
+$\rho=0.311$ shows that similar local preferences do not yet imply reliably
+similar global behavior. Negative correlations in some seeds establish that
+the embedding is not a seed-invariant intrinsic geometry.
+
+Explained PCA variance is reported only to quantify how much of the learned
+six-dimensional lookup table can be displayed on a page. A value of 77.3\%
+does not establish a two-dimensional manifold: PCA preserves variance rather
+than all pairwise distances, the goal set is small, and the embeddings were not
+trained to produce spatial coordinates. The inverse-designed study adopts much
+stricter dimensional diagnostics.
+
 \begin{figure}[p]
 \centering
 \includegraphics[width=.96\textwidth]{results/comparative/plots/qubit-pauli-sic__mixed__multi-gru__seed1/goal_geometry.png}
@@ -577,12 +1111,35 @@ $0.63$ in this run.}
 
 \subsection{Reachability and intervention displacement}
 
+Reachability evaluation asks a more demanding question than rank-order
+similarity: does a learned scalar equal an empirical number of interventions?
+We compare the blank-history prediction for each goal with mean hitting time
+on successful geometry rollouts. Pearson correlation measures linear ordering
+and mean absolute error (MAE)
+\begin{equation}
+ \operatorname{MAE}=\frac1M\sum_{i=1}^M
+ |\widehat d_i-\widehat{\E}(\tau_i\mid\tau_i\leq T)|
+ \label{eq:mae}
+\end{equation}
+measures calibration in intervention units. Correlation can be high despite a
+wrong scale; low MAE can arise from predicting the mean for a narrow range.
+Both are therefore needed.
+
 Across 79 goals with at least one geometry-rollout success, predicted cost
 correlates $r=0.471$ with conditional empirical steps and has mean absolute
 error 1.75. Predictions are compressed to 2.46--5.89 while observed means span
 1.0--10.71. The head contains ordinal information but is not a calibrated
 clock. Off-policy minimum backups, function approximation, policy mismatch,
 finite-horizon censoring, and conditioning on success all contribute.
+
+The compression of predictions is visible evidence of regression toward
+frequently observed targets: very easy and very hard goals are pulled toward a
+middle range. Off-policy minimum backups add downward selection bias because a
+minimum over noisy action estimates tends to choose an underestimated value.
+At the other side, failed trials are absent from the conditional empirical
+mean. The comparison is therefore deliberately diagnostic rather than a claim
+that either axis is an uncensored ground truth. The success curves in
+\cref{fig:curves} preserve the missing reliability information.
 
 \begin{figure}[t]
 \centering
@@ -608,49 +1165,149 @@ increase. Completion explicitly sets a matching goal to zero, so diagonals
 should not be overinterpreted; structured off-diagonal change is the more
 interesting signature of backaction.
 
+An off-diagonal cell answers a counterfactual-geometric question: after
+experiencing outcome $o$ of action $a$, did an unrelated goal become easier or
+harder according to the same predictive state? A coherent row pattern means
+the representation tracks a joint reorganization of affordances rather than
+only recognizing terminal reward. Because these values come from the learned
+cost head, they remain hypotheses about operational displacement. Their next
+validation should compare predicted and empirical post-intervention success
+curves for every goal.
+
 \section{Inverse-designing emergent two-dimensional space}
 \label{sec:spatial}
 
-\subsection{Hodological criterion and bilevel objective}
+\subsection{From a philosophical proposal to an empirical criterion}
 
 The preceding experiments ask whether a finite goal repertoire acquires useful
-structure. We now ask the inverse question: can one choose a quantum world and
-goals such that difficulty itself is compatible with ordinary 2D distance?
-For operational states $s_i$ associated with goals $g_i$, let
+structure. The stronger hypothesis motivating this project is that ordinary
+space itself may be a special form of an agent's goal geometry: goals that are
+easy to achieve are near, goals that require many interventions are far, and a
+policy is motion through the resulting hodological space. This statement is
+not yet an experiment. To make it falsifiable, we need operational definitions
+of place, distance, dimension, and trajectory that do not silently provide the
+answer to the learner.
+
+Suppose there are $n$ repeatably preparable operational situations
+$s_1,\ldots,s_n$ and $n$ corresponding place goals $g_1,\ldots,g_n$. The
+ordered policy cost from source $i$ to goal $j$ is
 \begin{equation}
- D_{ij}=\E_{\pi_j}[\tau_{g_j}\mid s_i]-c_{\rm probe},
+ C_{ij}^{\pi}=\E_{\pi_j}[\min(\tau_{g_j},T)\mid s_i],
+ \label{eq:restricted-cost}
+\end{equation}
+where $T$ is the evaluation horizon. In a fully successful regime this reduces
+to expected hitting time. The reported spatial dissimilarity removes the one
+intervention that every goal uses for terminal verification:
+\begin{equation}
+ D_{ij}=C_{ij}^{\pi}-c_{\rm probe},\qquad c_{\rm probe}=1.
  \label{eq:spatial-cost}
 \end{equation}
-where the common terminal-probe cost is removed. A Euclidean interpretation in
-$d$ dimensions is tested by metric multidimensional scaling (MDS), minimizing
+Subtracting this common overhead is analogous to removing a fixed measurement
+latency from every journey. Without it, even $D_{ii}$ would be one although no
+movement is needed. The subtraction affects absolute scale but not the learned
+policy.
+
+A finite goal system supports an ordinary spatial interpretation only if
+several conditions hold together:
+\begin{enumerate}
+ \item \emph{competence}: policies reliably reach every goal from every source;
+ \item \emph{localization}: histories contain enough operational information
+ to select source-dependent actions, without being handed coordinates;
+ \item \emph{metric coherence}: pairwise costs are approximately symmetric and
+ obey a common low-distortion distance model;
+ \item \emph{dimensional preference}: two dimensions fit much better than one,
+ while three add little;
+ \item \emph{trajectory coherence}: successive operational observations map to
+ local paths in the coordinates derived from all-pairs cost;
+ \item \emph{robustness}: these conclusions persist across learned policies,
+ random seeds, and controls designed to remove specific ingredients.
+\end{enumerate}
+No single item is sufficient. A perfect navigator can inhabit a non-Euclidean
+metric; a beautiful embedding can summarize failed policies; and a hidden grid
+can be invisible to an agent that cannot localize itself.
+
+\subsection{The inverse-design problem}
+
+Let $\theta$ parameterize the initial-state ensemble, quantum instruments, and
+observation coarse-graining, and let $\mathcal G$ denote the goal repertoire.
+Training algorithm $\mathcal A_{\rm RL}$ maps interaction data to policies
+$\pi_{\theta,\mathcal G}$. The outer scientific problem is therefore bilevel:
+\begin{align}
+ \pi_{\theta,\mathcal G}
+ &=\mathcal A_{\rm RL}(\mathcal E_\theta,\mathcal G),\\
+ (\theta^\star,\mathcal G^\star)
+ &=\argmin_{\theta,\mathcal G}
+ J_d\!\left(D_{\pi_{\theta,\mathcal G}}\right).
+ \label{eq:bilevel-map}
+\end{align}
+The inner learner turns the proposed world into behavior; evaluation turns
+behavior into a cost matrix; the outer objective judges whether that matrix
+has the desired geometry. A useful general objective is
+\begin{equation}
+ J_d=\lambda_s\operatorname{Stress}_d
+ +\lambda_c P_{\rm calibration}+\lambda_n P_{\rm nonmetric}
+ +\lambda_a P_{\rm asymmetry}+\lambda_f P_{\rm failure}
+ +\lambda_k P_{\rm complexity}.
+ \label{eq:bilevel}
+\end{equation}
+The terms discourage different pathologies. Stress penalizes failure of a
+$d$-dimensional Euclidean fit. Calibration compares learned and reproducible
+costs. The nonmetric term detects dissimilarities that cannot be exact
+Euclidean distances even in higher dimension. Asymmetry detects irreversible
+or policy-biased travel. Failure prevents the optimizer from making difficult
+pairs disappear behind censoring. Complexity discourages a separate
+teleportation action for every goal or an unnecessarily large hidden model.
+
+Optimizing general quantum channels through a stochastic RL loop is expensive
+and scientifically opaque as a first experiment. We instead choose a family
+whose exact stochastic shortest paths can be computed by a privileged outer
+loop, search one physically meaningful instrument parameter, and only then
+train coordinate-free agents. This separation makes the construction
+auditable: analytic intuition, exact design geometry, and learned empirical
+geometry can be compared rather than conflated.
+
+\subsection{Euclidean distance and the dimensional hypothesis}
+
+For candidate coordinates $x_i\in\R^d$, the Euclidean distance is
+$\delta_{ij}(X)=\|x_i-x_j\|_2$. Metric multidimensional scaling (MDS) asks for
+coordinates whose distances approximate the observed dissimilarities. We use
 Kruskal-style normalized raw stress \cite{kruskal1964}:
 \begin{equation}
  \operatorname{Stress}_d(D,X)
- =\sqrt{\frac{\sum_{i<j}(\lVert x_i-x_j\rVert-D_{ij})^2}
+ =\sqrt{\frac{\sum_{i<j}[\delta_{ij}(X)-D_{ij}]^2}
  {\sum_{i<j}D_{ij}^2}}.
  \label{eq:stress}
 \end{equation}
-Classical MDS initializes deterministic SMACOF majorization. Manifold learning
-similarly reconstructs global geometry from local metric information
-\cite{tenenbaum2000}, but here the dissimilarities are learned control costs.
+The numerator is total squared distance error; the denominator removes overall
+units. Stress zero means exact representation at the requested dimension.
+There is no universal threshold at which stress suddenly becomes acceptable:
+its interpretation depends on sample size, noise, and comparison conditions.
+We therefore emphasize relative gaps among dimensions and matched controls.
 
-Let $\theta$ parameterize the state and instruments and $\mathcal G$ the goals.
-The intended general bilevel design is
+The dimensional hypothesis is not merely ``2D stress is small.'' Any finite
+metric can often fit better when extra dimensions are added. The characteristic
+pattern sought here is
 \begin{equation}
- (\theta^\star,\mathcal G^\star)
- =\arg\min_{\theta,\mathcal G}
- \bigl[\lambda_s\operatorname{Stress}_d
- +\lambda_c P_{\rm calibration}+\lambda_n P_{\rm nonmetric}
- +\lambda_a P_{\rm asymmetry}+\lambda_f P_{\rm failure}
- +\lambda_k P_{\rm complexity}\bigr],
- \label{eq:bilevel}
+ \operatorname{Stress}_1\gg\operatorname{Stress}_2
+ \approx\operatorname{Stress}_3.
+ \label{eq:dimension-gap}
 \end{equation}
-where the matrix inside the objective is produced by an inner RL learner. The
-first experiment simplifies this expensive problem: its exact stochastic
-shortest paths are known to the privileged outer loop, which searches one
-instrument parameter before independent policies are trained and evaluated.
+The first inequality rejects a line; the small second improvement says a third
+coordinate explains little additional structure. Larger studies should use
+held-out points or local dimension estimators to guard against overfitting. On
+nine exhaustively evaluated sites, the dimension curve and controls provide a
+transparent first test.
+
+MDS is related in spirit to manifold learning, where global coordinates are
+reconstructed from local metric relations \cite{tenenbaum2000}. The important
+difference is the source of dissimilarity: our $D_{ij}$ is not an externally
+measured physical separation. It is the intervention cost of a learned policy.
+The resulting axes consequently have no preferred orientation, handedness,
+origin, or unit until an external validation frame is applied.
 
 \subsection{Nine-dimensional quantum construction}
+
+\subsubsection{Hilbert space, labels, and source ensemble}
 
 Let
 \begin{equation}
@@ -659,46 +1316,320 @@ Let
  \rho_0=\lvert1,1\rangle\!\langle1,1\rvert .
  \label{eq:grid-hilbert}
 \end{equation}
-The labels $(x,y)$ are private validation metadata; the agent receives only an
-arbitrary place symbol. Four axial and four diagonal actions map a site $s$ to
-an adjacent site $f_a(s)$. Their hidden source-resolved Kraus events are
+The nine basis vectors are mutually orthogonal localized states. The canonical
+episode starts at the central state $\rho_0$, but all-pairs training uniformly
+draws a source from the ensemble
+\begin{equation}
+ \mathcal S_0=\{|x,y\rangle\!\langle x,y|:x,y\in\{0,1,2\}\}.
+ \label{eq:source-ensemble}
+\end{equation}
+This distinction is important. The central state answers the requested
+initial-state specification; random-source episodes teach translation of a
+local policy across the entire operational space. A geometry inferred only
+from the center would determine one row of $D$, not all pairwise relations.
+
+The coordinate labels $(x,y)$ exist only in environment construction,
+exact-cost calculation, and post hoc validation. The learner sees an arbitrary
+bijection to symbols A--I. Permuting these symbols before training changes no
+available statistical fact. Thus place identity is observable, but adjacency,
+axis, handedness, coordinate difference, and Euclidean distance are not.
+
+\subsubsection{Movement actions as quantum instruments}
+
+There are eight movement actions: north, south, east, west, and four
+diagonals. Let $s$ abbreviate a basis site and let $f_a(s)$ be its neighboring
+destination when action $a$ is legal. Their hidden source-resolved Kraus events
+are
 \begin{equation}
  K^{(a)}_{s,+}=\sqrt{p_a(s)}\lvert f_a(s)\rangle\!\langle s\rvert,
  \qquad
  K^{(a)}_{s,-}=\sqrt{1-p_a(s)}\lvert s\rangle\!\langle s\rvert .
  \label{eq:move-kraus}
 \end{equation}
-At open boundaries $p_a(s)=0$, so summing \cref{eq:move-kraus} over sources and
-branches gives $I$. Axial moves have probability one; legal diagonals share
-$p_d$. Several unobserved source events are coarse-grained into one observed
-destination symbol. The corresponding instrument operation is
+For a legal axial movement $p_a(s)=1$; for a legal diagonal
+$p_a(s)=p_d$; and at an open boundary $p_a(s)=0$ with $f_a(s)$ understood as
+$s$. The ``$+$'' branch moves, while the ``$-$'' branch remains in place.
+
+Physical completeness follows explicitly. For each source $s$,
+\begin{align}
+ K_{s,+}^{(a)\dagger}K_{s,+}^{(a)}
+ &=p_a(s)|s\rangle\!\langle s|,\\
+ K_{s,-}^{(a)\dagger}K_{s,-}^{(a)}
+ &=[1-p_a(s)]|s\rangle\!\langle s|.
+\end{align}
+Adding branches gives $|s\rangle\!\langle s|$; adding the nine orthogonal
+sources gives
+\begin{equation}
+ \sum_s\sum_{b\in\{+,-\}}
+ K_{s,b}^{(a)\dagger}K_{s,b}^{(a)}
+ =\sum_s|s\rangle\!\langle s|=I_9.
+ \label{eq:grid-completeness}
+\end{equation}
+Every action is therefore a valid trace-preserving quantum instrument for all
+$p_d\in[0,1]$.
+
+These channels also reveal the construction's present boundary. On arbitrary
+$\rho=\sum_{s,t}\rho_{st}|s\rangle\!\langle t|$, the source-resolved sum
+removes off-diagonal coherences because every term contains the same source
+projector on both sides. The movement is a measure-and-prepare,
+entanglement-breaking channel on the localized basis: a classical stochastic
+walk represented within quantum operations. This is a legitimate quantum
+environment and a clean existence proof, but it does not yet use coherent
+interference to generate the geometry.
+
+\subsubsection{Observed outcomes as a coarse-graining of hidden events}
+
+The environment need not report the hidden source index or branch. Several
+Kraus events can correspond to the same classical outcome, as in
+\cref{eq:instrument-map}. In the main world, events are grouped by the place
+occupied after the action. The completely positive operation associated with
+observing destination $y$ is
 \begin{equation}
  \mathcal I_y^{(a)}(\rho)
  =\sum_{s:f_a(s)=y}K_{s,+}^{(a)}\rho K_{s,+}^{(a)\dagger}
  +K_{y,-}^{(a)}\rho K_{y,-}^{(a)\dagger}.
  \label{eq:grouped-instrument}
 \end{equation}
-A ninth, common place probe has projectors
-$P_s=\lvert s\rangle\!\langle s\rvert$. Goal $g_s$ is simply ``perform this
-probe and obtain symbol $s$.'' No goal-specific destination action exists.
+where the first sum includes successful branches arriving at $y$, and the
+second term includes a failed attempt originating at $y$. Summing
+$\mathcal I_y^{(a)}$ over $y$ recovers the trace-preserving action channel.
+Conditioned on observing $y$, the post-measurement state is $|y\rangle\!\langle
+y|$ whenever the input is a localized state. The observed symbol is therefore
+a place-cell-like localization event.
 
-Training uniformly prepares all nine localized sources and supplies one place
-probe before task time. This contextual outcome localizes the agent but gives
-no adjacency, axis, orientation, or metric. Its Markov state is
-$(g,p,\ell)$: goal ID, progress, and latest arbitrary place symbol. Ordinary
-tabular Q-learning then discovers the transitions. Two controls separate
-possible explanations: a \emph{blind} instrument reports only movement
-success/failure, and a place-observed \emph{cardinal} world removes diagonals,
-leaving Manhattan shortest paths.
+The blind control uses exactly the same hidden Kraus operators but groups
+events into only two observed outcomes: success and failure. It isolates the
+effect of observation: hidden connectivity and transition probabilities remain
+fixed while location becomes partially observed. Comparing the two asks
+whether an underlying spatial graph is enough when the agent cannot tell where
+it is.
 
-\subsection{Outer optimization and learned geometry}
+\subsubsection{A common probe and a homogeneous goal repertoire}
 
-One axial displacement costs one intervention; repeated diagonal attempts cost
-$1/p_d$ on average. Euclidean cost matching suggests $p_d\simeq1/\sqrt2$.
-Searching 81 values in $[0.55,0.95]$ selects $p_d=0.715$ by a combination of
-2D stress, negative centered-Gram spectrum, and privileged coordinate recovery.
-The proximity to $1/\sqrt2$ is an outcome of the search, not an input to its
-objective.
+A ninth action is a sharp place probe with projectors
+\begin{equation}
+ P_s=|s\rangle\!\langle s|,\qquad
+ \sum_sP_s^\dagger P_s=I_9.
+ \label{eq:place-probe}
+\end{equation}
+The nine goals all have exactly the same syntax:
+\begin{equation}
+ g_s=\text{``choose the common probe and observe symbol $s$''.}
+ \label{eq:place-goal}
+\end{equation}
+There is no action called ``go to A,'' no coordinate-conditioned reward, and
+no separate detector dedicated to each target. A successful policy must use
+movement actions until its operational observation is appropriate and then use
+the common probe. Goal names distinguish desired outcomes but do not encode
+which actions approach them.
+
+At the beginning of a random-source episode, the environment emits one ordinary
+probe result before the task clock starts. This supplies current place identity
+without charging a movement or verification cost. It reveals no neighbor
+table. From then onward, the agent must learn the transition affordances of
+each movement label through interaction. This arrangement cleanly separates
+\emph{localization} (which place symbol am I at?) from \emph{geometrization}
+(how are place symbols related by action cost?).
+
+\subsubsection{The coordinate-free Markov state}
+
+For the place-observed worlds, the observable decision state is
+\begin{equation}
+ \widetilde S_t=(g,J_t,\ell_t),
+ \label{eq:place-state}
+\end{equation}
+where $\ell_t$ is the latest arbitrary place symbol. It deliberately discards
+the action and older history. This is not a hand-coded coordinate: it contains
+no pair $(x,y)$ and no distance. It is a quotient of histories by current
+observable affordance. If two histories end with the same $\ell_t$, every
+future action has the same outcome distribution, so retaining their different
+arrival routes would violate rather than improve Markov abstraction.
+
+Tabular Q-learning over \cref{eq:place-state} must still discover which
+movement labels connect which symbols and how their stochastic costs compare.
+The blind world cannot use this state because the latest success/failure
+outcome does not identify place; it retains the longer finite-history learner.
+This matched difference becomes an observability ablation rather than a claim
+that memory is never necessary.
+
+\subsection{Why stochastic diagonal motion repairs the metric}
+
+The shortest-path metric induced by four unit-cost cardinal actions is
+Manhattan distance,
+\begin{equation}
+ d_1[(x,y),(x',y')]=|x-x'|+|y-y'|.
+ \label{eq:manhattan}
+\end{equation}
+This recovers the topology and ordering of a square grid but not its ordinary
+Euclidean metric
+\begin{equation}
+ d_2[(x,y),(x',y')]=
+ \sqrt{(x-x')^2+(y-y')^2}.
+ \label{eq:euclidean-grid}
+\end{equation}
+In particular, both an axial step and a diagonal step cost one if all eight
+moves are deterministic, whereas Euclidean geometry requires the diagonal to
+cost $\sqrt2$ times as much.
+
+The instrument supplies a simple operational unit conversion. Repeating a
+legal diagonal action with independent success probability $p_d$ gives a
+geometric waiting time $N\in\{1,2,\ldots\}$:
+\begin{equation}
+ \Prob(N=k)=(1-p_d)^{k-1}p_d.
+ \end{equation}
+Its expectation can be derived from the geometric series,
+\begin{align}
+ \E N
+ &=\sum_{k=1}^\infty k(1-p_d)^{k-1}p_d
+ =p_d\frac{d}{dq}\left.\sum_{k=0}^\infty q^k\right|_{q=1-p_d}\\
+ &=p_d\frac{1}{[1-(1-p_d)]^2}=\frac1{p_d}.
+ \label{eq:geometric-cost}
+\end{align}
+Matching this expected diagonal cost to $\sqrt2$ predicts
+\begin{equation}
+ p_d\approx\frac1{\sqrt2}=0.707106\ldots.
+ \label{eq:diagonal-prediction}
+\end{equation}
+This analytic argument is a sanity check, not the fitted result. Open
+boundaries and a finite $3\times3$ set mean that a value minimizing global MDS
+error need not equal $1/\sqrt2$ exactly.
+
+\subsection{Exact stochastic shortest paths in the outer loop}
+
+For a fixed $p_d$, the privileged design model constructs a directed weighted
+graph over the nine localized states. A legal axial edge has expected cost one
+and a legal diagonal edge has expected cost $1/p_d$. The optimal exact movement
+cost obeys
+\begin{equation}
+ d^*_{ij}=\min_{a\in\mathcal A_i}
+ \left[c(i,a)+d^*_{f_a(i),j}\right],\qquad d^*_{jj}=0,
+ \label{eq:grid-shortest-path}
+\end{equation}
+where $c=1$ or $1/p_d$. This is the deterministic weighted-graph form obtained
+after analytically integrating the self-loop failures. Dijkstra's algorithm
+computes every source--goal pair because costs are nonnegative.
+
+This exact matrix is used only for economical outer search and as a later
+calibration target. The RL agent is not given the matrix, probabilities, graph,
+or Dijkstra policy. It samples actual successes and failures and learns from
+reward. Separating exact design from learned verification prevents a favorable
+analytic construction from being mistaken for evidence that finite-data
+behavior recovered it.
+
+\subsection{Classical MDS, Euclidean spectra, and stress refinement}
+
+Classical MDS gives an algebraic test of Euclidean realizability
+\cite{torgerson1952,gower1966}. Let $\Delta^{(2)}$ contain squared symmetric
+dissimilarities, let
+\begin{equation}
+ H=I_n-\frac1n\bm1\bm1^\top
+ \end{equation}
+center vectors by subtracting their mean, and define the double-centered Gram
+matrix
+\begin{equation}
+ B=-\frac12H\Delta^{(2)}H.
+ \label{eq:double-centering}
+\end{equation}
+To see why, suppose centered coordinates form the rows of $X$. Then
+$\delta_{ij}^2=x_i^\top x_i+x_j^\top x_j-2x_i^\top x_j$; double centering
+cancels the norm terms and leaves $B=XX^\top$. Therefore exact Euclidean
+distances produce a positive-semidefinite $B$. If
+\begin{equation}
+ B=V\diag(\lambda_1,\ldots,\lambda_n)V^\top,
+ \qquad\lambda_1\geq\cdots\geq\lambda_n,
+\end{equation}
+then the best classical $d$-dimensional coordinates retain the leading
+positive eigenvalues:
+\begin{equation}
+ X_d=V_{1:d}\diag(\sqrt{\lambda_1},\ldots,\sqrt{\lambda_d}).
+ \label{eq:cmds-coordinates}
+\end{equation}
+
+Classical MDS optimizes an algebraic strain criterion, not exactly the raw
+stress in \cref{eq:stress}. We use $X_d$ as a deterministic initialization for
+SMACOF (scaling by majorizing a complicated function), an iterative
+majorization algorithm that monotonically reduces raw stress. Deterministic
+initialization avoids making reported dimension gaps depend on arbitrary plot
+seeds.
+
+Negative eigenvalues of $B$ are informative. They cannot be represented as
+squared norms in a real Euclidean space, so a large negative spectrum indicates
+that the dissimilarity is non-Euclidean even before choosing dimension. We
+report
+\begin{align}
+ V_2^+&=\frac{\lambda_1^++\lambda_2^+}
+ {\sum_k\lambda_k^+},\qquad \lambda^+=\max(\lambda,0),
+ \label{eq:positive-variance}\\
+ P_-&=\frac{\sum_k|\min(\lambda_k,0)|}
+ {\sum_k|\lambda_k|}.
+ \label{eq:negative-spectrum}
+\end{align}
+$V_2^+$ asks how much representable Euclidean variation lies in two axes;
+$P_-$ asks how much of the centered relation resists any Euclidean
+interpretation. They answer different questions and complement stress.
+
+\subsection{Validation metrics and why each is present}
+
+No single scalar certifies emergent space, so the study reports a diagnostic
+panel:
+\begin{description}[style=nextline]
+ \item[All-pairs success.]
+ The fraction of 81 ordered source--goal tasks completed by horizon 12. This
+ tests whether every entry of the cost matrix describes meaningful navigation.
+ \item[Stress in 1D, 2D, and 3D.]
+ These values test \cref{eq:dimension-gap} and quantify absolute distance
+ distortion at each candidate dimension.
+ \item[Positive two-dimensional spectral variance.]
+ Equation~\eqref{eq:positive-variance} tests whether two axes dominate the
+ Euclidean part of the centered dissimilarity.
+ \item[Negative-spectrum fraction.]
+ Equation~\eqref{eq:negative-spectrum} detects intrinsically non-Euclidean
+ structure that could be hidden by an attractive low-dimensional projection.
+ \item[Exact-cost correlation.]
+ Pearson correlation between vectorized learned and exact costs tests whether
+ RL recovered the intended ordering and approximately linear scale. It is not a
+ dimensional test: the Manhattan control can score perfectly.
+ \item[Directionality.]
+ Before MDS, normalized antisymmetry is retained as
+ \begin{equation}
+  A(D)=\frac{\|D-D^\top\|_F}{\|D+D^\top\|_F}.
+  \label{eq:directionality}
+ \end{equation}
+ This measures finite-sample, policy, or genuine dynamical irreversibility.
+ \item[Procrustes recovery.]
+ After learning only, the 2D embedding $X$ is aligned to concealed validation
+ coordinates $Y$ by translation, orthogonal transformation, and uniform scale:
+ \begin{equation}
+  \min_{c>0,R^\top R=I,b}\|cXR+\bm1b^\top-Y\|_F^2.
+  \label{eq:procrustes}
+ \end{equation}
+ If $X_c^\top Y_c=U\Sigma V^\top$, the optimal orthogonal map is
+ $R=UV^\top$ \cite{schonemann1966}. We report
+ $R_P^2=1-\mathrm{SSE}_{\rm aligned}/\|Y_c\|_F^2$. This tests coordinate
+ recovery up to the gauge freedoms of distance geometry.
+ \item[Concealed Euclidean distance correlation.]
+ This compares pairwise distances without choosing an alignment and provides a
+ scale-insensitive check on the intended physical interpretation.
+\end{description}
+
+Procrustes coordinates are privileged and never enter policy learning. They
+are useful because a correct emergent geometry is identifiable only up to
+translation, rotation, reflection, and scale. Yet Procrustes $R_P^2$ cannot
+replace stress: Manhattan distances on a square grid can recover the correct
+point arrangement after alignment while still distorting metric ratios.
+
+\subsection{One-parameter outer search}
+
+The outer loop evaluates 81 values of $p_d$ evenly spaced from 0.55 to 0.95.
+For each value it computes the exact all-pairs matrix, fits 2D coordinates, and
+combines 2D stress, negative spectrum, and privileged coordinate-recovery
+penalty. The selected value is
+\begin{equation}
+ p_d^\star=0.715,
+ \qquad \frac1{p_d^\star}=1.3986,
+ \end{equation}
+close to the analytic $1/\sqrt2$ prediction. The analytic value is plotted as a
+reference but is not an input target to the numerical objective.
 
 \begin{figure}[p]
 \centering
@@ -717,11 +1648,92 @@ cardinal control has 2D stress 0.1416 and negative-spectrum fraction 0.217,
 versus 0.081 for the selected instrument. Thus a grid-like arrangement does
 not by itself make the operational metric Euclidean.
 
+These exact numbers establish that the designed task is suitable for the inner
+learning experiment. One dimension fails badly: nine points on a line cannot
+simultaneously preserve the corner, edge, and center relations. Moving from
+two to three dimensions changes stress by only $0.0005$, so the small remaining
+error is not substantially repaired by an extra spatial axis. The 0.995
+distance correlation says the cost ordering and relative scale closely match
+the concealed Euclidean lattice, while the nonzero negative spectrum records
+the unavoidable residual of a small weighted graph rather than a continuous
+plane. The claim is approximate Euclidean compatibility, not exact isometry.
+
+\subsection{Inner learning problem and policy extraction}
+
+For the place-observed worlds, the learner is the standard tabular Q-learning
+algorithm of \cref{eq:qlearn} applied to state \cref{eq:place-state}, with
+$\alpha=0.1$, $\gamma=0.95$, and epsilon-greedy exploration decaying from 1.0
+to 0.05. Source and target are sampled independently and uniformly for each of
+6,000 episodes. Uniform coverage gives every ordered relation a chance to
+affect the Q table; it also includes source-equals-goal episodes, which teach
+the common verification action.
+
+The learned reward policy is
+\begin{equation}
+ \widehat\pi_g(a|\ell)=
+ \mathbb 1\!\left[a\in\argmax_{a'}Q(g,J,\ell,a')\right]
+ \label{eq:spatial-greedy-policy}
+\end{equation}
+with deterministic tie-breaking at evaluation. Notice what is and is not
+learned. The table learns action values and thereby local navigation. MDS does
+not provide input to the policy and the Q table has no $x$ or $y$ columns.
+Conversely, the final spatial coordinates are computed from empirical policy
+costs, not read from the table or hidden basis labels. Control learning and
+geometric reconstruction are two distinct stages.
+
+For each ordered pair $(i,j)$, evaluation resets to source $i$, executes
+$\widehat\pi_{g_j}$ without exploration, and repeats 100 times. Let
+$\widehat s_{ij}$ be the success fraction and let
+$\widetilde\tau_{ij}^{(m)}=\min(\tau_{ij}^{(m)},T)$ assign the horizon to a
+failure. The empirical restricted cost is
+\begin{equation}
+ \widehat C_{ij}=\frac1M\sum_{m=1}^M\widetilde\tau_{ij}^{(m)},
+ \qquad M=100,quad T=12.
+ \label{eq:empirical-spatial-cost}
+\end{equation}
+The common final-probe cost is then subtracted as in
+\cref{eq:spatial-cost}. Using the restricted rather than success-conditional
+mean ensures failure increases distance instead of disappearing from it.
+
+MDS requires a symmetric dissimilarity, whereas finite policy estimates are
+ordered. We therefore form
+\begin{equation}
+ \widehat D^{\rm sym}_{ij}
+ =\frac12(\widehat D_{ij}+\widehat D_{ji})
+ \label{eq:symmetrization}
+\end{equation}
+for the Euclidean hypothesis and separately report
+\cref{eq:directionality}. Symmetrization is a declared projection onto the
+class of ordinary metric candidates, not evidence that the original process
+was reversible.
+
+\subsection{Matched controls and experimental scale}
+
+The three worlds differ one ingredient at a time:
+\begin{enumerate}
+ \item \textbf{optimized place-observed}: four axial and four cost-matched
+ diagonal actions; a movement reports its destination symbol;
+ \item \textbf{optimized blind}: identical hidden movement Kraus maps and
+ $p_d$, but a movement reports only success or failure;
+ \item \textbf{cardinal place-observed}: destination symbols remain available,
+ but diagonal actions are removed, leaving the Manhattan metric.
+\end{enumerate}
+The blind comparison targets observability and state estimation. The cardinal
+comparison targets metric isotropy while holding localization and basic
+competence favorable. Together they distinguish ``there is a grid,'' ``the
+agent can navigate,'' and ``the learned cost is Euclidean-like.''
+
 Each of three worlds and three seeds receives 6,000 uniformly sampled
 source--goal episodes. Evaluation uses 100 trials for all 81 ordered pairs:
 54,000 training and 72,900 evaluation episodes in total. Failures contribute a
 finite restricted-mean penalty at horizon 12. The learned matrix is
 symmetrized for MDS, while normalized antisymmetry is retained separately.
+
+The resulting total is 54,000 training episodes and 72,900 evaluation episodes.
+Three seeds are still too few for narrow confidence intervals, but exhaustive
+all-pairs evaluation within each run is much stronger than evaluating only the
+canonical center reset. Every aggregate in \cref{tab:spatial-results} is the
+mean and sample standard deviation of three independently trained policies.
 
 \begin{table}[t]
 \centering
@@ -745,6 +1757,26 @@ Directionality & $.122\pm.037$ & $.264\pm.093$ & $.000\pm.000$\\
 \end{tabular}
 \end{table}
 
+\subsection{Results: competence before geometry}
+
+The proposed place-observed learner achieves all 81 ordered tasks in every
+seed. This result removes the most serious ambiguity in a hitting-cost matrix:
+none of its entries is dominated by the failure penalty. The cardinal control
+also reaches 100\%, proving that navigation success alone does not select the
+proposed metric. By contrast, the blind learner succeeds on only
+$0.482\pm0.023$ of ordered trials. Its poor geometric fit must therefore be
+read partly as a control failure and not purely as a change of intrinsic
+dimension.
+
+Why does observation matter so much? A destination symbol makes
+\cref{eq:place-state} Markov: after every move the same symbol implies the same
+future transition law, independent of arrival route. Success/failure alone
+does not. The blind learner must infer place from a bounded action/outcome
+history, and different hidden sites can produce identical recent binary
+records. A policy conditioned on such an aliased state must compromise between
+incompatible actions. This degrades success, inflates restricted costs, and
+introduces direction-dependent sampling error.
+
 \begin{figure}[t]
 \centering
 \includegraphics[width=.98\textwidth]{results/spatial-hodology/performance_geometry_comparison.png}
@@ -755,6 +1787,8 @@ success/failure observation damages both competence and geometry.}
 \label{fig:spatial-performance}
 \end{figure}
 
+\subsection{Results: selecting two dimensions}
+
 The proposed construction has a decisive dimension gap: learned stress falls
 from $0.372$ in 1D to $0.071$ in 2D, while a third coordinate improves it only
 to $0.064$. Procrustes $R^2=0.975$ confirms recovery of the concealed
@@ -762,14 +1796,74 @@ arrangement up to rotation, reflection, translation, and scale. Coordinate
 recovery alone would be misleading: the cardinal control has $R_P^2\simeq1$
 but twice the 2D stress because its metric is Manhattan.
 
+The first stress drop is the main dimensional evidence. In relative terms,
+two dimensions remove about 81\% of the one-dimensional normalized stress,
+whereas a third dimension removes only about 10\% of the remaining stress.
+The residual $0.071$ is expected to exceed the exact value $0.0365$: the learned
+policy sometimes selects a longer route, diagonal travel is sampled rather
+than analytically averaged, and each ordered pair has finite evaluation data.
+The small standard deviation across seeds indicates that the dimension pattern
+is more stable than the orientation of any individual embedding.
+
+Procrustes $R_P^2=0.975$ means that after removing geometrically irrelevant
+translation, orthogonal frame, and scale, only about 2.5\% of concealed
+coordinate sum-of-squares remains as alignment error. This is strong recovery
+of point arrangement. The cardinal control's perfect value is the decisive
+caution: an embedding can put corners, edges, and center in their expected
+visual locations while systematically misrepresenting how far apart they are.
+Stress, not visual recognizability, detects that difference.
+
+The learned/exact cost correlation $0.936\pm0.003$ asks whether RL recovered
+the intended stochastic shortest-path problem. It is high but not perfect,
+consistent with a near-optimal policy and finite geometric waiting times. The
+cardinal control reaches correlation one because its deterministic tabular
+problem is learned exactly. Yet its stress remains $0.142$. Calibration to a
+non-Euclidean target cannot make the target Euclidean; this is why exact-cost
+correlation and metric fit belong in separate columns.
+
+Directionality is $0.122\pm0.037$ in the proposed world. The underlying exact
+cost is symmetric, so the learned asymmetry is not interpreted as physical
+time orientation. It reflects independent finite samples, stochastic
+diagonals, tie-breaking among near-equivalent routes, and imperfect policies.
+The deterministic cardinal control has zero directionality. The blind value
+is larger because state aliasing makes policy errors depend strongly on source
+and target. Reporting this discarded component makes the symmetry assumption
+auditable.
+
 \begin{figure}[p]
 \centering
 \includegraphics[width=.90\textwidth]{results/spatial-hodology/learned_hodological_spaces.png}
 \caption{MDS of empirical policy hitting costs. Rows show the proposed world,
 the partial-observability control, and the cardinal control. Axes have no
-externally meaningful orientation.}
+externally meaningful orientation. The coordinates are outputs of the cost
+matrix, not inputs to the policies.}
 \label{fig:spatial-spaces}
 \end{figure}
+
+Figure~\ref{fig:spatial-spaces} should be read relationally. Rotating or
+reflecting a row changes no pairwise distance, and therefore no operational
+claim. The proposed embeddings consistently separate corner, edge, and center
+relations in two axes. The blind embeddings retain a rough lattice because
+some transition information remains inferable, but variable failures stretch
+and shear the cost relation. The cardinal embeddings look exceptionally
+regular while their distance matrices remain Manhattan-like. The side-by-side
+display is deliberately designed to train visual skepticism: regular pictures
+are hypotheses whose distortion must be quantified.
+
+\subsection{Trajectories as motion in the reconstructed coordinates}
+
+Having inferred $X$ from the complete symmetrized cost matrix, we can map a
+new policy rollout into that coordinate system. If its observed place sequence
+is $(\ell_0,\ell_1,\ldots,\ell_m)$, the plotted path is
+\begin{equation}
+ (x_{\ell_0},x_{\ell_1},\ldots,x_{\ell_m}).
+ \label{eq:embedded-trajectory}
+\end{equation}
+This is not a latent-state decoder trained on coordinates. It is a lookup from
+operational place symbols to MDS coordinates derived solely from learned
+all-pairs difficulty. Movement failures appear as repeated points; successful
+local actions connect nearby reconstructed places; the final probe verifies
+the target without adding movement distance.
 
 \begin{figure}[t]
 \centering
@@ -777,17 +1871,87 @@ externally meaningful orientation.}
 \caption{Observed place sequences under learned policies, drawn in coordinates
 computed only from learned all-pairs difficulty. The green star is the goal;
 numbers mark intervention order. In this limited sense, action histories are
-stochastic motion through emergent hodological space.}
+stochastic motion through emergent hodological space. Coordinate frames differ
+because rotation, reflection, translation, and scale are not operationally
+fixed.}
 \label{fig:spatial-trajectories}
 \end{figure}
 
-The negative stages are informative. Center-only training achieved
-$0.92$--$0.95$ reset success but only about $0.25$ arbitrary all-pairs success:
-a star of routes from one origin is not a space. Random-source binary
-observation reached only $0.482$ all-pairs success. Destination observation
-with a six-event literal history achieved nearly perfect control but split one
-place by arrival route and left 2D stress near $0.16$. Quotienting histories by
-their latest place symbol yields the final result.
+The displayed policies make one or two movement interventions followed by the
+common probe. Their coordinate traces are short local paths toward the green
+goal. Stochasticity is operationally visible: a diagonal action may leave the
+agent at the same place before a later success. In this precise and limited
+sense, an action history has become motion through emergent space. The plot does
+not imply continuous dynamics between points, a universal external frame, or
+that the hidden Hilbert basis itself was learned.
+
+\subsection{Failed constructions and the corrections they motivated}
+\label{sec:spatial-failures}
+
+Negative stages were retained because each rules out an initially tempting but
+insufficient definition of emergent space.
+
+\paragraph{A single origin produces routes, not a space.}
+The first learner always reset at the central state. It achieved roughly
+$0.92$--$0.95$ success on that reset distribution, which at first looked
+encouraging. When evaluated from arbitrary sources, success fell to about
+$0.25$. The policy had learned a star of source-specific routes from the center
+and had too little evidence for local behavior elsewhere. More fundamentally,
+one source determines only $D_{\mathrm{center},j}$. A 2D geometry requires
+relations among all places. Uniform source--goal training corrected both the
+coverage defect and the conceptual definition.
+
+\paragraph{A hidden spatial graph is not automatically an agent's space.}
+With uniform sources but binary success/failure movement observations, the
+learner reached only $0.482$ all-pairs success. The same Kraus connectivity that
+supports the positive result was present, yet it was not operationally
+available through the learner's finite memory. This failure separates a space
+in the simulator designer's representation from a hodological space usable by
+the agent. It motivates recurrent predictive localization as the next, more
+ambitious experiment.
+
+\paragraph{More remembered detail can make geometry worse.}
+When destination symbols were introduced but the agent retained a literal
+six-event history, navigation success rose to approximately $0.998$. Its 2D
+stress nevertheless remained near $0.16$. The state table assigned distinct
+keys to the same current place depending on arrival route. Those keys received
+unequal data and learned slightly different policies and costs, fragmenting one
+operational place into many representational states. The failure illustrates
+that memory capacity and state quality are not synonymous.
+
+\paragraph{Quotienting by future affordance repairs the representation.}
+The final PlaceQAgent keeps only $(g,J,\ell)$. Histories ending at the same
+place symbol are pooled because they imply the same next-outcome law for every
+action. This predictive equivalence increases sample sharing, reaches 100\%
+all-pairs success, and lowers mean 2D stress to 0.071. The correction is not
+coordinate supervision; it is the minimal Markov quotient supported by the
+observation interface.
+
+Together these stages identify three conditions for the present spatial
+result: broad all-pairs experience, enough observation or memory for
+operational localization, and a representation that merges histories with the
+same future affordances. The tuned diagonal cost is a fourth condition for
+Euclidean rather than merely grid-topological structure.
+
+\subsection{Exactly what this construction establishes}
+
+The positive conclusion can now be stated without either underselling or
+overclaiming it. There exists a valid nine-dimensional quantum instrument
+family, a common-probe goal repertoire, and a coordinate-free RL state for
+which independently learned all-pairs intervention cost strongly prefers two
+dimensions, closely recovers a concealed square arrangement, and maps learned
+action histories to stochastic local paths. Matched controls show that
+competence, localization, arrangement recovery, and Euclidean metric quality
+are distinct.
+
+The result is an existence proof in a deliberately classical corner of quantum
+theory. Localized basis states, a sharp place outcome, open boundaries, and
+measure-and-prepare motion were designed. The agent reconstructs their metric
+relations but does not discover an unanticipated number of places from raw
+coherent dynamics. A stronger emergence claim will require aliased or weak
+observations, learned recurrent localization, larger and topologically varied
+systems, coherent channels, held-out landmarks, and geometry that remains
+stable when no privileged place basis is built into the simulator.
 
 \section{Discussion and limitations}
 \label{sec:discussion}
@@ -990,6 +2154,88 @@ five figures.
 same common place probe.
 \end{description}
 
+\section{Worked examples for the new reader}
+
+\subsection{A numerical Q-learning update}
+
+Suppose the current estimate for an observed state--action pair is
+$Q(s,a)=2.0$. The action gives reward $r=1$, the next state is nonterminal, the
+largest next-state action value is 4, and $\gamma=0.95$. The TD target and error
+are
+\begin{equation}
+ Y^Q=1+0.95(4)=4.8,
+ \qquad \delta^Q=4.8-2.0=2.8.
+\end{equation}
+With $\alpha=0.1$, the updated entry is
+\begin{equation}
+ Q_{\rm new}(s,a)=2.0+0.1(2.8)=2.28.
+\end{equation}
+The target is not treated as certain: one sample moves the estimate only ten
+percent of the way. Repeated transitions average stochastic outcomes. If the
+transition terminated, the next-state term would be removed and the target
+would be just the observed reward.
+
+\subsection{Reward value versus intervention cost}
+
+Consider two policies for the same goal. Policy A succeeds in two steps with
+probability one. Policy B succeeds in one step with probability $0.6$ and in
+ten steps otherwise. With only a large completion reward and discounting,
+policy preference depends on $\gamma$ and reward design. Their expected
+undiscounted hitting costs are unambiguous:
+\begin{equation}
+ \E\tau_A=2,
+ \qquad
+ \E\tau_B=0.6(1)+0.4(10)=4.6.
+\end{equation}
+At deadline $T=1$, however, B has success probability 0.6 while A has zero.
+This example explains why expected cost, discounted reward, and finite-time
+success are related but distinct descriptions of goal difficulty.
+
+\subsection{Why a square is intrinsically two-dimensional}
+
+Take four ideal points at $(0,0),(1,0),(0,1),(1,1)$. Their Euclidean distance
+matrix is
+\begin{equation}
+ D=\begin{pmatrix}
+ 0&1&1&\sqrt2\\
+ 1&0&\sqrt2&1\\
+ 1&\sqrt2&0&1\\
+ \sqrt2&1&1&0
+ \end{pmatrix}.
+\end{equation}
+Double centering $D^{\circ2}$ using \cref{eq:double-centering} yields a
+positive-semidefinite Gram matrix of rank two. Consequently classical MDS has
+two positive eigenvalues and reconstructs the square exactly in $\R^2$; a
+one-dimensional reconstruction must distort at least one pair. If the
+diagonal entries were changed from $\sqrt2$ to 1 while axial entries remained
+1, the relation would no longer describe the ordinary unit square even though
+a plotting algorithm might still arrange the four labels in a square-like
+pattern. This miniature example is the logic behind the diagonal-cost design
+and the separation of Procrustes recovery from stress.
+
+\subsection{Spatial experiment as an auditable algorithm}
+
+The complete study can be summarized without implementation-specific detail:
+\begin{enumerate}
+ \item For every candidate $p_d$, construct the valid movement instruments,
+ compute exact all-pairs stochastic shortest paths, and score their 2D
+ Euclidean compatibility.
+ \item Fix the best candidate before training. For each random seed and each
+ control world, initialize an empty Q table.
+ \item Repeatedly sample a source and goal uniformly, emit the coordinate-free
+ source symbol, and train by epsilon-greedy Q-learning for at most 12 actions.
+ \item Freeze the policy. For each of 81 ordered source--goal pairs, run 100
+ greedy trials and record success and restricted hitting cost.
+ \item Subtract the common terminal-probe overhead, retain ordered asymmetry,
+ and symmetrize costs only for the Euclidean test.
+ \item Fit 1D, 2D, and 3D MDS coordinates; calculate stress, spectrum,
+ calibration, directionality, and privileged Procrustes diagnostics.
+ \item Map fresh observed policy trajectories into coordinates inferred from
+ the all-pairs costs. Never use concealed coordinates to select an action.
+\end{enumerate}
+This ordering prevents test information from entering the policy and makes
+each transformation from quantum instrument to geometric claim inspectable.
+
 \begin{thebibliography}{99}
 \bibitem{fuchs2014} C.~A. Fuchs, N.~D. Mermin, and R.~Schack,
 “An introduction to QBism with an application to the locality of quantum
@@ -1010,6 +2256,9 @@ Information} 8, 535--640 (2010). \doi{10.1142/S0219749910006502}.
 \bibitem{sutton2018} R.~S. Sutton and A.~G. Barto,
 \emph{Reinforcement Learning: An Introduction}, 2nd ed. (MIT Press, 2018).
 \url{https://mitpress.mit.edu/9780262039246/reinforcement-learning/}.
+\bibitem{bellman1957} R.~Bellman, \emph{Dynamic Programming}
+(Princeton University Press, 1957).
+\url{https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming}.
 \bibitem{watkins1992} C.~J. C.~H. Watkins and P.~Dayan, “Q-learning,”
 \emph{Machine Learning} 8, 279--292 (1992). \doi{10.1007/BF00992698}.
 \bibitem{kaelbling1998} L.~P. Kaelbling, M.~L. Littman, and A.~R. Cassandra,
@@ -1062,6 +2311,15 @@ potential,” \emph{Physical Review Letters} 127, 190403 (2021).
 \bibitem{kruskal1964} J.~B. Kruskal, “Multidimensional scaling by optimizing
 goodness of fit to a nonmetric hypothesis,” \emph{Psychometrika} 29, 1--27
 (1964). \doi{10.1007/BF02289565}.
+\bibitem{torgerson1952} W.~S. Torgerson, “Multidimensional scaling: I. Theory
+and method,” \emph{Psychometrika} 17, 401--419 (1952).
+\doi{10.1007/BF02288916}.
+\bibitem{gower1966} J.~C. Gower, “Some distance properties of latent root and
+vector methods used in multivariate analysis,” \emph{Biometrika} 53, 325--338
+(1966). \doi{10.1093/biomet/53.3-4.325}.
+\bibitem{schonemann1966} P.~H. Sch\"onemann, “A generalized solution of the
+orthogonal Procrustes problem,” \emph{Psychometrika} 31, 1--10 (1966).
+\doi{10.1007/BF02289451}.
 \bibitem{tenenbaum2000} J.~B. Tenenbaum, V.~de Silva, and J.~C. Langford,
 “A global geometric framework for nonlinear dimensionality reduction,”
 \emph{Science} 290, 2319--2323 (2000).

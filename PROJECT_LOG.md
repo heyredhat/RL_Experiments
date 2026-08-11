@@ -200,3 +200,55 @@ are recorded in `SPATIAL_HODOLOGY.md`; aggregate results are also appended to
   schematic, six additional primary references, and a causal/curvature
   outlook. Rebuilt it successfully with resolved citations and cross-references
   and visually inspected the new theory, result, and bibliography pages.
+
+## 2026-08-11 — Pedagogical manuscript expansion
+
+Expanded `GOAL_GEOMETRY_PAPER.tex` from 24 to 44 pages in response to the need
+for a research document that can teach the required reinforcement-learning and
+goal-geometry theory without assuming prior RL experience.
+
+### Theory additions
+
+- Derived the agent--environment loop, MDP kernel, return, state/action values,
+  Bellman expectation and optimality equations, Q-learning temporal-difference
+  update, epsilon-greedy exploration, goal conditioning, censoring, and the
+  distinction between reward value and stochastic-shortest-path cost.
+- Expanded the POMDP treatment through Bayesian beliefs, finite-history state,
+  predictive equivalence classes, GRU gates, neural TD loss, target networks,
+  backpropagation through time, and the limits of convergence claims under
+  nonlinear approximation.
+- Expanded quantum-instrument theory to allow multiple hidden Kraus branches
+  per observed outcome, explicitly deriving normalization, post-measurement
+  state, coarse-graining, and the operational history distribution.
+- Distinguished strategic, trajectory, and directed reachability geometries;
+  defined the metric axioms, Jensen--Shannon policy comparison, goal automaton,
+  intervention displacement, and finite-time success curves.
+- Added worked numerical appendices for a Q update, reward-versus-hitting-cost
+  comparison, the rank-two MDS geometry of a square, and an auditable spatial
+  experiment algorithm.
+
+### Section 7 reconstruction
+
+- Reframed the spatial claim as six simultaneous operational criteria:
+  all-pairs competence, localization, metric coherence, dimensional preference,
+  trajectory coherence, and robustness.
+- Derived the full bilevel inverse-design map, the nine-dimensional source
+  ensemble, movement Kraus completeness, destination coarse-graining, common
+  probe goals, and the coordinate-free Markov quotient used by `PlaceQAgent`.
+- Derived the geometric waiting-time cost `1/p_d`, explained the
+  `1/sqrt(2)` prediction, and separated exact Dijkstra design costs from the
+  learned empirical restricted hitting-cost matrix.
+- Derived classical MDS through double centering and Gram eigendecomposition,
+  explained SMACOF refinement, and motivated stress, positive spectral
+  variance, negative spectrum, exact-cost correlation, directionality, and
+  Procrustes validation individually.
+- Expanded the interpretation of every spatial result and control, the policy
+  trajectory construction, all failed stages, and the precise boundary of the
+  existence claim.
+- Added foundational references for Bellman dynamic programming, classical
+  MDS, Euclidean distance spectra, and orthogonal Procrustes analysis.
+
+The revised source is 2,337 lines. It compiles successfully to a 44-page PDF
+with all citations and cross-references resolved; only harmless underfull
+bibliography lines remain. Representative pages and the full test suite were
+checked after the final editorial pass.
