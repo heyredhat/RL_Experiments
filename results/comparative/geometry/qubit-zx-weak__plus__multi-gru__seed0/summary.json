@@ -1,0 +1,8 @@
+{
+  "embedding_strategy_spearman": 0.7233766233766233,
+  "embedding_trajectory_spearman": 0.49350649350649345,
+  "pca_explained_variance": [
+    0.5782080085266045,
+    0.2244676032289479
+  ]
+}

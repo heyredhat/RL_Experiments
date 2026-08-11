@@ -1,0 +1,111 @@
+# Agent-Centered Quantum Reinforcement Learning
+
+This repository studies agents that learn quantum measurement strategies from
+their own action/outcome histories. The simulator knows the density matrix and
+Kraus operators; the agent never receives either. The central research objects
+are a learned predictive state, a behavioral geometry among goals, and a
+directed reachability relation from the current history to each goal.
+
+The conceptual motivation is in [VISION.md](VISION.md), the software design is
+in [ARCHITECTURE.md](ARCHITECTURE.md), the reproducible study protocol and
+results are in [EXPERIMENTS.md](EXPERIMENTS.md), and the development record is
+in [PROJECT_LOG.md](PROJECT_LOG.md).
+
+## Quick start
+
+```bash
+conda env update --file environment.yml --prune
+conda activate qbist_spacetime
+python -m unittest discover -s tests -v
+```
+
+Run one backward-compatible baseline:
+
+```bash
+python compare_backends.py --backend tabular --episodes 2000
+```
+
+Select a different intervention world:
+
+```bash
+python compare_backends.py \
+  --environment qubit-pauli-sic \
+  --backend multi-gru \
+  --episodes 2000 \
+  --geometry-prefix results/sic/geometry
+```
+
+Run a controlled suite and render all figures:
+
+```bash
+python run_experiment_suite.py --episodes 1000 --seeds 0,1,2 --output results/standard
+python plot_results.py results/standard
+```
+
+`plot_results.py` deliberately has no PyTorch dependency. It can run in any
+Python environment containing NumPy and Matplotlib.
+
+## Environment catalog
+
+| name | hidden system | available interventions | default hidden state |
+|---|---:|---|---|
+| `qubit-zx-weak` | qubit | projective Z, projective X, weak Z | `one` |
+| `qubit-pauli` | qubit | projective Z, X, Y | `plus-i` |
+| `qubit-unsharp` | qubit | weak Z, X, Y | `mixed` |
+| `qubit-pauli-sic` | qubit | projective Z, X, Y, four-outcome tetrahedral SIC | `mixed` |
+| `qutrit-mub` | qutrit | three mutually unbiased projective bases | `two` |
+
+Qubit states include `zero`, `one`, `plus`, `minus`, `plus-i`, `minus-i`, and
+`mixed`. Qutrit states include `zero`, `one`, `two`, `plus`, and `mixed`. Each
+world supplies goals matched to its action and outcome alphabet; passing
+`--goals` overrides that catalog.
+
+## Backends
+
+- `tabular`: Q-learning over a literal finite action/outcome history.
+- `gru`: a goal-conditioned recurrent state trained only through reward.
+- `multi-gru`: the recurrent controller plus an outcome predictor, a directed
+  cost-to-go head, and behaviorally regularized goal embeddings.
+
+The older `predictive_gru_q_learning.py` remains a focused single-goal
+prediction baseline. `multi_goal_q_learning.py` remains a compatibility entry
+point for the tabular baseline.
+
+## Goal syntax
+
+A goal is an ordered subsequence of desired action/outcome checkpoints. Other
+events may occur between checkpoints:
+
+```text
+prepare_then_test=0:0,1:1
+```
+
+This means “eventually perform action 0 and experience outcome 0, then later
+perform action 1 and experience outcome 1.” Goal progress is first-person
+information computable from the observed history. Validation rejects actions
+and outcomes unavailable in the selected environment.
+
+## Experiment artifacts
+
+`run_experiment_suite.py` writes:
+
+- `training_episodes.csv` and `evaluation_episodes.csv`: tidy raw outcomes;
+- `summary.csv`: per-goal and overall metrics for every run;
+- `manifest.json`: exact configuration and seed metadata;
+- `models/*.pt`: recurrent model weights;
+- `geometry/<run>/`: embedding, policy, trajectory, reachability, reachability
+  curve, and intervention-displacement data.
+
+`plot_results.py` turns these into performance heatmaps, learning curves, goal
+embedding projections, independent strategy-distance comparisons, trajectory
+signatures, reachability calibration plots, and action/outcome displacement
+maps.
+
+## Scientific boundary
+
+Agent code must not inspect `env._rho`, `env._kraus`, or any quantity derived
+from them. Tests may inspect private simulator state solely to verify quantum
+validity. Offline scientific analysis may compare a learned representation to
+hidden physics only when explicitly labeled as privileged analysis; the
+current geometry pipeline does not do so.
+

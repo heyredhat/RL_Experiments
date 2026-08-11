@@ -81,6 +81,7 @@ def make_agent(args, env, goals):
         return MultiGoalGRUAgent(
             n_actions=env.n_actions,
             n_outcomes=env.n_outcomes,
+            action_outcome_counts=env.action_outcome_counts,
             goals=goals,
             interaction_embedding_dim=args.interaction_embedding_dim,
             hidden_dim=args.hidden_dim,
@@ -182,7 +183,7 @@ def main():
         completion_reward=args.completion_reward,
     )
 
-    print_evaluation_summary(agent, goals, results)
+    print_evaluation_summary(agent, goals, results, eval_env.action_names)
 
     if args.backend == "multi-gru":
         print_goal_geometry(agent, goals)

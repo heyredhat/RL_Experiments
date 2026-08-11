@@ -1,0 +1,8 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+# Keep the documented comparative data/figures, but omit disposable smoke runs
+# and binary neural checkpoints.
+results/*
+!results/comparative/
+results/comparative/models/

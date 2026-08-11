@@ -193,7 +193,7 @@ def main():
         completion_reward=args.completion_reward,
     )
 
-    print_evaluation_summary(agent, goals, results)
+    print_evaluation_summary(agent, goals, results, eval_env.action_names)
 
     if args.csv:
         save_results_csv(args.csv, agent.name, "evaluation", results)

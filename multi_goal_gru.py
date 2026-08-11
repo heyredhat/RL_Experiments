@@ -96,6 +96,7 @@ class MultiGoalNetwork(nn.Module):
         *,
         n_actions: int,
         n_outcomes: int,
+        action_outcome_counts: tuple[int, ...] | None = None,
         n_goals: int,
         max_goal_length: int,
         interaction_embedding_dim: int = 8,
@@ -106,6 +107,11 @@ class MultiGoalNetwork(nn.Module):
 
         self.n_actions = n_actions
         self.n_outcomes = n_outcomes
+        counts = action_outcome_counts or (n_outcomes,) * n_actions
+        if len(counts) != n_actions:
+            raise ValueError("action_outcome_counts must have one entry per action")
+        mask = torch.arange(n_outcomes)[None, :] < torch.tensor(counts)[:, None]
+        self.register_buffer("valid_outcome_mask", mask)
         self.n_goals = n_goals
         self.max_goal_length = max_goal_length
         self.hidden_dim = hidden_dim
@@ -236,7 +242,8 @@ class MultiGoalNetwork(nn.Module):
     ) -> torch.Tensor:
         a = torch.tensor(action, dtype=torch.long, device=z.device)
         a_emb = self.action_embedding(a)
-        return self.outcome_head(torch.cat([z, a_emb], dim=-1))
+        logits = self.outcome_head(torch.cat([z, a_emb], dim=-1))
+        return logits.masked_fill(~self.valid_outcome_mask[action], -1e9)
 
     def update_memory(
         self,
@@ -270,6 +277,7 @@ class MultiGoalGRUAgent:
         *,
         n_actions: int,
         n_outcomes: int,
+        action_outcome_counts: tuple[int, ...] | None = None,
         goals: tuple[GoalSpec, ...],
         interaction_embedding_dim: int = 8,
         hidden_dim: int = 48,
@@ -323,6 +331,7 @@ class MultiGoalGRUAgent:
         self.network = MultiGoalNetwork(
             n_actions=n_actions,
             n_outcomes=n_outcomes,
+            action_outcome_counts=action_outcome_counts,
             n_goals=len(goals),
             max_goal_length=max(g.length for g in goals),
             interaction_embedding_dim=interaction_embedding_dim,
@@ -967,6 +976,7 @@ def main():
     agent = MultiGoalGRUAgent(
         n_actions=train_env.n_actions,
         n_outcomes=train_env.n_outcomes,
+        action_outcome_counts=train_env.action_outcome_counts,
         goals=goals,
         interaction_embedding_dim=args.interaction_embedding_dim,
         hidden_dim=args.hidden_dim,
@@ -1013,7 +1023,7 @@ def main():
         completion_reward=args.completion_reward,
     )
 
-    print_evaluation_summary(agent, goals, results)
+    print_evaluation_summary(agent, goals, results, eval_env.action_names)
 
     print(
         "last losses: "

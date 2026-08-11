@@ -18,10 +18,19 @@ The quantum model exists only inside the simulated environment.
 
 ## 1. Files
 
+### Python environment
+
+Use `conda activate qbist_spacetime`.
+
 ### Current shared infrastructure
 
+- `quantum_environments.py`
+  - validated catalog of qubit and qutrit instruments;
+  - environment-specific hidden states, action labels, outcome alphabets, and
+    goal repertoires;
+  - keeps density matrices and Kraus operators private to the simulator.
+
 - `quantum_rl_common.py`
-  - hidden quantum environment;
   - sequence-goal definitions;
   - multi-goal task parser;
   - backend protocol;
@@ -60,18 +69,31 @@ The quantum model exists only inside the simulated environment.
     - `--backend multi-gru`
   - intended as the main place to add future backends.
 
-### Legacy files from the first iteration
+- `run_experiment_suite.py`
+  - seeded comparisons across environments, hidden initial states, and agents;
+  - checkpoints episode data, summaries, model weights, and geometry data.
 
-- `quantum_environment.py`
+- `goal_geometry.py`
+  - held-out policy and trajectory geometry;
+  - reachability calibration and finite-time curves;
+  - intervention/outcome displacement in goal-distance coordinates.
+
+- `plot_results.py`
+  - dependency-light performance and geometry figure generator.
+
+### Focused / compatibility entry points
+
 - `q_learning.py`
 - `gru_q_learning.py`
+- `predictive_gru_q_learning.py`
+- `multi_goal_q_learning.py`
 
-Those remain useful as the simplest one-goal versions, but the newer files use
-`quantum_rl_common.py`.
+All use the shared environment/runner boundary. The predictive file deliberately
+restricts itself to one goal; the others provide focused baseline CLIs.
 
 ---
 
-# 2. Physical environment
+# 2. Physical environments
 
 The default hidden system is one qubit.
 
@@ -84,6 +106,12 @@ Available interventions:
 | `2` | weak \(Z\) |
 
 Every measurement has classical outcomes `0` and `1`.
+
+The catalog additionally includes projective Pauli XYZ, unsharp XYZ, a mixed
+two-/four-outcome Pauli plus tetrahedral SIC repertoire, and three qutrit MUB
+measurements. Run any CLI with `--help` for accepted environment names. Neural
+outcome heads use the maximum outcome count in a world and mask outcomes that
+are impossible for a particular action.
 
 The environment secretly uses Kraus operators:
 
@@ -690,10 +718,12 @@ This is a standard stabilization device.
 
 # 13. Running the experiments
 
-Install dependencies:
+Create or update the environment and run the tests:
 
 ```bash
-pip install numpy torch
+conda env update --file environment.yml --prune
+conda activate qbist_spacetime
+python -m unittest discover -s tests -v
 ```
 
 ## Multi-goal tabular baseline
@@ -754,6 +784,14 @@ python compare_backends.py \
 
 For serious comparisons, repeat over several random seeds.
 
+The suite runner automates matched worlds, states, backends, and seeds:
+
+```bash
+python run_experiment_suite.py --episodes 1000 --seeds 0,1,2 \
+  --output results/standard
+python plot_results.py results/standard
+```
+
 ---
 
 # 14. Evaluation outputs
@@ -783,6 +821,11 @@ These expose:
 1. the raw learned goal coordinates;
 2. pairwise Euclidean goal distances;
 3. the learned distance from blank history to each goal.
+
+The suite runner additionally writes raw training/evaluation episodes, an exact
+manifest, model checkpoints, held-out strategy and trajectory distances,
+reachability curves, and intervention-displacement tables. `plot_results.py`
+renders both aggregate performance and four complementary geometry views.
 
 ---
 

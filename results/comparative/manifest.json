@@ -1,0 +1,660 @@
+{
+  "created_utc": "2026-08-10T21:28:53.271217+00:00",
+  "configuration": {
+    "scenarios": "qubit-zx-weak:one,qubit-zx-weak:plus,qubit-pauli:plus-i,qubit-unsharp:mixed,qubit-pauli-sic:mixed,qutrit-mub:two",
+    "backends": "tabular,gru,multi-gru",
+    "seeds": "0,1",
+    "episodes": 400,
+    "eval_episodes": 100,
+    "geometry_episodes": 40,
+    "max_steps": 15,
+    "log_every": 0,
+    "weak_q": 0.8,
+    "max_goals": 0,
+    "device": "cpu",
+    "history_length": 4,
+    "alpha": 0.1,
+    "gamma": 0.95,
+    "epsilon_start": 1.0,
+    "epsilon_end": 0.05,
+    "epsilon_decay": 0.99,
+    "interaction_embedding_dim": 8,
+    "hidden_dim": 32,
+    "goal_dim": 6,
+    "learning_rate": 0.001,
+    "prediction_weight": 0.5,
+    "cost_weight": 0.5,
+    "geometry_weight": 0.05,
+    "geometry_scale": 2.0,
+    "policy_temperature": 1.0,
+    "target_tau": 0.02,
+    "grad_clip": 5.0
+  },
+  "output": "/home/heyredhat/Documents/QBist Spacetime/RL_Experiments/results/comparative",
+  "runs": [
+    {
+      "run_id": "qubit-zx-weak__one__tabular__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__one__tabular__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__one__gru__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__one__gru__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__one__multi-gru__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ],
+      "geometry_directory": "geometry/qubit-zx-weak__one__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.45454545454545453,
+      "embedding_trajectory_spearman": 0.08181818181818182
+    },
+    {
+      "run_id": "qubit-zx-weak__one__multi-gru__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "one",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ],
+      "geometry_directory": "geometry/qubit-zx-weak__one__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.6493506493506493,
+      "embedding_trajectory_spearman": 0.7116883116883117
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__tabular__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__tabular__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__gru__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__gru__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ]
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__multi-gru__seed0",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ],
+      "geometry_directory": "geometry/qubit-zx-weak__plus__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.7233766233766233,
+      "embedding_trajectory_spearman": 0.49350649350649345
+    },
+    {
+      "run_id": "qubit-zx-weak__plus__multi-gru__seed1",
+      "environment": "qubit-zx-weak",
+      "initial_state": "plus",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "X0",
+        "X1",
+        "Z0_X0",
+        "X0_Z0",
+        "weakZ0_Z0"
+      ],
+      "geometry_directory": "geometry/qubit-zx-weak__plus__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.45454545454545453,
+      "embedding_trajectory_spearman": 0.11948051948051949
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__tabular__seed0",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__tabular__seed1",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__gru__seed0",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__gru__seed1",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__multi-gru__seed0",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ],
+      "geometry_directory": "geometry/qubit-pauli__plus-i__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.12077922077922078,
+      "embedding_trajectory_spearman": 0.1909090909090909
+    },
+    {
+      "run_id": "qubit-pauli__plus-i__multi-gru__seed1",
+      "environment": "qubit-pauli",
+      "initial_state": "plus-i",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "Z0_X0",
+        "X0_Z0",
+        "Y0_X1",
+        "Z0_X0_Y0"
+      ],
+      "geometry_directory": "geometry/qubit-pauli__plus-i__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.28181818181818186,
+      "embedding_trajectory_spearman": 0.7863425029321471
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__tabular__seed0",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ]
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__tabular__seed1",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ]
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__gru__seed0",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ]
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__gru__seed1",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ]
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__multi-gru__seed0",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ],
+      "geometry_directory": "geometry/qubit-unsharp__mixed__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.7,
+      "embedding_trajectory_spearman": 0.3571428571428571
+    },
+    {
+      "run_id": "qubit-unsharp__mixed__multi-gru__seed1",
+      "environment": "qubit-unsharp",
+      "initial_state": "mixed",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "wZ0",
+        "wX0",
+        "wY0",
+        "wZ0_wX0",
+        "wX0_wZ0",
+        "wZ0_wX0_wY0"
+      ],
+      "geometry_directory": "geometry/qubit-unsharp__mixed__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.825,
+      "embedding_trajectory_spearman": 0.46071428571428563
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__tabular__seed0",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__tabular__seed1",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__gru__seed0",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__gru__seed1",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ]
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__multi-gru__seed0",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ],
+      "geometry_directory": "geometry/qubit-pauli-sic__mixed__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.5742599742599743,
+      "embedding_trajectory_spearman": -0.09111969111969112
+    },
+    {
+      "run_id": "qubit-pauli-sic__mixed__multi-gru__seed1",
+      "environment": "qubit-pauli-sic",
+      "initial_state": "mixed",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "X0",
+        "Y0",
+        "SIC0",
+        "SIC1",
+        "SIC2",
+        "SIC3",
+        "Z0_SIC0",
+        "SIC0_X0"
+      ],
+      "geometry_directory": "geometry/qubit-pauli-sic__mixed__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.7498069498069498,
+      "embedding_trajectory_spearman": 0.6276150952688055
+    },
+    {
+      "run_id": "qutrit-mub__two__tabular__seed0",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "tabular",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ]
+    },
+    {
+      "run_id": "qutrit-mub__two__tabular__seed1",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "tabular",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ]
+    },
+    {
+      "run_id": "qutrit-mub__two__gru__seed0",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ]
+    },
+    {
+      "run_id": "qutrit-mub__two__gru__seed1",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ]
+    },
+    {
+      "run_id": "qutrit-mub__two__multi-gru__seed0",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "multi-gru",
+      "seed": 0,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ],
+      "geometry_directory": "geometry/qutrit-mub__two__multi-gru__seed0",
+      "embedding_strategy_spearman": 0.4915161466885605,
+      "embedding_trajectory_spearman": 0.03557744937055282
+    },
+    {
+      "run_id": "qutrit-mub__two__multi-gru__seed1",
+      "environment": "qutrit-mub",
+      "initial_state": "two",
+      "backend": "multi-gru",
+      "seed": 1,
+      "goals": [
+        "Z0",
+        "Z1",
+        "Z2",
+        "F0",
+        "F1",
+        "Z0_F0",
+        "F0_Z0",
+        "Z0_F0_P0"
+      ],
+      "geometry_directory": "geometry/qutrit-mub__two__multi-gru__seed1",
+      "embedding_strategy_spearman": 0.41488779419813904,
+      "embedding_trajectory_spearman": -0.044882320744389706
+    }
+  ]
+}

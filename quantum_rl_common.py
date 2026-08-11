@@ -52,119 +52,11 @@ from typing import Protocol, Sequence
 
 import numpy as np
 
-
-# ============================================================================
-# Hidden quantum environment
-# ============================================================================
-
-class QuantumEnvironment:
-    """
-    One hidden qubit with three available measurement interventions.
-
-    PUBLIC API FOR THE AGENT:
-        env.n_actions
-        env.n_outcomes
-        outcome = env.step(action)
-
-    The leading underscore on _rho and _kraus is intentional: those are hidden
-    environment variables and must not be used by an agent.
-    """
-
-    action_names = ("Z", "X", "weak-Z")
-
-    def __init__(
-        self,
-        initial_state: str = "one",
-        weak_q: float = 0.80,
-        seed: int = 0,
-    ):
-        if not (0.5 < weak_q < 1.0):
-            raise ValueError("weak_q must lie strictly between 0.5 and 1.0")
-
-        self.initial_state = initial_state
-        self.weak_q = float(weak_q)
-        self.rng = np.random.default_rng(seed)
-
-        zero = np.array([1.0, 0.0], dtype=complex)
-        one = np.array([0.0, 1.0], dtype=complex)
-        plus = (zero + one) / np.sqrt(2.0)
-        minus = (zero - one) / np.sqrt(2.0)
-
-        Z0 = np.outer(zero, zero.conj())
-        Z1 = np.outer(one, one.conj())
-
-        X0 = np.outer(plus, plus.conj())
-        X1 = np.outer(minus, minus.conj())
-
-        q = self.weak_q
-        W0 = np.diag([np.sqrt(q), np.sqrt(1.0 - q)]).astype(complex)
-        W1 = np.diag([np.sqrt(1.0 - q), np.sqrt(q)]).astype(complex)
-
-        self._kraus = ((Z0, Z1), (X0, X1), (W0, W1))
-        self.n_actions = len(self._kraus)
-        self.n_outcomes = 2
-        self._rho: np.ndarray | None = None
-        self.reset()
-
-    def _initial_density_matrix(self) -> np.ndarray:
-        zero = np.array([1.0, 0.0], dtype=complex)
-        one = np.array([0.0, 1.0], dtype=complex)
-        plus = (zero + one) / np.sqrt(2.0)
-        minus = (zero - one) / np.sqrt(2.0)
-
-        pure = {
-            "zero": zero,
-            "one": one,
-            "plus": plus,
-            "minus": minus,
-        }
-
-        if self.initial_state == "mixed":
-            return np.eye(2, dtype=complex) / 2.0
-
-        if self.initial_state not in pure:
-            raise ValueError(
-                "initial_state must be one of zero, one, plus, minus, mixed"
-            )
-
-        psi = pure[self.initial_state]
-        return np.outer(psi, psi.conj())
-
-    def reset(self) -> None:
-        self._rho = self._initial_density_matrix()
-
-    def step(self, action: int) -> int:
-        """
-        Secret environment calculation:
-
-            p(o) = Tr(K_o rho K_o^†)
-            rho' = K_o rho K_o^† / p(o)
-
-        Only the integer outcome is returned to the agent.
-        """
-        if not 0 <= int(action) < self.n_actions:
-            raise ValueError(f"invalid action {action}")
-
-        assert self._rho is not None
-        Ks = self._kraus[int(action)]
-
-        probs = np.array(
-            [
-                np.trace(K @ self._rho @ K.conj().T).real
-                for K in Ks
-            ],
-            dtype=float,
-        )
-        probs = np.clip(probs, 0.0, None)
-        probs /= probs.sum()
-
-        outcome = int(self.rng.choice(self.n_outcomes, p=probs))
-        K = Ks[outcome]
-
-        unnormalized = K @ self._rho @ K.conj().T
-        self._rho = unnormalized / np.trace(unnormalized)
-
-        return outcome
+from quantum_environments import (
+    DEFAULT_GOALS_BY_ENVIRONMENT,
+    QuantumEnvironment,
+    available_environments,
+)
 
 
 # ============================================================================
@@ -229,8 +121,15 @@ def parse_target(text: str) -> tuple[tuple[int, int], ...]:
         token = token.strip()
         if not token:
             continue
-        a, o = token.split(":")
-        target.append((int(a), int(o)))
+        parts = token.split(":")
+        if len(parts) != 2:
+            raise ValueError(
+                f"invalid checkpoint {token!r}; expected ACTION:OUTCOME"
+            )
+        a, o = (int(part) for part in parts)
+        if a < 0 or o < 0:
+            raise ValueError(f"checkpoint indices must be non-negative: {token!r}")
+        target.append((a, o))
 
     if not target:
         raise ValueError(f"empty target: {text!r}")
@@ -271,9 +170,38 @@ def parse_goals(text: str) -> tuple[GoalSpec, ...]:
     return tuple(specs)
 
 
-def goal_to_string(spec: GoalSpec) -> str:
-    names = QuantumEnvironment.action_names
-    return " -> ".join(f"{names[a]}:{o}" for a, o in spec.target)
+def goal_to_string(
+    spec: GoalSpec,
+    action_names: Sequence[str] | None = None,
+) -> str:
+    """Render a goal, falling back to action indices for custom environments."""
+    names = tuple(action_names or ("Z", "X", "weak-Z"))
+    return " -> ".join(
+        f"{names[a] if 0 <= a < len(names) else f'a{a}'}:{o}"
+        for a, o in spec.target
+    )
+
+
+def validate_goals(goals: Sequence[GoalSpec], env: QuantumEnvironment) -> None:
+    """Reject checkpoints that cannot occur in the selected environment."""
+    names: set[str] = set()
+    for spec in goals:
+        if not spec.name:
+            raise ValueError("goal names must not be empty")
+        if spec.name in names:
+            raise ValueError(f"duplicate goal name {spec.name!r}")
+        names.add(spec.name)
+        for action, outcome in spec.target:
+            if not 0 <= action < env.n_actions:
+                raise ValueError(
+                    f"goal {spec.name!r} uses unavailable action {action} "
+                    f"in {env.environment_name}"
+                )
+            if not 0 <= outcome < env.action_outcome_counts[action]:
+                raise ValueError(
+                    f"goal {spec.name!r} uses unavailable outcome {outcome} "
+                    f"for action {env.action_names[action]!r}"
+                )
 
 
 # ============================================================================
@@ -526,6 +454,7 @@ def print_evaluation_summary(
     agent: AgentBackend,
     goals: Sequence[GoalSpec],
     results: Sequence[EpisodeResult],
+    action_names: Sequence[str] | None = None,
 ) -> None:
     print()
     print("=" * 78)
@@ -540,7 +469,7 @@ def print_evaluation_summary(
             f"{spec.name:<18} "
             f"success={s['success_rate']:.3f}   "
             f"mean_steps={s['mean_steps_success']:.3f}   "
-            f"target={goal_to_string(spec)}"
+            f"target={goal_to_string(spec, action_names)}"
         )
 
     overall = summarize_results(results)
@@ -595,14 +524,7 @@ def save_results_csv(
 # Shared CLI
 # ============================================================================
 
-DEFAULT_GOALS = (
-    "Z0=0:0;"
-    "Z1=0:1;"
-    "X0=1:0;"
-    "X1=1:1;"
-    "Z0_X0=0:0,1:0;"
-    "X0_Z0=1:0,0:0"
-)
+DEFAULT_GOALS = DEFAULT_GOALS_BY_ENVIRONMENT["qubit-zx-weak"]
 
 
 def common_arg_parser(description: str) -> argparse.ArgumentParser:
@@ -615,16 +537,22 @@ def common_arg_parser(description: str) -> argparse.ArgumentParser:
     parser.add_argument("--log-every", type=int, default=1_000)
 
     parser.add_argument(
+        "--environment",
+        choices=available_environments(),
+        default="qubit-zx-weak",
+        help="Hidden measurement world; each has its own default goals.",
+    )
+    parser.add_argument(
         "--initial-state",
-        choices=("zero", "one", "plus", "minus", "mixed"),
-        default="one",
+        default=None,
+        help="Environment-specific state name (omit to use its documented default).",
     )
     parser.add_argument("--weak-q", type=float, default=0.80)
 
     parser.add_argument(
         "--goals",
         type=str,
-        default=DEFAULT_GOALS,
+        default=None,
         help=(
             'Semicolon-separated goals, e.g. '
             '"Z0=0:0;X0=1:0;Z0X0=0:0,1:0"'
@@ -642,6 +570,7 @@ def common_arg_parser(description: str) -> argparse.ArgumentParser:
 
 def make_environment(args, *, seed_offset: int = 0) -> QuantumEnvironment:
     return QuantumEnvironment(
+        environment=args.environment,
         initial_state=args.initial_state,
         weak_q=args.weak_q,
         seed=args.seed + seed_offset,
@@ -649,4 +578,16 @@ def make_environment(args, *, seed_offset: int = 0) -> QuantumEnvironment:
 
 
 def make_goals(args) -> tuple[GoalSpec, ...]:
-    return parse_goals(args.goals)
+    text = args.goals or DEFAULT_GOALS_BY_ENVIRONMENT[args.environment]
+    goals = parse_goals(text)
+    # Configuration errors should be reported before a long training run.  A
+    # short-lived environment is sufficient because validation uses metadata
+    # only and does not expose the hidden state to an agent.
+    env = QuantumEnvironment(
+        environment=args.environment,
+        initial_state=args.initial_state,
+        weak_q=args.weak_q,
+        seed=args.seed,
+    )
+    validate_goals(goals, env)
+    return goals

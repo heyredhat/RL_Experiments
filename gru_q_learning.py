@@ -681,6 +681,7 @@ def main() -> None:
         agent,
         goals,
         results,
+        eval_env.action_names,
     )
 
     print(

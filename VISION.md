@@ -1530,3 +1530,28 @@ They emerge together from the structure of intervention and consequence.
 In that sense, the project is not merely about applying reinforcement learning to quantum control.
 
 It is an attempt to computationally study how an agent can build an **operational world and a geometry of its own possibilities** from first-person experimental experience alone.
+
+---
+
+# 33. Implemented comparative program
+
+The software now varies the intervention repertoire as well as the agent. Its
+catalog includes sharp and unsharp qubit measurements, an informationally rich
+four-outcome qubit SIC alongside Pauli measurements, and qutrit mutually
+unbiased bases. This realizes the proposed experiment on agent-relative state
+spaces: the same learning architecture can now encounter worlds with different
+dimensions, disturbance profiles, and outcome alphabets.
+
+The goal geometry is inspected through several deliberately separate views:
+
+1. Euclidean distance between learned goal embeddings;
+2. held-out Jensen–Shannon strategy distance;
+3. distance between complete empirical trajectory signatures;
+4. directed distance from the current experiential history to each goal;
+5. intervention/outcome displacement of the entire goal-distance vector;
+6. finite-horizon reachability curves rather than mean hitting time alone.
+
+These views prevent a visually attractive embedding from being treated as
+self-validating. A useful learned geometry should predict independent behavior,
+calibrate against actual reachability, and make measurement-induced changes in
+future possibility legible.
