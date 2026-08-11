@@ -102,6 +102,37 @@ existence result: place can be an anticipated future experience maintained
 from history rather than a supplied current symbol. Delayed landmark
 supervision, landmark-anchored surveys, commuting sensors, and expensive fixed
 scans remain explicit limitations.
+
+We then make sensing itself goal directed. Open-boundary pilots expose a
+boundary-homing loophole, motivating local random-unitary layer swaps whose
+doubly stochastic kernels preserve uncertainty and the optimized 2D costs.
+Beacon, movement, and commitment actions all cost one. An atlas-preserving
+active policy chooses informative probes and uses $19.12\pm0.53$ total
+interventions rather than the fixed scan's $50.49\pm0.02$, while achieving
+$0.965\pm0.004$ success, movement stress $0.111\pm0.006$, and Procrustes
+$R^2=0.987\pm0.004$. A cheaper goal-relative value-of-information state loses
+global metric fidelity. Separating movement from sensing cost produces a first
+operational spatial-base/epistemic-fiber visualization: beliefs move in the
+learned plane while entropy records an internal height. This is a precursor,
+not yet a mathematical fiber bundle.
+
+The final study asks whether nine orthogonal place states were ever necessary.
+They were not. Two rationally independent phase controls on a single qubit
+give nine nonorthogonal sequence-labelled goals with an exact open
+$3\times3$ Manhattan word metric. Unit-cost retry instruments realize exact
+Euclidean distance in expectation, although the encoding is dense on one
+Bloch circle and develops severe finite-resolution shortcuts. A qutrit removes
+that dimensional pathology: two commuting phase generators have isotropic
+Fubini--Study covariance, a 121-state finite orbit, and an exact Euclidean
+nine-goal chart. An independent Hesse-SIC construction makes the goals common
+measurement outcomes and has the analytic Bellman solution
+$V_g(s)=6+d_{\mathbb Z_3^2}(s,g)$. Its geometry is a two-dimensional torus,
+not a Euclidean plane. These examples establish that Hilbert dimension does
+not count goals, separate physical, predictive, and automaton memory, and give
+a finite necessary-and-sufficient test: Bellman realizability together with
+the Schoenberg positive-semidefinite rank criterion. They also sharpen the
+open problem from whether low-dimensional systems can carry space to why
+physically natural instruments should select a robust Euclidean norm.
 \end{abstract}
 
 \noindent\textbf{Keywords:} reinforcement learning; quantum measurement;
@@ -163,6 +194,13 @@ multidimensional-scaling test, and every reported geometric diagnostic.
 The successor in \cref{sec:predictive-atlas} then derives weak-beacon
 localization, delayed predictive supervision, Bayesian belief filtering, and
 model-based navigation without an exact online place symbol.
+The active extension in \cref{sec:active-atlas} prices sensing and motion in
+common units, repairs a boundary-homing confound with coherent reversible
+channels, and tests a provisional spatial-base/epistemic-fiber decomposition.
+Finally, \cref{sec:lowdim} removes the nine-dimensional place register. It
+derives exact low-dimensional constructions, proves the relevant obstruction
+and embedding criteria, and distinguishes a geometry carried by quantum
+dynamics from one stored only in a goal automaton.
 
 The stronger motivation is hodological: for an agent, goals that require few
 reliable interventions are near and difficult goals are far. Lewin introduced
@@ -691,7 +729,7 @@ A sequence goal is an ordered list of action/outcome checkpoints
 Other events may occur between checkpoints. Progress $J_t\in\{0,\ldots,m_g\}$
 is the number of checkpoints already matched. It updates deterministically:
 \begin{equation}
- J_{t+1}=J_t+mathbb 1\{(A_t,O_t)=(a_{J_t+1}^g,o_{J_t+1}^g)\},
+ J_{t+1}=J_t+\mathbb 1\{(A_t,O_t)=(a_{J_t+1}^g,o_{J_t+1}^g)\},
  \label{eq:progress-update}
 \end{equation}
 with $J=m_g$ absorbing. Thus each goal defines a small deterministic automaton
@@ -1999,7 +2037,7 @@ The online information boundary is
  \mathcal I_t=\{g,(a_1,o_1),\ldots,(a_t,o_t)\}.
  \label{eq:atlas-information}
 \end{equation}
-The controller is not given $ho_t$, any Kraus operator, response
+The controller is not given $\rho_t$, any Kraus operator, response
 probabilities, lattice coordinates, or the exact landmark that the terminal
 probe would report. Source preparation and hidden-state decoding are used only
 to construct balanced experiments and audit results. The terminal report can
@@ -2421,6 +2459,914 @@ costs 48 interventions, far more than the typical journey. The result should be
 read as the first learned predictive atlas, not as generic emergence of
 physical space from arbitrary quantum dynamics.
 
+\section{Active atlas construction and an epistemic fiber}
+\label{sec:active-atlas}
+
+\subsection{Why sensing must enter the control problem}
+
+The predictive atlas in \cref{sec:predictive-atlas} always performs 48 weak
+probes before moving. This isolates the role of recurrent evidence, but the
+sensor budget is imposed by the experimenter rather than chosen by the agent.
+If place is an operational resource for goal pursuit, the agent should acquire
+only the distinctions whose expected benefit justifies their cost.
+
+We now give every intervention the same unit price,
+\begin{equation}
+ c_{\rm sense}=c_{\rm move}=c_{\rm commit}=1.
+ \label{eq:active-unit-cost}
+\end{equation}
+The agent begins from a uniform landmark belief, selects weak beacons or blind
+movements, and eventually invokes the terminal landmark probe. A false
+commitment ends the episode. The primary question is whether adaptive
+observation can preserve a common two-dimensional movement geometry while
+using substantially fewer interventions than fixed scanning.
+
+This is a value-of-information problem inside a POMDP, not a preprocessing
+problem. An observation is useful when its possible outcomes alter a valuable
+future decision. Its value depends on the current posterior, goal, action
+model, remaining options, and failure cost.
+
+\subsection{Boundary homing: a successful policy that destroys geometry}
+
+The first active pilot retained the open-boundary translations of
+\cref{sec:predictive-atlas}. It produced a decisive negative result. Repeating
+north drives all possible vertical coordinates to the top boundary; repeating
+west then drives them to the left boundary. A controller can therefore
+\emph{synchronize} an unknown ensemble at a corner. In one pilot the null-
+sensor condition reached every corner without sensing.
+
+No hidden coordinate leaked to the controller. Boundary homing was rational
+goal-directed behavior. Yet it erased the source distinctions from which an
+all-pairs geometry must be inferred. Near-identical open-loop routines from
+every source cannot support source-sensitive distance even when terminal
+success is perfect. The episode illustrates why competence is necessary but
+not sufficient for spatial emergence.
+
+The correction was structural rather than a larger uncertainty penalty. We
+require every blind movement kernel $P_a$ to be doubly stochastic,
+\begin{equation}
+ P_a\mathbf1=\mathbf1,
+ \qquad
+ \mathbf1^\top P_a=\mathbf1^\top.
+ \label{eq:doubly-stochastic}
+\end{equation}
+Consequently the uniform prior is invariant,
+\begin{equation}
+ b_{\rm unif}P_a=b_{\rm unif},
+ \label{eq:uniform-invariant}
+\end{equation}
+and blind movement cannot manufacture localization. The null-sensor production
+condition then returns to chance.
+
+\subsection{Coherent random-unitary movement}
+
+On the concealed $3\times3$ arrangement, north exchanges the top and middle
+rows while leaving the bottom row fixed; south exchanges the middle and bottom
+rows. East and west similarly exchange adjacent column layers. The resulting
+permutation operators are local involutions,
+\begin{equation}
+ U_a^2=I,
+ \qquad U_a^\dagger U_a=I.
+ \label{eq:layer-involution}
+\end{equation}
+The diagonal operators compose one horizontal and one vertical layer swap.
+These actions are contextual edge-layer exchanges rather than ordinary global
+translations, but together they generate the full lattice connectivity.
+
+Movement is implemented by the two-outcome random-unitary instrument
+\begin{equation}
+ M^{(a)}_0=\sqrt{p_a}U_a,
+ \qquad
+ M^{(a)}_1=\sqrt{1-p_a}I,
+ \label{eq:random-unitary-move}
+\end{equation}
+where axial actions use $p_a=1$ and diagonals use $p_a=0.715$. Its completeness
+is
+\begin{equation}
+ M_0^{(a)\dagger}M_0^{(a)}+M_1^{(a)\dagger}M_1^{(a)}
+ =p_aI+(1-p_a)I=I.
+\end{equation}
+Conditional on the reported outcome, a coherent superposition evolves by
+$U_a$ or $I$. Thus movement no longer measures and reprepares a hidden source
+site. The beacons are still diagonal QND instruments, but this is the first
+spatial experiment here whose movement preserves quantum coherence.
+
+The generated classical graph retains the earlier exact stochastic-shortest-
+path matrix: adjacent axial layer crossings cost one and diagonal crossings
+cost $1/0.715\simeq\sqrt2$. Exact 2D stress remains 0.0365 and privileged
+Procrustes recovery is one. Reversibility removes the homing confound without
+sacrificing the designed spatial target.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/active-atlas/reversible_design_and_calibration.png}
+\caption{\textbf{Reversible action design and learned sensing model.} Left and
+center: examples of local permutation involutions; blind movement cannot
+concentrate a uniform landmark distribution. Right: learned beacon response
+probabilities versus exact values reserved for offline audit.}
+\label{fig:active-design}
+\end{figure}
+
+\subsection{Learning observation and transition tables}
+
+The active controller must imagine the consequences of candidate probes. For
+every verified landmark $s$ and beacon $q$, 200 delayed-label trials estimate
+\begin{equation}
+ \widehat O_q(o\mid s)=\widehat\Prob(O=o\mid S=s,Q=q),
+ \label{eq:learned-beacon-table}
+\end{equation}
+with a symmetric one-half pseudocount. Given outcome $o$, Bayesian filtering is
+\begin{equation}
+ b_{q,o}(s)=
+ \frac{b(s)\widehat O_q(o\mid s)}
+ {\sum_jb(j)\widehat O_q(o\mid j)}.
+ \label{eq:active-beacon-update}
+\end{equation}
+Mean absolute response-table error is $0.0233\pm0.0057$ across seeds.
+
+Landmark-anchored movement surveys likewise estimate
+$\widehat T_a(o,s'\mid s)$, and \cref{eq:atlas-filter} updates beliefs after
+motion. Movement-model total-variation error is $0.0220\pm0.0026$. Value
+iteration on its outcome-marginal kernel supplies $V_g(s)$ and $Q_g(s,a)$.
+Exact fields and kernels enter only named oracle/audit conditions.
+
+This is self-calibration relative to an operational landmark vocabulary, not
+unsupervised discovery of that vocabulary. Sharp terminal labels still anchor
+both empirical tables.
+
+\subsection{Goal-relative policy partitions}
+
+We compare two meanings of useful information. The first asks only which next
+decision is correct for the present goal. Define
+\begin{equation}
+ d_g(s)=
+ \begin{cases}
+  \mathrm{commit},&s=g,\\
+  \argmin_aQ_g(s,a),&s\ne g.
+ \end{cases}
+ \label{eq:policy-partition}
+\end{equation}
+A place posterior induces decision-class mass
+\begin{equation}
+ m_g(d\mid b)=\sum_{s:d_g(s)=d}b(s),
+\end{equation}
+and next-decision Bayes risk
+\begin{equation}
+ r_g(b)=1-\max_dm_g(d\mid b).
+ \label{eq:decision-risk}
+\end{equation}
+Places that require the same next movement are deliberately quotiented. This is
+the pragmatic state of \cref{sec:rl}: it preserves distinctions useful now,
+not necessarily every distinction required by every future goal.
+
+With decision-error penalty $\lambda=100$, finite sensing depth $D=3$ is
+evaluated exactly:
+\begin{align}
+ W_0(b,g)&=\lambda r_g(b),\\
+ W_d(b,g)&=\min\left\{\lambda r_g(b),
+ \min_{q\in\mathcal B}\left[
+ 1+\sum_o\Prob(o\mid b,q)W_{d-1}(b_{q,o},g)
+ \right]\right\}.
+ \label{eq:active-voi}
+\end{align}
+If the second branch is cheaper, the minimizing unit-cost beacon is sampled;
+otherwise the modal movement or commitment is executed. The tree is replanned
+after every outcome, and values are cached by goal and rounded posterior.
+
+Depth one failed in pilot testing. One weak result often leaves the modal
+decision unchanged, assigning it zero myopic classification value even when a
+short sequence would cross a decision boundary. Depth three recognizes that
+temporally extended value.
+
+\subsection{Atlas-preserving active sensing}
+
+The second controller treats the full landmark distribution as a representation
+to preserve across all goals. It selects the beacon with maximum expected
+entropy reduction
+\begin{equation}
+ \operatorname{EIG}(b,q)=H(b)-
+ \sum_o\Prob(o\mid b,q)H(b_{q,o})
+ \label{eq:active-eig}
+\end{equation}
+until $max_sb(s)\ge0.95$. It then follows belief-weighted $Q_g$ and senses
+again only if uncertainty violates this reliability constraint.
+
+This policy solves a constrained rather than penalty-only problem: minimize
+unit-cost sensing subject to landmark confidence. It is less aggressively goal
+relative, but it maintains one chart usable by every goal. Comparing it with
+\cref{eq:active-voi} asks whether locally sufficient pragmatic states assemble
+into a common geometry.
+
+\subsection{Conditions and production scale}
+
+Six conditions separate sensing cost, calibration, representation, and hidden
+dynamics:
+\begin{description}[style=nextline]
+ \item[Oracle] Exact online one-hot landmark; no sensing.
+ \item[Goal-relative active] Learned fields and the depth-three policy
+ partition rule.
+ \item[Exact-sensor active] Same controller with privileged exact beacon fields;
+ this is an information-model upper bound, not an online agent claim.
+ \item[Fixed-12] Twelve cycles, or 48 learned-model beacon updates, before
+ movement.
+ \item[Atlas-preserving active] Expected-information-gain sensing to the 0.95
+ reliability constraint.
+ \item[Active null] Same active computation with learned place-independent
+ fair-coin fields.
+\end{description}
+
+Production uses three seeds, 200 beacon trials per site/action, 100 movement
+trials per source/action, and 50 navigation trials for every ordered pair. The
+six conditions give 72,900 held-out navigation episodes. A 60-intervention
+safety deadline censors failures in the restricted total-cost analysis.
+Movement failures analogously receive the 12-move horizon cost. By contrast,
+the sensing matrix records beacon actions actually taken, even on failed
+episodes: it is a resource decomposition, and replacing failed trials by the
+deadline would make a competence penalty masquerade as sensor use.
+
+\subsection{Competence and information cost}
+
+\begin{table}[t]
+\centering
+\caption{Active navigation and intervention burden, mean $\pm$ sample standard
+deviation across three seeds. Every sensor, movement, and commitment costs one.}
+\label{tab:active-performance}
+\small
+\begin{tabular}{lccccc}
+\toprule
+Condition & success & sensors & moves & total & commit conf.\\
+\midrule
+Oracle & $1.000\pm.000$ & $0.00$ & $1.482\pm.015$ & $2.482\pm.015$ & $0.991\pm.000$\\
+Goal-relative & $0.938\pm.002$ & $\mathbf{13.54\pm.10}$ & $1.576\pm.015$ & $\mathbf{16.12\pm.11}$ & $0.941\pm.005$\\
+Exact-sensor & $0.943\pm.004$ & $13.07\pm.04$ & $1.563\pm.011$ & $15.63\pm.05$ & $0.937\pm.000$\\
+Fixed 12-cycle & $\mathbf{0.976\pm.002}$ & $48.00$ & $1.487\pm.017$ & $50.49\pm.02$ & $0.968\pm.001$\\
+Atlas-preserving & $\mathbf{0.965\pm.004}$ & $16.63\pm.53$ & $1.494\pm.003$ & $\mathbf{19.12\pm.53}$ & $0.962\pm.000$\\
+Null & $0.111\pm.002$ & $0.72\pm.12$ & $37.80\pm3.66$ & $39.52\pm3.54$ & $0.122\pm.002$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The atlas-preserving controller reduces mean total cost by 31.36
+interventions, or 62.1\%, relative to fixed scanning, while losing 1.14
+percentage points of success. Its movement count is essentially unchanged:
+savings come from observing selectively, not taking longer routes.
+
+Goal-relative sensing removes about three additional observations but loses a
+further 2.67 percentage points. Exact beacon probabilities recover only 0.45
+points, so calibration error is not the main cause. The policy quotient itself
+forgets distinctions that later become relevant.
+
+Null success $0.111\pm0.002$ agrees with $1/9$. The controller performs many
+movements but retains near-maximal entropy. Reversible motion successfully
+isolates informative sensing as the source of place knowledge.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/active-atlas/active_atlas_performance.png}
+\caption{Active competence, information cost, movement geometry, and posterior
+uncertainty. The atlas-preserving controller removes most fixed sensing while
+maintaining high success and geometric fidelity. The cheaper goal-relative
+state exhibits a measurable global-geometry cost.}
+\label{fig:active-performance}
+\end{figure}
+
+\subsection{A common atlas costs more than one sufficient decision}
+
+\begin{table}[t]
+\centering
+\caption{Movement-cost geometry. Exact-cost correlation and Procrustes
+alignment use privileged quantities only after evaluation.}
+\label{tab:active-geometry}
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lccccc}
+\toprule
+Condition & exact $r$ & stress 1D & stress 2D & stress 3D & Procrustes $R^2$\\
+\midrule
+Oracle & $0.995\pm.000$ & $0.407\pm.005$ & $0.047\pm.009$ & $0.046\pm.008$ & $0.999\pm.000$\\
+Goal-relative & $0.724\pm.054$ & $0.444\pm.009$ & $0.193\pm.015$ & $0.097\pm.007$ & $0.900\pm.063$\\
+Exact-sensor & $0.694\pm.103$ & $0.447\pm.013$ & $0.194\pm.013$ & $0.093\pm.009$ & $0.855\pm.105$\\
+Fixed 12-cycle & $0.962\pm.005$ & $0.410\pm.009$ & $0.079\pm.014$ & $0.054\pm.020$ & $0.993\pm.001$\\
+Atlas-preserving & $\mathbf{0.929\pm.012}$ & $0.422\pm.004$ & $\mathbf{0.111\pm.006}$ & $0.060\pm.010$ & $\mathbf{0.987\pm.004}$\\
+Null & $0.094\pm.189$ & $0.492\pm.005$ & $0.300\pm.004$ & $0.193\pm.000$ & $0.197\pm.166$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Atlas-preserving movement cost retains strong two-dimensional organization at
+less than 40\% of fixed total cost. The 2D-to-3D improvement remains visible,
+so sensing and filtering errors still add nonspatial distortion.
+
+Goal-relative stress is much higher despite competent control. The equivalence
+relation ``same next action'' changes with the goal and along the trajectory.
+A sequence of such quotients need not define one consistent landmark metric.
+The result empirically separates
+\begin{equation}
+ \text{state sufficient for the present goal}
+ \ne
+ \text{state sufficient for a shared spatial atlas}.
+ \label{eq:pragmatic-versus-atlas}
+\end{equation}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/active-atlas/active_atlas_geometries.png}
+\caption{Movement-only (top) and all-intervention (bottom) MDS coordinates.
+Movement defines a recoverable spatial base for the oracle, fixed, and atlas-
+preserving policies. Adding sensing burden produces a different, generally
+warped hodological object.}
+\label{fig:active-geometries}
+\end{figure}
+
+\subsection{Decomposing spatial and epistemic difficulty}
+
+For every source--goal pair, equal-cost difficulty decomposes as
+\begin{equation}
+ C^{\rm total}_{ij}=C^{\rm sense}_{ij}+C^{\rm move}_{ij}
+ +C^{\rm commit}_{ij}.
+ \label{eq:cost-decomposition}
+\end{equation}
+The movement component is the candidate spatial base. Sensing is work on the
+agent's internal predictive condition, not a displacement between landmarks.
+Indeed, atlas-preserving movement stress is 0.111 while total-cost stress is
+0.280. Even the fixed controller's constant scan raises total 2D stress to
+0.310 because all nonidentical pairs acquire a large common overhead.
+
+Atlas-preserving sensing burden has only a weak and seed-variable correlation,
+$0.281\pm0.191$, with spatial distance. An additive model with separate source
+and goal effects explains just $0.037\pm0.026$ of its variance. Required
+information is principally pair dependent. Goal-relative sensing has a
+stronger positive distance correlation, $0.580\pm0.075$, but its additive
+endpoint model explains only $0.032\pm0.008$ of sensing variance. Longer tasks
+tend to expose more goal-relative decision boundaries, yet distance alone is
+far from sufficient: information demand depends on the policy partitions
+encountered between a particular source and goal.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.94\textwidth]{results/active-atlas/active_sensing_overhead.png}
+\caption{Mean number of beacon interventions by source and goal. Fixed scanning
+is constant; active sensing is a task-dependent internal cost that is neither a
+simple function of source nor a monotone function of spatial distance.}
+\label{fig:active-sensing}
+\end{figure}
+
+\subsection{Belief entropy as a provisional fiber coordinate}
+
+To visualize the richer state, map a posterior to the barycenter of learned
+movement coordinates,
+\begin{equation}
+ x(b)=\sum_sb(s)x_s,
+ \label{eq:belief-barycenter}
+\end{equation}
+and lift it by normalized entropy,
+\begin{equation}
+ z(b)=\frac{H(b)}{\log9}.
+ \label{eq:entropy-fiber}
+\end{equation}
+Representative atlas-preserving trajectories begin high above the base,
+descend as informative beacon outcomes arrive, and move near the base after
+localization. The same
+spatial region can support multiple beliefs with different future sensing
+costs.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{results/active-atlas/epistemic_fiber_trajectories.png}
+\caption{Atlas-preserving belief trajectories over their learned movement
+plane. Height is normalized entropy, an internal epistemic coordinate. The
+visualization is an operational precursor to a fiber construction, not evidence of local
+trivialization, connection, or holonomy.}
+\label{fig:active-fiber}
+\end{figure}
+
+This is the project's first empirical base/fiber separation, but not yet a
+fiber bundle in the mathematical sense. No open cover, local product
+$U\times F$, transition functions, parallel transport, or holonomy have been
+learned. Entropy is also epistemic rather than an internal physical degree of
+freedom. The legitimate conclusion is narrower: scalar total difficulty mixes
+spatial and internal work, while a structured representation makes their
+different roles visible.
+
+\subsection{What active construction establishes}
+
+There exists a valid coherent movement family and learned weak-sensor model for
+which an agent can rationally reduce observation by more than 60\%, retain high
+all-pairs competence, and preserve a strong two-dimensional movement atlas.
+Matched controls show why it works: reversible motion prevents blind
+synchronization, learned place-dependent beacons provide the necessary
+information, and a representation preserving the full landmark posterior
+maintains global metric coherence.
+
+The result also identifies a fundamental trade-off. Pragmatic compression can
+be optimal for an immediate goal yet incompatible with a single stable space.
+The emergence of a common atlas is therefore an informational achievement, not
+an automatic consequence of competent action.
+
+Landmark anchors, tabular observation/transition models, designed layer-swap
+actions, diagonal QND sensing, a hand-set three-step horizon and penalty, and a
+small grid remain. Movement preserves coherence, but the agent neither exploits
+phase nor discovers a place basis from coherent data. The epistemic fiber is a
+research representation, not yet geometry with bundle structure.
+
+\section{Exactly soluble hodology in a qubit and a qutrit}
+\label{sec:lowdim}
+
+\subsection{The dimensional question and the hidden ambiguity}
+
+The preceding spatial environments use nine orthogonal vectors as nine
+landmarks. This is transparent and experimentally useful, but it risks
+suggesting a false principle: that nine goals require a nine-dimensional
+Hilbert space. A Hilbert-space dimension limits the number of states that are
+perfectly distinguishable in one shot; it does not limit the number of
+distinct rays, controlled histories, measurement effects, or goal languages.
+A qubit has only two orthogonal basis vectors but continuously many pure
+states. The correct question is therefore not ``how many goals fit in
+$\mathbb C^d$?'' but ``which part of the complete controlled process carries
+their geometry?''
+
+Three state spaces must be kept separate:
+\begin{description}[style=nextline]
+ \item[Physical quantum state] The density operator $\rho$ changed by the
+ chosen instruments. Its dimension is fixed by the Hilbert space.
+ \item[Predictive state] An equivalence class of histories that gives the same
+ distribution for every contemplated future experiment. This is the
+ operational state available in principle to the agent.
+ \item[Goal-progress state] The state of a counter or deterministic finite
+ automaton (DFA) used to recognize a sequence goal. It can be useful memory,
+ but it need not be encoded by the quantum system at all.
+\end{description}
+Conflating these spaces makes a low-dimensional result vacuous. A classical
+DFA with nine nodes can be attached to an untouched qubit and can reproduce
+any desired $3\times3$ graph. The graph then lives in the task designer's
+counter, not in controlled quantum experience. Conversely, nonorthogonal
+quantum states can carry a large orbit even when no one-shot measurement can
+name its members without error. We use null-instrument and memory-accounting
+controls below to distinguish these cases.
+
+\subsection{What low dimension really forbids}
+
+Suppose $N$ density operators $\rho_i$ must be identified with certainty by
+one common POVM $\{E_j\}_{j=1}^N$. Perfect identification means
+\begin{equation}
+ \Tr(\rho_iE_j)=\delta_{ij},\qquad E_j\succeq0,
+ \qquad\sum_jE_j=I. \label{eq:perfect-discrimination}
+\end{equation}
+For pure states $\rho_i=|\psi_i\rangle\langle\psi_i|$, positivity and
+$0\preceq E_i\preceq I$ imply
+$E_i|\psi_i\rangle=|\psi_i\rangle$ and
+$E_i|\psi_j\rangle=0$ for $j\ne i$. Hence
+\begin{equation}
+ \langle\psi_j|\psi_i\rangle
+ =\langle\psi_j|E_i|\psi_i\rangle=0.
+\end{equation}
+The mixed-state statement is the same at the level of supports: perfectly
+discriminable states have mutually orthogonal supports. Therefore
+\begin{equation}
+ N\le d \label{eq:one-shot-bound}
+\end{equation}
+whenever ``place'' means an exclusively recognizable one-shot state in
+$\mathbb C^d$. An adaptive measurement protocol on a \emph{single} copy does
+not evade the bound; the complete outcome tree is itself a POVM. Repeated
+preparations, persistent action history, or an external recognizer change the
+premise and can evade it.
+
+This proposition explains both the value and limitation of the earlier
+nine-level construction. It realizes the strongest classical-place
+interpretation. The constructions below instead use nonorthogonal endpoints,
+covariant measurement events, or action histories. They answer a different
+and more agent-centered question.
+
+\subsection{A finite necessary-and-sufficient criterion}
+
+Before constructing examples, it helps to state exactly what must be true of a
+finite cost table. Let $S$ be a finite predictive-state set, $g\in S$ an
+absorbing goal, $P^a_{ij}$ the outcome-marginal transition probability under
+action $a$, and $c(i,a)>0$ its cost. A proposed directed difficulty
+$D(i,g)$ is optimal stochastic-shortest-path cost if and only if it satisfies
+the Bellman equations
+\begin{align}
+ D(g,g)&=0,\label{eq:lowdim-bellman-goal}\\
+ D(i,g)&=\min_a\left[c(i,a)+\sum_jP^a_{ij}D(j,g)\right]
+ \quad(i\ne g), \label{eq:lowdim-bellman}
+\end{align}
+with at least one proper minimizing policy that reaches $g$ almost surely.
+This is not merely an algorithm. The equalities certify that no omitted
+strategy is cheaper, while properness excludes an attractive zero-progress
+cycle. They are the dynamic-programming half of an exact characterization
+\cite{bellman1957,bertsekas1991,puterman1994}.
+
+Ordinary Euclidean space imposes a second, independent condition. Symmetrize
+the relevant costs if reversibility is part of the hypothesis and form the
+matrix $D=[D_{ij}]$. With
+\begin{equation}
+ J=I-\frac1N\mathbf1\mathbf1^\top,
+ \qquad B=-\frac12J(D\circ D)J, \label{eq:schoenberg-gram}
+\end{equation}
+where $\circ$ is elementwise multiplication, Schoenberg's theorem states
+\begin{equation}
+ D_{ij}=\|x_i-x_j\|_2\text{ for some }x_i\in\mathbb R^k
+ \quad\Longleftrightarrow\quad
+ B\succeq0\text{ and }\operatorname{rank}B\le k
+ \label{eq:schoenberg-criterion}
+\end{equation}
+for a symmetric hollow distance matrix \cite{schoenberg1935,gower1966}.
+The coordinates are recovered from the positive eigendecomposition
+$B=X X^\top$. Thus Bellman realizability plus the positive-semidefinite rank
+criterion is necessary and sufficient for a finite \emph{cost matrix} to be
+exactly Euclidean.
+
+It is not yet sufficient for a persuasive emergent space. A task designer can
+hard-code $D$ into an action price or goal automaton. Physical emergence also
+requires translated goal semantics, locally reusable actions, predictive
+distinguishability, trajectories, robustness to finite resolution, and an
+audit of every nonquantum memory variable. These are causal and operational
+conditions layered on top of the mathematical criterion.
+
+\subsection{Exact qubit word geometry}
+
+Take the equatorial state and two commuting phase controls
+\begin{equation}
+ |+\rangle=\frac{|0\rangle+|1\rangle}{\sqrt2},\qquad
+ U=\diag(1,e^{i\alpha}),\qquad V=\diag(1,e^{i\beta}),
+ \label{eq:qubit-phase-controls}
+\end{equation}
+with
+\begin{equation}
+ \alpha=\frac{2\pi}{9}+\epsilon\sqrt2,qquad
+ \beta=\frac{2\pi}{3}+\epsilon\sqrt3,qquad
+ \epsilon=10^{-2}. \label{eq:irrational-phases}
+\end{equation}
+The four unit-cost cardinal instruments are the one-Kraus channels
+$U,U^\dagger,V,V^\dagger$. Define nine goals by
+\begin{equation}
+ |\psi_{ij}\rangle=U^iV^j|+\rangle,qquad i,j\in\{0,1,2\}.
+ \label{eq:qubit-nine-goals}
+\end{equation}
+All nine are nonorthogonal rays of a single qubit.
+
+The essential algebra is faithfulness. If
+$U^aV^b|+\rangle\sim|+\rangle$, equality of relative phase requires
+\begin{equation}
+ a\alpha+b\beta=2\pi m,qquad a,b,m\in\mathbb Z. \label{eq:phase-relation}
+\end{equation}
+After substitution,
+\begin{equation}
+ 2\pi\left(\frac a9+\frac b3-m\right)
+ +\epsilon(a\sqrt2+b\sqrt3)=0. \label{eq:faithfulness-proof}
+\end{equation}
+If the rational coefficient of $\pi$ were nonzero, this equality would make
+$\pi$ algebraic. It must therefore vanish. Linear independence of
+$\sqrt2$ and $\sqrt3$ over the rationals then gives $a=b=0$. The projective
+stabilizer is trivial, so the qubit orbit carries a faithful action of
+$\mathbb Z^2$.
+
+Because $U$ and $V$ commute, every action word reduces to $U^aV^b$.
+Faithfulness forces the unique displacement from $(i,j)$ to $(k,l)$ to be
+$(k-i,l-j)$. Cardinal moves attain the lower bound, proving
+\begin{equation}
+ d_1((i,j),(k,l))=|k-i|+|l-j|. \label{eq:qubit-manhattan}
+\end{equation}
+This is exactly the open $3\times3$ square-lattice word metric. In the
+all-pairs calculation, maximum terminal infidelity was
+$6.7\times10^{-16}$.
+
+The same goals can be stated as sequence languages: accept action histories
+whose signed $U$ and $V$ exponent totals equal the desired displacement. At a
+fixed horizon this is a regular language recognized by a finite counter DFA.
+Without a horizon, two unbounded integer counters are required, so it would be
+incorrect to call the exact infinite language regular. This bookkeeping detail
+matters because an unbounded recognizer can silently supply more state than the
+qubit.
+
+\subsection{From Manhattan words to exact Euclidean waiting time}
+
+The graph distance in \cref{eq:qubit-manhattan} is $L^1$, not ordinary
+$L^2$ distance. To obtain exact Euclidean cost while retaining a common unit
+price, provide a binary retry instrument for every nonzero patch displacement
+$\delta=(a,b)$. Let $r=\|\delta\|_2$ and
+\begin{equation}
+ K_{\rm s}(\delta)=\sqrt{\frac1r}\,U^aV^b,qquad
+ K_{\rm f}(\delta)=\sqrt{1-\frac1r}\,I. \label{eq:retry-kraus}
+\end{equation}
+Nonzero integer displacements have $r\ge1$, and
+$K_{\rm s}^\dagger K_{\rm s}+K_{\rm f}^\dagger K_{\rm f}=I$. Failure leaves
+the conditional state unchanged; success performs the exact translation.
+Repeated attempts have geometric waiting time
+\begin{equation}
+ \E T_\delta=\frac1{p_\delta}=r. \label{eq:retry-mean}
+\end{equation}
+
+A direct attempt therefore achieves ordinary Euclidean distance in expected
+unit interventions. It is optimal: any successful decomposition
+$\delta=\delta_1+\cdots+\delta_n$ costs in expectation
+\begin{equation}
+ \sum_{q=1}^n\|\delta_q\|_2
+ \ge\left\|\sum_{q=1}^n\delta_q\right\|_2
+ =\|\delta\|_2, \label{eq:retry-triangle}
+\end{equation}
+by the triangle inequality. Equivalently, substituting
+$D(x,g)=\|g-x\|_2$ into \cref{eq:lowdim-bellman} makes the direct
+displacement action an equality and every composite alternative an
+inequality. Fifty thousand samples for each of 24 nonzero displacements,
+1.2 million attempts in aggregate, had maximum mean error 0.02897.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/results/figures/exact_qubit_lattice.png}
+\caption{\textbf{Exact qubit lattice and its limits.} The nine goals are
+nonorthogonal phase states. Their cardinal word metric is exactly Manhattan,
+and inverse-distance retry probabilities give exact Euclidean expected cost.
+The tolerance analysis shows that exact algebraic labels cease to be reliable
+when nearby rays are operationally identified.}
+\label{fig:exact-qubit-lattice}
+\end{figure}
+
+This is an exact theorem, but not yet a robust physical plane. The faithful
+$\mathbb Z^2$ orbit is dense on one Bloch circle. Its inverse coordinate map is
+discontinuous: arbitrarily distant words approach the same ray. The nine
+projector tests are not exclusive; the worst false acceptance probability is
+0.9025. When rays within infidelity $10^{-3}$ are treated as equivalent,
+30.6\% of unordered patch pairs acquire a shortcut. The construction proves
+that low Hilbert dimension does not preclude exact history geometry. It also
+shows why algebraic faithfulness without finite-resolution stability is too
+weak for ordinary space.
+
+\subsection{A qutrit with a genuine two-dimensional phase manifold}
+
+The qubit construction uses two integer windings on a one-dimensional circle.
+A qutrit has two independent relative phases and can therefore carry a smooth
+two-dimensional orbit. Choose
+\begin{equation}
+ |\psi_0\rangle=\sqrt{\frac38}|0\rangle+\frac12|1\rangle
+ +\sqrt{\frac38}|2\rangle,
+ \quad A=\diag(0,1,0),\quad B=\diag\left(0,\frac12,1\right).
+ \label{eq:qutrit-phase-fiducial}
+\end{equation}
+For
+$|\psi(\theta,\phi)\rangle=e^{i\theta A+i\phi B}|\psi_0\rangle$,
+the Fubini--Study line element is the covariance matrix of the generators,
+\begin{equation}
+ ds^2=\operatorname{Var}(A)d\theta^2
+ +2\operatorname{Cov}(A,B)d\theta d\phi
+ +\operatorname{Var}(B)d\phi^2. \label{eq:fs-covariance}
+\end{equation}
+Direct evaluation gives
+\begin{equation}
+ \operatorname{Var}(A)=\operatorname{Var}(B)=\frac3{16},
+ \qquad\operatorname{Cov}(A,B)=0. \label{eq:isotropic-fs}
+\end{equation}
+The quantum-state manifold is therefore locally flat and isotropic in these
+coordinates, up to the common scale $3/16$.
+
+To make a finite, robust orbit, set
+\begin{equation}
+ U=e^{4\pi iA/11},\qquad V=e^{4\pi iB/11}. \label{eq:qutrit-order11}
+\end{equation}
+Both have order 11. If $U^aV^b$ stabilizes the fiducial ray, the phase on the
+$|0\rangle$ component fixes the global phase. The other two components give
+$2a+b=0$ and $2b=0$ modulo 11, hence $a=b=0$. The 121 rays form a faithful
+$\mathbb Z_{11}^2$ orbit. Because the nine selected goals use
+$i,j\in\{0,1,2\}$, their difference set lies well inside the wrap radius.
+They are a local chart rather than an attempted flattening of the full torus.
+
+The same retry construction supplies exact Euclidean Bellman cost on this
+chart. The numerical audit found a minimum pairwise orbit Frobenius separation
+0.34505, Bellman residual $8.88\times10^{-16}$, exact distance error zero,
+MDS reconstruction error $1.33\times10^{-15}$, and a Schoenberg spectrum with
+exactly two positive eigenvalues, both six. Control distance correlates 0.98892
+with trace distance. Monte Carlo waiting-time error was at most 0.02373.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/results/qutrit-phase/qutrit_phase_lattice.png}
+\caption{\textbf{Robust qutrit phase chart.} The generator covariance is
+isotropic, the finite order-11 orbit has separated rays, and the selected
+$3\times3$ patch has exact rank-two Euclidean expected cost. Procrustes-aligned
+MDS coordinates coincide with the analytic chart.}
+\label{fig:qutrit-phase-lattice}
+\end{figure}
+
+This qutrit model repairs the qubit's manifold-dimension and density defects,
+but the Euclidean norm remains engineered into the retry probability
+$p_\delta=1/\|\delta\|_2$. Moreover, providing every patch displacement as a
+macro-instrument is nonlocal in action space. With only finitely many local
+directions, shortest-path cost generically approaches a polygonal or Finsler
+norm, not exact rotationally invariant $L^2$. Deriving the success law and a
+continuum of effective directions from simpler microscopic physics is now the
+central inverse-design problem.
+
+\subsection{A fully operational qutrit goal: the Hesse SIC}
+
+The phase chart still uses a synchronized history label to name its exact
+endpoint. A complementary qutrit construction makes every goal an outcome of
+one common physical measurement. Let
+\begin{equation}
+ X|j\rangle=|j+1\!\!\pmod3\rangle,qquad
+ Z|j\rangle=\omega^j|j\rangle,qquad \omega=e^{2\pi i/3},
+\end{equation}
+and choose $|\psi_{00}\rangle=(0,1,-1)^\top/\sqrt2$. The orbit
+\begin{equation}
+ |\psi_{mn}\rangle=X^mZ^n|\psi_{00}\rangle
+ \label{eq:hesse-orbit}
+\end{equation}
+is the qutrit Hesse SIC. Its projectors satisfy
+\begin{equation}
+ \sum_{m,n}\frac13\Pi_{mn}=I,qquad
+ |\langle\psi_{mn}|\psi_{m'n'}\rangle|^2=\frac14
+ \quad((m,n)\ne(m',n')), \label{eq:hesse-sic}
+\end{equation}
+as required for a symmetric informationally complete POVM
+\cite{renes2004,scott2006}.
+
+The physical repertoire contains $X^{\pm1},Z^{\pm1}$ and the common
+measurement Kraus operators $K_{mn}=\Pi_{mn}/\sqrt3$. Outcome $(m,n)$ resets
+the qutrit to the corresponding SIC state. Goal $g$ is the observable event
+``the SIC measurement reports $g$,'' not a basis-state fidelity test. From
+state $s$ its probability is $1/3$ if $s=g$ and $1/12$ otherwise.
+
+The exact Bellman equation is
+\begin{equation}
+ V_g(s)=\min\left\{
+ 1+V_g(X^{\pm1}s),\ 1+V_g(Z^{\pm1}s),\
+ 1+\sum_{o\ne g}p(o|s)V_g(o)\right\}. \label{eq:hesse-bellman}
+\end{equation}
+It has the closed-form solution
+\begin{equation}
+ V_g(s)=6+d_T(s,g), \label{eq:hesse-solution}
+\end{equation}
+where
+\begin{equation}
+ d_T((m,n),(m',n'))=
+ \min(|m-m'|,3-|m-m'|)+
+ \min(|n-n'|,3-|n-n'|) \label{eq:torus-manhattan}
+\end{equation}
+is toroidal Manhattan distance. At the goal, one measurement is paid
+immediately. The eight failed outcomes consist of four neighbors with value
+seven and four distance-two states with value eight; their probability-weighted
+continuation is $(4\cdot7+4\cdot8)/12=5$, giving $V_g(g)=6$. Away from the
+goal, a shortest unitary translation reduces $d_T$ by one, while direct
+substitution verifies the measurement inequality. The numerical Bellman
+solver recovered the baseline and every excess cost, with Pearson and Spearman
+correlation one.
+
+This is the strongest operational low-dimensional example in the study:
+states, reusable controls, common measurement, and goals are all quantum. It
+also supplies an important negative result. The orbit is
+$\mathbb Z_3\times\mathbb Z_3$, so it wraps. Sixteen of 36 unordered pairs
+are shorter than their open-grid counterparts. Its double-centered Gram
+matrix has four positive eigenvalues 3.5 and four negative eigenvalues $-1$;
+raw 2D MDS stress is 0.383. It is an exact two-dimensional \emph{periodic
+control topology}, not an exact Euclidean plane. Equiangularity also makes all
+static off-diagonal trace distances identical: the geometry resides in
+controlled transitions rather than state distinguishability.
+
+\subsection{Elaborate sequence goals and memory provenance}
+
+A second qutrit phase grid uses
+\begin{equation}
+ |\phi_{mn}\rangle=\frac{|0\rangle+\omega^m|1\rangle+\omega^n|2\rangle}{\sqrt3},
+ \quad U=\diag(1,\omega,1),\quad V=\diag(1,1,\omega).
+ \label{eq:qutrit-phase-grid}
+\end{equation}
+The nine covariant effects
+$E_{mn}=|\phi_{mn}\rangle\langle\phi_{mn}|/3$ sum to identity. Its
+baseline-subtracted hitting cost correlates 0.996116 with torus control
+distance. Requiring $L=1,2,3$ \emph{consecutive} reports of the designated
+outcome gives aligned baseline costs 5.588, 22.353, and 72.647 while preserving
+the same 0.996116 correlation. The result cleanly separates where a translated
+goal is from how demanding its internal completion condition is.
+
+Yet the confirmation count is a goal-progress coordinate. To see why this
+qualification is essential, we solved a deliberate null system: a nine-node
+counter DFA coupled to identity controls on a qubit. It retains a perfect grid
+while all nine conditional density operators are identical and every trace
+distance is zero. The geometry is wholly external memory.
+
+A more informative ablation compares the same two-counter goal under
+independent fair coins and projective qubit $X/Z$ measurements. For the coin,
+the exact cost surface is
+\begin{equation}
+ C_{\rm coin}=\begin{pmatrix}0&2&4\\2&4&6\\4&6&8\end{pmatrix};
+ \end{equation}
+for the qubit, measurement backaction yields
+\begin{equation}
+ C_{\rm qubit}=\begin{pmatrix}0&3&4\\3&5&6\\4&6&7\end{pmatrix}.
+ \label{eq:counter-surfaces}
+\end{equation}
+The additive residual rises from numerical zero to one. Quantum dynamics has
+warped an automaton-carried base, but it has not created the base. This is a
+simple prototype of an internal physical fiber over an externally specified
+spatial task.
+
+\subsection{Approximate qubit planarity and the flatness--resolution trade-off}
+
+There is also a less algebraic qubit route. The Bloch sphere is a smooth
+two-dimensional manifold, so a sufficiently small patch is approximately
+planar. We searched
+\begin{equation}
+ |\psi_{xy}\rangle=R_x(\theta)^xR_y(\theta)^y|0\rangle,
+ \qquad x,y\in\{0,1,2\}, \label{eq:qubit-tangent-patch}
+\end{equation}
+over 180 angles. Subject to minimum trace separation 0.12, the selected
+$\theta=0.309665$ radians gives Euclidean-distance correlation 0.989749,
+2D MDS stress 0.007361, positive-Gram planarity 0.992494, mean translation
+defect 0.009424, and commutator defect 0.010249.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/search/figures/low_dimensional_search.png}
+\caption{\textbf{Skeptical low-dimensional search.} A null automaton produces
+geometry without quantum state variation. A genuine qubit tangent patch is
+nearly planar, but reducing curvature also collapses distinguishability. The
+selected angle balances minimum separation and translation defect.}
+\label{fig:lowdim-search}
+\end{figure}
+
+The apparent success has a singular limit: as $\theta\to0$, curvature,
+noncommutativity, and translation defects vanish, but all nine states coalesce.
+Larger $\theta$ improves discrimination while revealing spherical curvature
+and noncommutativity. A qubit can therefore model a useful local plane, but
+flatness and resolvability must be reported together.
+
+There is a sharper obstruction for exact ternary translation covariance. Two
+commuting order-three qubit unitaries are simultaneously diagonalizable and,
+after removing global phase, supply only one relative phase. A nontrivial Weyl
+relation $XZ=\omega ZX$ gives
+$\det(XZ)=\omega^d\det(ZX)$, so $\omega^d=1$ and $3$ divides $d$. This rules
+out a faithful projective $\mathbb Z_3^2$ Weyl representation in dimension
+two. It does not rule out the irrational qubit history encoding, nonunitary
+instruments, or approximate local patches; it identifies exactly which
+symmetry demand makes the qutrit minimal.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/search/figures/qutrit_and_counter_comparison.png}
+\caption{\textbf{Where the geometry lives.} The Hesse-SIC orbit has exact
+toroidal control geometry although all distinct states are equidistant. The
+relative-phase POVM carries more static distinguishability and nearly the same
+cost ordering. Coin and qubit counter surfaces expose external goal memory and
+the additional distortion caused by quantum backaction.}
+\label{fig:qutrit-counter-comparison}
+\end{figure}
+
+\subsection{Comparative result and scientific interpretation}
+
+\begin{table}[t]
+\centering
+\caption{Low-dimensional constructions. ``Exact 2D'' distinguishes topology,
+state-manifold dimension, and Euclidean cost rather than collapsing them.}
+\label{tab:lowdim-summary}
+\small
+\begin{tabularx}{\textwidth}{lXXXX}
+\toprule
+Model & Goal carrier & Exact result & Main strength & Main limitation\\
+\midrule
+Qubit irrational phase & action history and ray & open $\mathbb Z^2$ word
+metric; exact Euclidean retry cost & minimal Hilbert dimension & dense 1D
+orbit; finite-resolution shortcuts\\
+Qubit tangent patch & nonorthogonal rays & approximate local plane & simple,
+well-separated compromise & flatness--resolution trade-off\\
+Qutrit order-11 phase & 2D relative-phase orbit & isotropic FS manifold and
+exact Euclidean chart & finite, separated, rank-two chart & inverse norm and
+macro-actions engineered\\
+Qutrit Hesse SIC & common POVM outcomes & exact $\mathbb Z_3^2$ Bellman
+geometry & fully operational analytic model & torus is not Euclidean\\
+Qutrit confirmation goals & translated outcome sequences & stable relative
+geometry for $L=1,2,3$ & natural base/fiber split & completion counter adds
+external memory\\
+Null DFA & goal automaton only & arbitrary finite graph & decisive negative
+control & no quantum geometry\\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The answer to the motivating question is consequently conditional. A qubit
+can carry an exact open $3\times3$ lattice as a faithful word/history metric,
+and can approximate a resolved local plane in state space. It cannot provide a
+robust two-relative-phase manifold or the exact ternary Weyl covariance of the
+qutrit. A qutrit supports both a locally isotropic phase surface and a fully
+operational covariant goal family. Finite-order symmetry naturally produces a
+torus; open Euclidean space requires a local chart, a boundary mechanism, or an
+infinite translation representation.
+
+The experiments also reveal a hierarchy of increasingly strong claims:
+\begin{enumerate}
+ \item the goal recognizer has a two-dimensional graph;
+ \item conditional quantum states vary in two independent directions;
+ \item reusable controls act covariantly as two translations;
+ \item optimal all-pairs costs satisfy the Bellman equations;
+ \item the symmetrized costs pass the exact rank-two Schoenberg test;
+ \item the construction survives finite resolution, noise, and memory
+ ablation;
+ \item learned trajectories, rather than privileged labels, localize the
+ agent in the resulting chart.
+\end{enumerate}
+The present models reach different levels of this hierarchy. None yet derives
+the Euclidean norm, large-scale locality, and robust operational localization
+from a simple untuned quantum law. That gap is the most promising direction
+for the next stage rather than a defect to hide.
+
 \section{Discussion and limitations}
 \label{sec:discussion}
 
@@ -2445,6 +3391,26 @@ recovery show that a supplied current-state symbol is not necessary on this
 world. The residual 2D-to-3D stress improvement is equally informative:
 representation error appears as nonspatial metric distortion, making emergent
 dimension a joint property of dynamics, sensing, memory, and control.
+
+The active successor adds rational selective observation. Reversible coherent
+movement closes the boundary-homing loophole, and adaptive sensing recovers
+most fixed-scan competence at less than 40\% of its total intervention cost.
+The gap between goal-relative and atlas-preserving policies shows that local
+decision sufficiency and global geometric coherence are different
+representation criteria. Separating sensing from movement also provides the
+first empirical reason to model full hodological state as structured over a
+spatial base rather than forcing all difficulty into one metric.
+
+The low-dimensional study removes a different hidden assumption. Nine goals
+do not require nine orthogonal states. The qubit gives a minimal exact
+algebraic encoding, the qutrit gives a robust two-phase manifold, and the
+Hesse-SIC instrument gives a fully operational analytic goal family. Their
+different failures are as informative as their successes. The qubit's exact
+coordinates are unstable at finite resolution; the finite qutrit Weyl orbit
+wraps into a torus; and the exact Euclidean retry models place the desired norm
+in the success law. ``Two-dimensional'' must therefore specify whether it
+refers to a control algebra, a state manifold, a graph topology, or a Euclidean
+distance matrix.
 
 These results do not show that a Bloch sphere, Hilbert space, or uniquely
 quantum geometry spontaneously emerged. Such a claim would require latent-state
@@ -2484,8 +3450,30 @@ decoding of quantum invariants. Other limitations are:
  \item every navigation episode pays for a fixed 48-probe scan, which is
  omitted from relative movement geometry but dominates the reported total
  intervention count;
- \item belief-weighted state costs approximate rather than solve the full
- belief-MDP, and the controller does not actively choose additional sensing.
+ \item the fixed predictive controller's belief-weighted state costs
+ approximate rather than solve the full belief-MDP, and that experiment does
+ not actively choose additional sensing;
+ \item the active study repairs the last limitation only with tabular,
+ landmark-anchored models, a depth-three sensing tree or hand-set 0.95
+ confidence constraint, and three seeds;
+ \item reversible layer swaps are coherent and doubly stochastic but were
+ deliberately designed; their contextual action semantics are not ordinary
+ global translations;
+ \item the entropy height is an epistemic visualization, not a demonstrated
+ physical fiber, local trivialization, connection, or holonomy.
+ \item the exact qubit $\mathbb Z^2$ representation is dense on a Bloch circle,
+ so its coordinate inverse is discontinuous and its finite-tolerance geometry
+ is not robust;
+ \item no common one-shot measurement can exclusively identify the nine
+ nonorthogonal qubit goals, and sequence recognition requires explicitly
+ audited history memory;
+ \item the qutrit phase chart is finite and locally isotropic, but exact
+ Euclidean cost is imposed through inverse-distance retry probabilities and a
+ catalog of displacement macro-actions;
+ \item the Hesse-SIC construction is exact and operational but periodic: its
+ $\mathbb Z_3^2$ shortest-path metric fails the rank-two Euclidean criterion;
+ \item sequence-confirmation goals introduce a progress automaton whose state
+ must not be mistaken for a quantum spatial coordinate.
 \end{itemize}
 
 \section{Outlook}
@@ -2518,6 +3506,27 @@ Explore directed graphs, asymmetric energy models, quasimetrics, hyperbolic
 goal hierarchies, and Finsler-like local costs. Choose geometry through
 predictive validity and planning utility, not aesthetics.
 
+\paragraph{Derive, rather than prescribe, the Euclidean norm.}
+The strongest next experiment starts from the robust qutrit phase manifold but
+removes displacement-specific retry instruments. Parameterize a small,
+translation-covariant family of local CPTP maps and a common covariant goal
+instrument. Optimize the microscopic Kraus parameters against a multi-scale
+loss containing Bellman residual, Schoenberg negativity, rank above two,
+anisotropy of the local Fubini--Study/control metric, nonlocal action support,
+and degradation under detector tolerance. Train on a subset of displacements
+and evaluate on held-out radii and directions. This tests whether $L^2$ cost is
+an emergent effective law rather than a lookup table. A successful model should
+also preserve its chart after the goal automaton is erased and after small
+instrument perturbations.
+
+\paragraph{Scale the exact analytic benchmark.}
+Use the Hesse-SIC Bellman solution as a unit test for learned solvers, then
+replace $\mathbb Z_3^2$ by larger odd-order phase orbits. Compare local charts,
+periodic topology, and open-boundary constructions with the same
+Bellman--Schoenberg diagnostics. The desired finite-size signature is a stable
+two-eigenvalue positive Gram sector over increasing radii before boundary or
+wrap corrections appear.
+
 \paragraph{Optimize states, instruments, and landmarks.}
 Generalize \cref{eq:bilevel} from one success probability to positive Choi
 matrices or Stinespring isometries, enforcing complete positivity and trace
@@ -2527,16 +3536,15 @@ Evolutionary search is a robust first outer loop; differentiable meta-learning
 becomes attractive once the inner planner is model-based.
 
 \paragraph{From predictive to active localization.}
-Explicit online place localization has now been removed in
-\cref{sec:predictive-atlas}. The next controller should jointly choose sensing,
-movement, and commitment under a common cost. Information gain
-$H(b)-\sum_oP(o\mid b,a)H(b'_{a,o})$ supplies a useful diagnostic, but sensing
-should ultimately be valued by how much it lowers goal-conditioned cost rather
-than by entropy alone. The agent should learn its observation and transition
-models from uninterrupted experience, eliminating separated
-landmark-anchored surveys. Scaling from grids to tori, cylinders, spheres, and
-defected graphs should then be evaluated with out-of-sample stress, local
-dimension, neighborhood preservation, and topology, not only global MDS
+Explicit online place localization was removed in
+\cref{sec:predictive-atlas}, and sensing now competes with movement and
+commitment in \cref{sec:active-atlas}. The next agent should learn its
+observation and transition models jointly from uninterrupted experience,
+eliminating separated landmark-anchored surveys, and solve the continuous
+belief problem with point-based planning, tree search, or a learned
+distributional value. Scaling from reversible grids to tori, cylinders,
+spheres, and defected graphs should be evaluated with out-of-sample stress,
+local dimension, neighborhood preservation, and topology, not only global MDS
 \cite{tenenbaum2000}.
 
 \paragraph{Spatial base and internal fiber.}
@@ -2568,9 +3576,11 @@ a Euclidean coordinate: future-goal reachability must first yield causal order,
 directed cones, clock tasks, and observer-dependent simultaneity.
 
 \paragraph{Information-seeking action.}
-Replace undirected epsilon exploration with expected information gain,
-prediction uncertainty reduction, or reachability uncertainty reduction. This
-turns experimentation itself into goal-directed behavior.
+The active atlas already replaces fixed observation with expected information
+gain and goal-relative decision risk. The next step is information-seeking
+\emph{exploration}: choose experiments that reduce uncertainty in the jointly
+learned dynamics, reachability, and chart structure, not merely the current
+place posterior.
 
 \paragraph{Privileged offline physics.}
 Pair learned $z_t$ with hidden Bloch coordinates only after training. Test
@@ -2612,6 +3622,27 @@ than network capacity or a hidden grid alone. Space in this construction is
 therefore closer to a learned organization of action and anticipation, though
 delayed labels and a designed place basis remain.
 
+The active atlas makes observation itself part of goal-directed behavior.
+Coherent reversible movements prevent a blind policy from synchronizing an
+unknown ensemble, and learned active sensing retains 96.5\% all-pairs success
+while reducing fixed-scan cost by 62.1\%. The cheaper pragmatic state is less
+geometrically coherent than the full landmark posterior, demonstrating that a
+common space demands more information than one locally adequate decision.
+Movement and sensing costs separate into a spatial base and an epistemic
+internal coordinate, providing a concrete but provisional bridge toward the
+project's fiber-bundle program.
+
+The low-dimensional results show that this program does not fundamentally
+depend on a classical nine-state register. A qubit already supports an exact
+open lattice word metric, while a qutrit supports a resolved two-phase surface
+and common covariant outcome goals. At the same time, exact solvability exposes
+the central unresolved mechanism: a faithful history code need not be robust,
+a two-generator torus need not be Euclidean, and an exact Euclidean cost can be
+put in by hand through action probabilities. Bellman consistency and the
+Schoenberg rank test now provide proof-level acceptance criteria. The next
+scientific objective is to make a local, noise-stable Euclidean metric survive
+held-out scales and directions under a small physically natural Kraus family.
+
 The geometry-aware agent is competitive but not universally superior. Its
 embedding has measurable, seed-dependent strategic meaning; its directed cost
 orders some goals but is not accurate in absolute units. These shortcomings
@@ -2644,11 +3675,27 @@ conda run --no-capture-output -n qbist_spacetime \
   --transition-trials 100 --pair-episodes 100 \
   --max-moves 12 --device cpu
 python plot_predictive_atlas.py results/predictive-atlas
+
+conda run --no-capture-output -n qbist_spacetime \
+  python active_predictive_atlas.py --output results/active-atlas \
+  --seeds 0,1,2 --beacon-trials 200 --transition-trials 100 \
+  --pair-episodes 50 --max-interventions 60 \
+  --max-movement-cost 12 --failure-penalty 100 \
+  --confidence-threshold .95 --sensing-lookahead 3
+python plot_active_atlas.py results/active-atlas
+
+python -m unittest discover -s low_dimensional_hodology/tests -v
+python low_dimensional_hodology/run_exact_experiments.py
+python low_dimensional_hodology/run_qutrit_phase_experiments.py
+
+python -m unittest discover -s low_dimensional_hodology/search \
+  -p 'test_*.py' -v
+python low_dimensional_hodology/search/search_low_dimensional.py
 \end{verbatim}
 
 The manifest records exact runs; episode CSVs retain raw outcomes; geometry
 directories store embeddings, three distance views, reachability, curves, and
-displacements; and the plot tree contains 51 figures.
+displacements; and the plot tree contains the publication figures.
 The spatial bundle separately retains its 81-point instrument search, exact and
 learned all-pairs matrices, text Q-tables, trajectory records, manifest, and
 five figures.
@@ -2656,6 +3703,13 @@ The predictive-atlas bundle adds three localization summaries/curves, per-seed
 confusion and transition matrices, four sets of navigation matrices, nine GRU
 checkpoints, belief trajectories, a manifest that records the online
 information boundary, and five figures.
+The active bundle adds learned sensor calibration, 72 movement/total/sensing/
+success matrices, 72 belief trajectory audits, an equal-cost manifest, and
+five active/base--fiber figures.
+The low-dimensional bundle adds analytic all-pairs matrices, finite-tolerance
+and dephasing sweeps, 1.2 million retry samples, qutrit Bellman and Schoenberg
+audits, a 180-angle qubit search, sequence-counter controls, four figures, and
+21 focused unit tests.
 
 \section{Goal repertoires}
 
@@ -2669,6 +3723,8 @@ information boundary, and five figures.
 same common place probe.
 \item[predictive-atlas worlds] The same nine terminal landmark goals, reached
 using eight blind movements and inferred from four weak binary beacon fields.
+\item[active-atlas worlds] The same landmarks and beacons with eight coherent
+random-unitary layer swaps; every sense, move, and commitment has unit cost.
 \end{description}
 
 \section{Worked examples for the new reader}
@@ -2767,6 +3823,9 @@ mechanics,” \emph{American Journal of Physics} 82, 749--754 (2014).
 “Symmetric informationally complete quantum measurements,”
 \emph{Journal of Mathematical Physics} 45, 2171--2180 (2004).
 \doi{10.1063/1.1737053}.
+\bibitem{scott2006} A.~J. Scott, “Tight informationally complete quantum
+measurements,” \emph{Journal of Physics A: Mathematical and General} 39,
+13507--13530 (2006). \doi{10.1088/0305-4470/39/43/009}.
 \bibitem{durt2010} T.~Durt, B.-G. Englert, I.~Bengtsson, and K.~\.{Z}yczkowski,
 “On mutually unbiased bases,” \emph{International Journal of Quantum
 Information} 8, 535--640 (2010). \doi{10.1142/S0219749910006502}.
@@ -2776,6 +3835,9 @@ Information} 8, 535--640 (2010). \doi{10.1142/S0219749910006502}.
 \bibitem{bellman1957} R.~Bellman, \emph{Dynamic Programming}
 (Princeton University Press, 1957).
 \url{https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming}.
+\bibitem{puterman1994} M.~L. Puterman, \emph{Markov Decision Processes:
+Discrete Stochastic Dynamic Programming} (Wiley, 1994).
+\doi{10.1002/9780470316887}.
 \bibitem{watkins1992} C.~J. C.~H. Watkins and P.~Dayan, “Q-learning,”
 \emph{Machine Learning} 8, 279--292 (1992). \doi{10.1007/BF00992698}.
 \bibitem{kaelbling1998} L.~P. Kaelbling, M.~L. Littman, and A.~R. Cassandra,
@@ -2831,6 +3893,10 @@ goodness of fit to a nonmetric hypothesis,” \emph{Psychometrika} 29, 1--27
 \bibitem{torgerson1952} W.~S. Torgerson, “Multidimensional scaling: I. Theory
 and method,” \emph{Psychometrika} 17, 401--419 (1952).
 \doi{10.1007/BF02288916}.
+\bibitem{schoenberg1935} I.~J. Schoenberg, “Remarks to Maurice Fr\'echet's
+article `Sur la d\'efinition axiomatique d'une classe d'espaces distanci\'es
+vectoriellement applicable sur l'espace de Hilbert,'” \emph{Annals of
+Mathematics} 36, 724--732 (1935). \doi{10.2307/1968654}.
 \bibitem{gower1966} J.~C. Gower, “Some distance properties of latent root and
 vector methods used in multivariate analysis,” \emph{Biometrika} 53, 325--338
 (1966). \doi{10.1093/biomet/53.3-4.325}.

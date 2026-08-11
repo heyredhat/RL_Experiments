@@ -349,6 +349,71 @@ def _grid_beacons(size: int, informative: bool = True) -> tuple[Measurement, ...
     )
 
 
+def _grid_band_swap(size: int, axis: str, upper_band: bool) -> Array:
+    """Local permutation swapping one adjacent row or column pair.
+
+    Unlike an open-boundary translation, a permutation cannot herd an unknown
+    distribution into a boundary.  The two vertical and two horizontal swaps
+    still generate the full grid connectivity.  This reversible action design
+    makes localization behaviorally necessary in the active-atlas experiment.
+    """
+    if size != 3:
+        raise ValueError("the current band-swap construction is defined for size 3")
+    mapping = (0, 2, 1) if upper_band else (1, 0, 2)
+    operator = np.zeros((size * size, size * size), dtype=complex)
+    for y in range(size):
+        for x in range(size):
+            nx, ny = x, y
+            if axis == "x":
+                nx = mapping[x]
+            elif axis == "y":
+                ny = mapping[y]
+            else:
+                raise ValueError("axis must be 'x' or 'y'")
+            operator[ny * size + nx, y * size + x] = 1.0
+    return operator
+
+
+def _random_unitary_move(name: str, unitary: Array, success_probability: float) -> Measurement:
+    """Reported random-unitary channel: success applies U, failure applies I."""
+    dimension = len(unitary)
+    probability = float(success_probability)
+    if not 0.0 <= probability <= 1.0:
+        raise ValueError("success probability must lie in [0, 1]")
+    success = np.sqrt(probability) * np.asarray(unitary, dtype=complex)
+    failure = np.sqrt(1.0 - probability) * np.eye(dimension, dtype=complex)
+    return Measurement(name, (success, failure))
+
+
+def _reversible_grid_moves(size: int, diagonal_q: float) -> tuple[Measurement, ...]:
+    """Eight local, uncertainty-preserving random-unitary grid actions."""
+    north = _grid_band_swap(size, "y", upper_band=False)
+    east = _grid_band_swap(size, "x", upper_band=True)
+    south = _grid_band_swap(size, "y", upper_band=True)
+    west = _grid_band_swap(size, "x", upper_band=False)
+    cardinal = (north, east, south, west)
+    diagonals = (
+        east @ north,
+        east @ south,
+        west @ south,
+        west @ north,
+    )
+    names = (
+        "north-layer-swap",
+        "east-layer-swap",
+        "south-layer-swap",
+        "west-layer-swap",
+        "north-east-layer-swap",
+        "south-east-layer-swap",
+        "south-west-layer-swap",
+        "north-west-layer-swap",
+    )
+    return tuple(
+        _random_unitary_move(name, unitary, 1.0 if index < 4 else diagonal_q)
+        for index, (name, unitary) in enumerate(zip(names, cardinal + diagonals))
+    )
+
+
 def _qudit_grid_3x3(diagonal_q: float) -> EnvironmentDefinition:
     """Open 2D lattice with four axial and four cost-matched diagonal moves."""
     size = 3
@@ -479,6 +544,40 @@ def _qudit_grid_3x3_null_beacons(diagonal_q: float) -> EnvironmentDefinition:
     )
 
 
+def _qudit_grid_3x3_reversible_beacons(diagonal_q: float) -> EnvironmentDefinition:
+    """Reversible local motion prevents boundary homing without localization."""
+    size = 3
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-reversible-beacons",
+        description=(
+            "Nine-level grid with coherent random-unitary layer swaps, four "
+            "overlapping binary QND beacons, and a terminal landmark probe."
+        ),
+        measurements=_reversible_grid_moves(size, diagonal_q)
+        + _grid_beacons(size, informative=True)
+        + (_grid_probe(size),),
+        initial_states=_grid_states(size),
+        default_initial_state="center",
+    )
+
+
+def _qudit_grid_3x3_reversible_null_beacons(diagonal_q: float) -> EnvironmentDefinition:
+    """Matched reversible-motion control with place-independent beacons."""
+    definition = _qudit_grid_3x3_reversible_beacons(diagonal_q)
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-reversible-null-beacons",
+        description=(
+            "Matched reversible grid whose binary QND beacons are "
+            "place-independent fair coins."
+        ),
+        measurements=definition.measurements[:8]
+        + _grid_beacons(3, informative=False)
+        + (definition.measurements[-1],),
+        initial_states=definition.initial_states,
+        default_initial_state=definition.default_initial_state,
+    )
+
+
 _BUILDERS: dict[str, Callable[[float], EnvironmentDefinition]] = {
     "qubit-zx-weak": _qubit_zx_weak,
     "qubit-pauli": _qubit_pauli,
@@ -490,6 +589,8 @@ _BUILDERS: dict[str, Callable[[float], EnvironmentDefinition]] = {
     "qudit-grid-3x3-blind": _qudit_grid_3x3_blind,
     "qudit-grid-3x3-beacons": _qudit_grid_3x3_beacons,
     "qudit-grid-3x3-null-beacons": _qudit_grid_3x3_null_beacons,
+    "qudit-grid-3x3-reversible-beacons": _qudit_grid_3x3_reversible_beacons,
+    "qudit-grid-3x3-reversible-null-beacons": _qudit_grid_3x3_reversible_null_beacons,
 }
 
 
@@ -527,6 +628,12 @@ DEFAULT_GOALS_BY_ENVIRONMENT: dict[str, str] = {
         f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
     ),
     "qudit-grid-3x3-null-beacons": ";".join(
+        f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-reversible-beacons": ";".join(
+        f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-reversible-null-beacons": ";".join(
         f"place-{letter}=12:{index}" for index, letter in enumerate("ABCDEFGHI")
     ),
 }

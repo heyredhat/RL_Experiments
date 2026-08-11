@@ -1,0 +1,21 @@
+{
+  "model": "faithful irrational qubit phase representation of Z^2",
+  "epsilon": 0.01,
+  "alpha": 0.7122738364214627,
+  "beta": 2.111715610468884,
+  "goals": 9,
+  "minimum_angular_separation": 0.6352064133988922,
+  "max_pair_terminal_infidelity": 6.661338147750939e-16,
+  "manhattan_mds_2d_stress": 0.1845307534798997,
+  "euclidean_coordinate_distance_max_error": 0.0,
+  "qutrit_pairs_with_strict_shortcuts": 16,
+  "euclidean_waiting_max_monte_carlo_error": 0.028967124746,
+  "artifacts": [
+    "all_pairs.csv",
+    "goals.csv",
+    "finite_tolerance.csv",
+    "dephasing_validation.csv",
+    "euclidean_waiting_validation.csv",
+    "figures/exact_qubit_lattice.png"
+  ]
+}

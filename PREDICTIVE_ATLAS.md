@@ -551,3 +551,36 @@ The tests verify quantum completeness indirectly through the common
 environment validator, QND behavior, overlapping and null beacon fields,
 delayed terminal labels, recurrent tensor behavior, exact Bellman planning,
 and outcome-conditioned belief updates.
+
+---
+
+## 13. Implemented successor: the agent chooses when to localize
+
+The active successor proposed in Section 11 is now complete. See
+`ACTIVE_PREDICTIVE_ATLAS.md` for the full construction and artifact record.
+
+The fixed 48-probe scan is replaced by unit-cost online choices among sensing,
+movement, and commitment. A structural pilot failure showed that the old open
+grid allowed blind boundary homing. Production therefore uses coherent
+random-unitary layer swaps whose classical kernels are doubly stochastic and
+whose exact movement costs retain the optimized 2D geometry.
+
+Two active notions of useful information were compared:
+
+- a goal-relative three-step value-of-information policy pools landmarks that
+  require the same current action;
+- an atlas-preserving policy actively reduces full landmark entropy to a 0.95
+  reliability constraint.
+
+The second uses \(19.12\pm0.53\) total interventions rather than the fixed
+baseline's \(50.49\pm0.02\), with success \(0.965\pm0.004\), movement 2D stress
+\(0.111\pm0.006\), and Procrustes \(R^2=0.987\pm0.004\). The cheaper
+goal-relative state uses \(16.12\pm0.11\) interventions but degrades movement
+stress to \(0.193\pm0.015\). This confirms that a state sufficient for one
+decision can be insufficient for a shared atlas.
+
+Separating sensing from movement also produces the first empirical
+base/epistemic-fiber view in the project. Movement cost defines the spatial
+base; belief entropy and pair-dependent sensor burden describe internal
+epistemic work. The visualization is explicitly provisional and does not yet
+establish bundle topology, connection, or holonomy.

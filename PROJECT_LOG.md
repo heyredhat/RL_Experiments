@@ -378,3 +378,277 @@ The final manuscript is 2,854 lines and compiles to 53 pages. All
 cross-references and citations resolve; only harmless underfull bibliography
 lines remain. The new result pages and all five atlas figures were visually
 inspected before LaTeX intermediates were removed.
+
+---
+
+## 2026-08-11 — Equal-cost active atlas and epistemic fiber
+
+### Objective
+
+Implemented the proposed active successor: the agent chooses among weak
+sensing, blind movement, and terminal commitment, with every intervention
+costing one. The intended test was whether rational selective observation can
+preserve the learned 2D atlas at much lower cost than a fixed 48-probe scan.
+
+### First pilot: boundary homing invalidates the control
+
+The first controller used the existing open grid, a uniform initial belief,
+and a one-step entropy-penalized rollout. It exposed a structural confound.
+Repeated cardinal actions drive every possible source toward an open boundary.
+A null-sensor policy could reach corners with 100% success and no beacon
+information by deliberately erasing source uncertainty.
+
+This was a legitimate goal policy but not an atlas: its behavior and costs
+were nearly independent of source. The result established that hidden
+connectivity and even reliable control remain insufficient when dynamics
+contain cheap synchronizers.
+
+### Environment correction: reversible coherent motion
+
+Added two environments:
+
+- `qudit-grid-3x3-reversible-beacons`;
+- `qudit-grid-3x3-reversible-null-beacons`.
+
+Cardinal actions are adjacent row/column permutation involutions. Diagonals
+compose one vertical and one horizontal swap. Their instruments use
+
+```text
+K_success = sqrt(p) U
+K_failure = sqrt(1-p) I
+```
+
+and therefore preserve coherence conditional on outcome. The induced kernels
+are doubly stochastic, making a uniform prior invariant under movement. Exact
+shortest-path costs remain identical to the earlier optimized 2D matrix.
+
+This is the first project environment whose spatial movement is not
+entanglement breaking.
+
+### Active-controller iterations
+
+1. A one-step uncertainty heuristic oversensed and often exhausted its budget
+   before moving.
+2. A one-step goal-relative policy partition used only 7–9 probes but plateaued
+   around 0.8–0.85 success. One weak result often failed to change the modal
+   decision even when several results together would.
+3. A depth-three exact beacon tree valued short sequences of weak evidence.
+   The corrected pilot reached 0.965 success at about 16 interventions.
+4. A full-landmark entropy controller was retained as an atlas-preserving
+   comparison; a fixed 12-cycle scan, exact-field controller, oracle, and null
+   environment complete the controls.
+
+### Formal goal-relative rule
+
+For each goal, places are partitioned by their fully localized next action or
+commitment. The Bayes error is one minus the largest decision-class posterior.
+A depth-three recursion compares penalty 100 times this error with one unit of
+sensing plus expected optimal subtree cost. It senses only when the latter is
+smaller. Decisions and subtree values are cached by rounded belief and goal.
+
+This implements a pragmatic state: landmarks requiring the same current
+action are deliberately identified.
+
+### Frozen production run
+
+Production used three seeds, 200 beacon surveys per site/action, 100 movement
+surveys per source/action, 50 evaluation trials per ordered pair, six
+conditions, and a 60-intervention safety deadline. Total navigation scale was
+72,900 episodes. The saved bundle contains 72 matrices and 72 representative
+trajectory audits.
+
+Learned beacon mean absolute error was (0.0233\pm0.0057); movement-model
+total-variation error was (0.0220\pm0.0026).
+
+### Main result
+
+The atlas-preserving active controller achieved:
+
+- success (0.965\pm0.004);
+- sensing (16.63\pm0.53);
+- total interventions (19.12\pm0.53);
+- exact movement-cost correlation (0.929\pm0.012);
+- movement 1D/2D/3D stress (0.422/0.111/0.060);
+- movement Procrustes (R^2=0.987\pm0.004).
+
+The fixed controller achieved (0.976\pm0.002) success using exactly 48
+sensors and (50.49\pm0.02) total interventions. Active sensing therefore
+reduced total burden by 62.1% with a 1.14 percentage-point success reduction.
+
+The goal-relative controller used (13.54\pm0.10) sensors and
+(16.12\pm0.11) total interventions, but success fell to
+(0.938\pm0.002) and movement 2D stress rose to (0.193\pm0.015). Exact
+beacon likelihoods did not repair this, showing that pragmatic quotienting—not
+calibration error—caused most of the loss.
+
+Null-sensor success was (0.111\pm0.002), confirming that reversible movement
+does not self-localize.
+
+### Base/fiber interpretation
+
+Movement costs preserve the candidate spatial base, whereas total equal-cost
+difficulty is more distorted. Atlas-preserving movement 2D stress is 0.111;
+total-cost stress is 0.280. Actual sensing burden has weak and seed-variable
+correlation (0.281\pm0.191) with movement distance and is poorly explained by
+separate source/goal main effects (R^2=0.037\pm0.026).
+
+Beliefs are visualized by their barycenter in the learned base and normalized
+entropy as height. Active paths descend through uncertainty before traveling
+near the base. This is recorded as an epistemic-fiber precursor, not a claim
+of a mathematical bundle.
+
+### Files and checks
+
+- Added `active_predictive_atlas.py`, `plot_active_atlas.py`,
+  `ACTIVE_PREDICTIVE_ATLAS.md`, and active-atlas tests.
+- Extended the environment catalog and made the transition survey accept an
+  environment argument without changing predictive-atlas defaults.
+- Retained the complete 1.3 MB production artifact under
+  `results/active-atlas/`.
+- Updated all project context documents and the publication manuscript.
+- Pilot artifacts were removed only after their design lessons and diagnostic
+  numbers were recorded.
+
+### Final metric audit and validation
+
+A final decomposition audit caught an analysis mistake before handoff: the
+first sensing matrices replaced failed trials by the 60-step deadline. That is
+appropriate for restricted movement and total hitting costs, but not for the
+question “how many beacon actions were actually used?” The implementation,
+manifest, regression tests, figures, and production bundle were corrected and
+the entire 72,900-episode evaluation was rerun. The correction changed the
+sensing/distance interpretation but no competence or movement-geometry result.
+
+The final atlas-preserving sensing/distance correlation is
+(0.281\pm0.191), with strong seed variation, while an additive endpoint model
+has (R^2=0.037\pm0.026). Goal-relative values are (0.580\pm0.075) and
+(R^2=0.032\pm0.008), respectively. Thus distance has some association with
+sensing, but neither distance nor source/goal main effects determine the
+pairwise epistemic burden.
+
+All 39 unit tests pass, Python byte-compilation succeeds, every saved matrix is
+finite and 9-by-9, and the bundle contains the expected 18 summaries, 216
+calibration rows, 72 matrices, 72 audit trajectories, and five figures. The
+3,322-line manuscript compiles cleanly to 61 pages with resolved citations and
+cross-references; only harmless underfull bibliography lines remain. Final
+active-atlas pages and the corrected sensing/fiber figures were visually
+inspected.
+
+---
+
+## 2026-08-11 — Low-dimensional exact hodology
+
+### Question and research split
+
+The nine-level construction associates places with nine orthogonal basis
+states. The new question was whether a qubit or qutrit, together with richer
+Kraus instruments and sequence goals, could generate the same spatial
+hodology. Work was split into independent exact-construction, theory, and
+skeptical-search strands and then reconciled in
+`low_dimensional_hodology/`.
+
+The first conclusion is a distinction rather than a number. Physical Hilbert
+dimension, predictive/history-state dimension, and goal-automaton dimension
+are different resources. Nine perfectly discriminated one-shot physical
+places still require nine orthogonal supports, but nine controlled histories
+do not.
+
+### Exact qubit construction
+
+Two rationally independent diagonal qubit rotations give a faithful
+projective action of \(\mathbb Z^2\) on \(|+\rangle\). The selected nine
+nonorthogonal orbit goals have exact open-grid Manhattan word distance. Binary
+random-unitary displacement instruments succeed with probability
+\(1/\|\delta\|_2\); geometric waiting time and the triangle inequality prove
+that their exact unit-intervention cost is ordinary Euclidean distance.
+
+The runner checked all 81 state transitions and sampled 1.2 million retry
+times. Maximum terminal infidelity was \(6.7\times10^{-16}\), analytic distance
+error was zero, and Monte Carlo mean error was below 0.029.
+
+This construction was deliberately not promoted without its failure modes.
+The orbit is dense on one phase circle, the worst false goal-projector
+acceptance is 0.9025, and finite verification tolerance \(10^{-3}\) creates
+shortcuts for 30.6% of pairs. It proves algebraic possibility, not robust
+two-dimensional physical localization.
+
+### Exact qutrit phase construction
+
+The stronger benchmark uses a qutrit fiducial with probabilities
+\((3/8,1/4,3/8)\) and two commuting diagonal generators whose covariance
+metric is exactly \((3/16)I_2\). Order-11 phase actions generate 121 distinct
+nonorthogonal states. The nine goals form a local \(3\times3\) chart below the
+torus wrap radius.
+
+The exact retry instruments yield zero Euclidean cost error, Bellman residual
+\(8.9\times10^{-16}\), Schoenberg rank two, and MDS reconstruction error
+\(1.3\times10^{-15}\). The physical trace/control-distance correlation is
+0.9889, but they remain conceptually different metrics. Monte Carlo error over
+the 24 patch displacement classes was below 0.024.
+
+The inverse-distance success law is supplied by design. The model is an exact
+ground truth for learning and perturbation theory, not an explanation of why
+Euclidean norm should be selected dynamically.
+
+### Operational qutrit and skeptical controls
+
+The Hesse SIC model uses nine nonorthogonal outcome goals and has the exact
+Bellman solution \(V_g(s)=6+d_T(s,g)\). Its geometry is the two-generator
+\(3\times3\) torus, but planar stress 0.383 prevents calling the scalar metric
+an ordinary Euclidean plane. A phase-grid POVM and translated goals requiring
+one to three consecutive outcomes retain 0.9961 correlation with torus control
+distance while baseline cost rises from 5.588 to 72.647.
+
+A qubit Bloch-sphere patch reaches Euclidean correlation 0.98975 and 2D stress
+0.00736 at minimum trace separation 0.1256, with measurable noncommutativity
+and translation defects. The null-qubit DFA control retains a goal grid with
+zero state geometry. Projective qubit sequence counters produce additive
+residual one, compared with zero for independent coins, isolating quantum
+backaction as a distortion rather than the source of the counter base.
+
+### Theory and next boundary
+
+The exact finite classification now has a clean core. A proposed cost family
+must solve the proper Bellman equations; its symmetric matrix must be a metric;
+and its Schoenberg matrix must be positive semidefinite of rank at most two or
+three. These conditions are necessary and sufficient for an exact Euclidean
+cost embedding.
+
+They are not sufficient for a physical emergence claim. The stronger program
+adds local action covariance, goal covariance, operational localization,
+trajectory coherence, low external-memory provenance, and robustness to
+unknown starts and disturbances. The next experiment should hide the qutrit
+phase counter, provide only weak quantum observations, and test whether a
+recurrent predictive state reconstructs the exact chart.
+
+### Files and validation at this stage
+
+- Added the self-contained miniproject README, two theory/results reports, a
+  skeptical search report, three simulation modules, three runners, and 21
+  focused tests.
+- Generated four inspected figures plus compact CSV/JSON matrices and
+  summaries entirely inside `low_dimensional_hodology/`.
+- Updated the project vision, architecture, experiment protocol, README, and
+  publication manuscript to distinguish word, state, automaton, topology, and
+  control-cost geometry.
+
+### Final integration and validation
+
+The publication manuscript now contains a self-contained low-dimensional
+chapter deriving the one-shot orthogonality bound, Bellman realizability,
+Schoenberg's exact Euclidean criterion, the qubit faithfulness theorem, the
+unit-cost retry theorem, the isotropic qutrit phase metric, and the analytic
+Hesse-SIC Bellman solution. It includes all four low-dimensional figures, a
+comparative table, explicit limitations, and an inverse-design outlook focused
+on deriving rather than prescribing the Euclidean norm.
+
+All three deterministic low-dimensional runners were repeated and reproduced
+their saved summaries. The 13 exact-construction tests and 8 skeptical-search
+tests pass. The complete pre-existing suite passes all 39 tests in the
+documented qbist_spacetime environment, for 60 passing tests in total.
+The system interpreter's expected lack of PyTorch was separately identified
+and was not counted as a code result. Python byte-compilation succeeds.
+
+GOAL_GEOMETRY_PAPER.tex compiles with resolved references and citations to a
+71-page PDF. The new pages and all four inserted figures were visually
+inspected; only harmless underfull-box typography warnings remain.

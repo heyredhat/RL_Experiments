@@ -15,7 +15,7 @@ The first inverse-designed emergent-space study, including its quantum
 instruments, failures, dimensional tests, and fiber-bundle research program, is
 in [SPATIAL_HODOLOGY.md](SPATIAL_HODOLOGY.md).
 
-The current research frontier is the
+The preceding major step is the
 [predictive-atlas study](PREDICTIVE_ATLAS.md). It removes exact online place
 reports: a GRU integrates ambiguous weak-beacon outcomes, a learned transition
 model propagates its belief through blind movements, and goal-conditioned
@@ -23,6 +23,24 @@ planning reconstructs a two-dimensional cost geometry. The three-seed
 production agent achieves 97.3% all-pairs success and recovers the concealed
 arrangement with Procrustes \(R^2=0.987\), while memory-limited and
 place-independent controls fail.
+
+The next step is now implemented in
+[ACTIVE_PREDICTIVE_ATLAS.md](ACTIVE_PREDICTIVE_ATLAS.md). Sensing, movement,
+and terminal commitment all cost one intervention, and the agent actively
+chooses among them. A reversible random-unitary movement design closes a
+boundary-homing loophole. The atlas-preserving policy uses 19.12 total
+interventions instead of the fixed baseline's 50.49 while retaining 96.5%
+success and Procrustes (R^2=0.987). Separating movement cost from adaptive
+sensing cost gives the project's first empirical spatial-base/epistemic-fiber
+visualization.
+
+The new [low-dimensional hodology miniproject](low_dimensional_hodology/README.md)
+removes the nine-level position register. It proves that a qubit can carry an
+exact \(3\times3\) history/word lattice and that a qutrit phase manifold can
+carry 121 nonorthogonal orbit states while a nine-goal local chart has exactly
+Euclidean optimal cost. Matched qutrit SIC, qubit tangent-plane, sequence-
+counter, and null-automaton studies distinguish geometry in quantum dynamics
+from geometry supplied only by goal memory.
 
 The publication-style account is available as both
 [LaTeX source](GOAL_GEOMETRY_PAPER.tex) and a
@@ -88,6 +106,29 @@ conda run --no-capture-output -n qbist_spacetime \
 python plot_predictive_atlas.py results/predictive-atlas
 ```
 
+Reproduce the equal-cost active atlas:
+
+```bash
+conda run --no-capture-output -n qbist_spacetime \
+  python active_predictive_atlas.py \
+  --output results/active-atlas --seeds 0,1,2 \
+  --beacon-trials 200 --transition-trials 100 \
+  --pair-episodes 50 --max-interventions 60 \
+  --failure-penalty 100 --confidence-threshold .95 \
+  --sensing-lookahead 3
+python plot_active_atlas.py results/active-atlas
+```
+
+Reproduce the exactly solvable low-dimensional studies:
+
+```bash
+python -m unittest discover -s low_dimensional_hodology/tests -v
+python -m unittest discover -s low_dimensional_hodology/search -p 'test_*.py' -v
+MPLBACKEND=Agg python low_dimensional_hodology/run_exact_experiments.py
+MPLBACKEND=Agg python low_dimensional_hodology/run_qutrit_phase_experiments.py
+MPLBACKEND=Agg python low_dimensional_hodology/search/search_low_dimensional.py
+```
+
 `plot_results.py` deliberately has no PyTorch dependency. It can run in any
 Python environment containing NumPy and Matplotlib.
 
@@ -105,6 +146,8 @@ Python environment containing NumPy and Matplotlib.
 | `qudit-grid-3x3-cardinal` | nine-level qudit | four place-reporting moves plus a common place probe | `center` |
 | `qudit-grid-3x3-beacons` | nine-level qudit | eight blind moves, four overlapping binary QND beacons, terminal place probe | `center` |
 | `qudit-grid-3x3-null-beacons` | nine-level qudit | same, but place-independent beacon fields | `center` |
+| `qudit-grid-3x3-reversible-beacons` | nine-level qudit | eight coherent random-unitary layer swaps, four learned QND beacons, terminal probe | `center` |
+| `qudit-grid-3x3-reversible-null-beacons` | nine-level qudit | same reversible motion with place-independent beacons | `center` |
 
 Qubit states include `zero`, `one`, `plus`, `minus`, `plus-i`, `minus-i`, and
 `mixed`. Qutrit states include `zero`, `one`, `two`, `plus`, and `mixed`. Each
@@ -170,6 +213,11 @@ curves, per-seed confusion/cost/success/transition matrices, nine GRU
 checkpoints, belief trajectories, a manifest, and five figures. The companion
 `plot_predictive_atlas.py` has no PyTorch dependency.
 
+`active_predictive_atlas.py` writes `results/active-atlas/`: learned beacon
+calibration, per-seed movement/total/sensing/success matrices, representative
+belief trajectories, a complete summary and manifest, and five figures.
+`plot_active_atlas.py` is likewise a lightweight artifact renderer.
+
 ## Scientific boundary
 
 Agent code must not inspect `env._rho`, `env._kraus`, or any quantity derived
@@ -186,3 +234,11 @@ withheld. Offline tests and figures may decode those variables only when
 explicitly labeled. Landmark-delayed training and landmark-anchored transition
 surveys remain supervision; the experiment is not described as fully
 unsupervised discovery.
+
+The active atlas adds a further separation. Its online controller knows only
+learned landmark-conditioned observation and transition tables, its goal, and
+its own action/outcome record. Exact sensor fields are used only in a named
+upper-bound control and offline calibration metric. The movement instruments
+are coherent random-unitary channels, but delayed landmark supervision and a
+designed place basis remain. The entropy-height “fiber” is explicitly a
+provisional operational visualization, not yet a mathematical fiber bundle.

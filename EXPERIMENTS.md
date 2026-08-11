@@ -371,3 +371,272 @@ of the retained result bundle; their numbers remain in this log for audit.
 The result bundle also retains every per-seed cost/success/confusion matrix,
 the learned transition tables, nine GRU checkpoints, trajectories, summary
 CSVs, and the exact run manifest.
+
+---
+
+## Equal-cost active predictive atlas
+
+The active successor lets every beacon, movement, and terminal commitment cost
+one intervention. Full theory, pilot history, and interpretation are in
+`ACTIVE_PREDICTIVE_ATLAS.md`.
+
+### Frozen production questions
+
+1. Can learned active sensing approach fixed-scan reliability at materially
+   lower total intervention cost?
+2. Does goal-relative information value use fewer sensors than preserving a
+   complete landmark posterior?
+3. Does pragmatic state compression preserve a common movement geometry?
+4. Can a null sensor support navigation when movement is reversible and doubly
+   stochastic?
+5. Does separating movement and sensing cost expose a spatial base plus an
+   internal epistemic coordinate?
+
+### Corrected environment
+
+The first active pilot in the open grid failed as a geometry experiment:
+repeated translations could herd unknown states to boundaries, giving a null-
+sensor policy perfect corner control without localization. The production
+world replaces translations with local random-unitary layer swaps. Their
+classical kernels are doubly stochastic, their conditional quantum maps
+preserve coherence, and their exact shortest-path matrix is identical to the
+optimized (p_d=0.715) geometry.
+
+This correction was structural, not a tuned penalty. Blind movement can no
+longer turn a uniform prior into a localized posterior.
+
+### Protocol
+
+- Three seeds.
+- 200 beacon calibration trials per landmark/action.
+- 100 movement surveys per source/action.
+- 50 held-out trials for every ordered source–goal pair.
+- Six conditions: oracle, goal-relative active, exact-sensor active, fixed
+  48-probe scan, atlas-preserving active, and null active.
+- Unit sensing, movement, and commitment cost.
+- Three-step goal-relative sensing lookahead with error penalty 100.
+- Atlas-preserving reliability constraint 0.95.
+- 60-intervention safety deadline.
+- 72,900 navigation episodes.
+
+### Competence and cost
+
+Mean ± sample standard deviation across three seeds:
+
+| condition | success | sensors | moves | total interventions | commit confidence |
+|---|---:|---:|---:|---:|---:|
+| oracle | 1.000 ± 0.000 | 0.00 | 1.482 ± 0.015 | 2.482 ± 0.015 | 0.991 ± 0.000 |
+| goal-relative active | 0.938 ± 0.002 | 13.54 ± 0.10 | 1.576 ± 0.015 | 16.12 ± 0.11 | 0.941 ± 0.005 |
+| exact-sensor active | 0.943 ± 0.004 | 13.07 ± 0.04 | 1.563 ± 0.011 | 15.63 ± 0.05 | 0.937 ± 0.000 |
+| fixed-12 | **0.976 ± 0.002** | 48.00 | 1.487 ± 0.017 | 50.49 ± 0.02 | 0.968 ± 0.001 |
+| atlas-preserving active | **0.965 ± 0.004** | **16.63 ± 0.53** | 1.494 ± 0.003 | **19.12 ± 0.53** | 0.962 ± 0.000 |
+| active null | 0.111 ± 0.002 | 0.72 ± 0.12 | 37.80 ± 3.66 | 39.52 ± 3.54 | 0.122 ± 0.002 |
+
+Atlas-preserving active sensing reduces total cost by 62.1% relative to the
+fixed scan while losing 1.14 percentage points of success. Exact beacon fields
+barely improve goal-relative control, so its residual error is primarily the
+cost of pragmatic state compression rather than calibration.
+
+### Movement and total geometry
+
+| condition | exact-cost (r) | movement 2D stress | movement 3D stress | movement Procrustes (R^2) | total 2D stress |
+|---|---:|---:|---:|---:|---:|
+| oracle | 0.995 ± 0.000 | 0.047 ± 0.009 | 0.046 ± 0.008 | 0.999 ± 0.000 | 0.115 ± 0.004 |
+| goal-relative active | 0.724 ± 0.054 | 0.193 ± 0.015 | 0.097 ± 0.007 | 0.900 ± 0.063 | 0.286 ± 0.006 |
+| exact-sensor active | 0.694 ± 0.103 | 0.194 ± 0.013 | 0.093 ± 0.009 | 0.855 ± 0.105 | 0.279 ± 0.006 |
+| fixed-12 | 0.962 ± 0.005 | 0.079 ± 0.014 | 0.054 ± 0.020 | 0.993 ± 0.001 | 0.310 ± 0.001 |
+| atlas-preserving active | **0.929 ± 0.012** | **0.111 ± 0.006** | 0.060 ± 0.010 | **0.987 ± 0.004** | 0.280 ± 0.005 |
+| active null | 0.094 ± 0.189 | 0.300 ± 0.004 | 0.193 ± 0.000 | 0.197 ± 0.166 | 0.297 ± 0.004 |
+
+Goal-relative state is cheaper but damages the shared geometry. The full
+landmark posterior costs roughly three additional probes and preserves a much
+better common atlas. Total intervention cost is substantially less Euclidean
+than movement cost because sensing is epistemic work, not spatial displacement.
+
+### Base/fiber diagnostics
+
+Atlas-preserving sensing burden has a weak, seed-variable correlation
+(0.281\pm0.191) with spatial distance. Only
+(0.037\pm0.026) of its variance is explained by additive source and goal
+effects. Goal-relative sensing has a stronger positive correlation
+(0.580\pm0.075), while its endpoint-only additive model explains just
+(0.032\pm0.008). Distance affects information demand, but neither distance nor
+separate endpoint taxes explain the pair-specific sensing matrix.
+
+The fiber visualization places belief barycenters in the learned movement
+plane and uses normalized entropy as height. Trajectories descend in
+uncertainty before moving across the base. This is an operational precursor,
+not yet evidence of a mathematical fiber bundle.
+
+### Figures
+
+- `reversible_design_and_calibration.png`
+- `active_atlas_performance.png`
+- `active_atlas_geometries.png`
+- `active_sensing_overhead.png`
+- `epistemic_fiber_trajectories.png`
+
+### Reproduction
+
+```bash
+conda run --no-capture-output -n qbist_spacetime \
+  python active_predictive_atlas.py \
+  --output results/active-atlas --seeds 0,1,2 \
+  --beacon-trials 200 --transition-trials 100 \
+  --pair-episodes 50 --max-interventions 60 \
+  --max-movement-cost 12 --failure-penalty 100 \
+  --confidence-threshold .95 --sensing-lookahead 3
+python plot_active_atlas.py results/active-atlas
+```
+
+---
+
+## Exactly solvable low-dimensional hodology
+
+### Frozen questions
+
+1. Can nine goals form a 2D lattice when \(d=2\) or \(3\)?
+2. Which result concerns word/control geometry, which concerns quantum-state
+   distinguishability, and which is supplied by a goal automaton?
+3. When is an exact lattice planar Euclidean rather than merely a two-
+   generator graph or torus?
+4. What fails under finite verification tolerance, measurement backaction,
+   and null quantum dynamics?
+5. Which parts admit closed-form Bellman proofs rather than fitted simulation?
+
+### Exact qubit word construction
+
+The qubit starts in \(|+\rangle\). Two commuting phase rotations have angles
+
+\[
+\alpha=2\pi/9+10^{-2}\sqrt2,
+\qquad
+\beta=2\pi/3+10^{-2}\sqrt3.
+\]
+
+Their projective action is faithful on \(\mathbb Z^2\). Nine goals are the
+nonorthogonal rays \(U^iV^j|+\rangle\), \(i,j\in\{0,1,2\}\), or equivalently
+bounded-horizon action-sequence languages with the same net exponents. The
+all-pairs cardinal word cost is exactly open-grid Manhattan distance.
+
+For every nonzero patch displacement \(\delta\), a binary unit-cost instrument
+applies \(U_\delta\) with probability \(1/\|\delta\|_2\) and identity otherwise.
+The exact expected hitting cost is Euclidean distance. Fifty thousand trials
+for each of 24 displacement classes—1.2 million geometric samples—gave maximum
+mean error 0.029 interventions.
+
+| qubit diagnostic | result |
+|---|---:|
+| all-pairs exact-state terminal infidelity | \(6.7\times10^{-16}\) |
+| Euclidean cost maximum analytic error | 0 |
+| worst one-shot false goal acceptance | 0.9025 |
+| pairs shortened at infidelity tolerance \(10^{-3}\) | 30.6% |
+| qutrit-Weyl open-grid pairs with torus shortcuts | 16/36 |
+
+This is an exact existence result but not a robust localization model. The
+orbit is dense on one phase circle and its coordinate inverse is discontinuous.
+
+### Exact order-11 qutrit phase chart
+
+The stronger benchmark uses
+
+\[
+|\psi_0\rangle=(\sqrt{3/8},1/2,\sqrt{3/8})^T,
+\quad A=\operatorname{diag}(0,1,0),
+\quad B=\operatorname{diag}(0,1/2,1).
+\]
+
+The commuting order-11 unitaries generate 121 distinct nonorthogonal qutrit
+states. The phase-generator covariance is exactly \((3/16)I_2\). A nine-goal
+\(3\times3\) patch lies below the wrap radius, and unit-cost retry instruments
+for all phase displacements yield exact Euclidean optimal cost.
+
+| qutrit phase diagnostic | result |
+|---|---:|
+| physical Hilbert dimension | 3 |
+| distinct phase-orbit states | 121 |
+| selected goals | 9 |
+| minimum orbit Frobenius separation | 0.3451 |
+| maximum Bellman residual | \(8.9\times10^{-16}\) |
+| patch Euclidean cost error | 0 |
+| MDS reconstruction error | \(1.3\times10^{-15}\) |
+| positive Schoenberg rank | 2 |
+| control/trace-distance correlation | 0.9889 |
+| Monte Carlo waiting-time maximum error | 0.0237 |
+
+The action law encodes inverse Euclidean length by design. The experiment
+proves compatibility of low Hilbert dimension, a genuine 2D phase manifold,
+sequence-labelled control, and exact Euclidean hodology; it does not derive the
+probability law from more primitive physics.
+
+### Fully operational qutrit goals
+
+The Hesse SIC experiment uses four Weyl unitary controls and one common
+nine-outcome qutrit instrument. Goal \(g\) is “obtain SIC outcome \(g\),” not
+“occupy basis state \(g\).” Exact value iteration recovers
+
+\[
+V_g(s)=6+d_T(s,g),
+\]
+
+with correlation one between baseline-subtracted goal cost and the
+\(\mathbb Z_3^2\) torus control distance. The price is topology: planar
+classical-MDS stress is 0.383 and the squared-distance Gram matrix is
+indefinite.
+
+A second phase-grid POVM has control/excess-cost correlation 0.9961. Requiring
+one, two, or three consecutive reports of the translated target outcome keeps
+the same correlation while baseline cost becomes 5.588, 22.353, and 72.647.
+The result separates goal location from internal sequence difficulty.
+
+### Qubit approximation and automaton controls
+
+A 180-angle search over
+\(|\psi_{xy}\rangle=R_x(\theta)^xR_y(\theta)^y|0\rangle\) selected
+\(\theta=0.309665\) subject to minimum trace separation 0.12.
+
+| qubit patch diagnostic | result |
+|---|---:|
+| Euclidean distance correlation | 0.98975 |
+| 2D classical-MDS stress | 0.00736 |
+| minimum trace separation | 0.12557 |
+| one-cell commutator defect | 0.01025 |
+| mean / maximum translation defect | 0.00942 / 0.04908 |
+
+The flat limit is singular: as \(\theta\to0\), all states coalesce. A null
+qubit with an unchanged nine-state DFA retains the entire automaton grid while
+all physical trace distances vanish. In a separate counter task, matched fair
+coins give the additive cost surface
+
+\[
+\begin{pmatrix}0&2&4\\2&4&6\\4&6&8\end{pmatrix},
+\]
+
+whereas projective qubit \(X/Z\) backaction gives
+
+\[
+\begin{pmatrix}0&3&4\\3&5&6\\4&6&7\end{pmatrix}.
+\]
+
+The qubit's additive residual is one versus numerical zero for the coin. This
+is a controlled example of quantum backaction warping a history-carried base.
+
+### Figures and artifacts
+
+- `low_dimensional_hodology/results/figures/exact_qubit_lattice.png`
+- `low_dimensional_hodology/results/qutrit-phase/qutrit_phase_lattice.png`
+- `low_dimensional_hodology/search/figures/low_dimensional_search.png`
+- `low_dimensional_hodology/search/figures/qutrit_and_counter_comparison.png`
+- exact all-pairs, tolerance, dephasing, and waiting-time CSV files;
+- qutrit probability, policy, cost, confirmation-sequence, and MDS matrices;
+- machine-readable manifests and summaries.
+
+### Reproduction
+
+```bash
+python -m unittest discover -s low_dimensional_hodology/tests -v
+python -m unittest discover -s low_dimensional_hodology/search -p 'test_*.py' -v
+MPLBACKEND=Agg python low_dimensional_hodology/run_exact_experiments.py
+MPLBACKEND=Agg python low_dimensional_hodology/run_qutrit_phase_experiments.py
+MPLBACKEND=Agg python low_dimensional_hodology/search/search_low_dimensional.py
+```

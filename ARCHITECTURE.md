@@ -99,6 +99,17 @@ Use `conda activate qbist_spacetime`.
   - produces sensor, confusion, learning, performance, geometry, and
     belief-trajectory figures without loading model checkpoints.
 
+- `active_predictive_atlas.py`
+  - calibrates beacon and movement tables from delayed landmark surveys;
+  - evaluates equal-cost sense/move/commit policies on reversible motion;
+  - compares goal-relative value of information, atlas-preserving sensing,
+    fixed scanning, exact-sensor, oracle, and null controls;
+  - separates movement, sensing, and total hodological cost matrices.
+
+- `plot_active_atlas.py`
+  - renders reversible-action, calibration, performance, geometry, sensing-
+    overhead, and epistemic-fiber figures from the saved bundle.
+
 ### Focused / compatibility entry points
 
 - `q_learning.py`
@@ -1284,3 +1295,243 @@ physics and learning code:
 the general environment validator, and exact place independence of the null
 fields. These tests complement end-to-end production metrics; neither replaces
 the other.
+
+---
+
+# 20. Equal-cost active-atlas pipeline
+
+The active pipeline addresses two limitations of the fixed predictive atlas:
+its 48 mandatory probes and its entanglement-breaking open-boundary motion.
+The full derivation and interpretation are in
+`ACTIVE_PREDICTIVE_ATLAS.md`.
+
+## 20.1 Reversible environment builders
+
+`_grid_band_swap()` constructs a local permutation unitary that exchanges one
+adjacent pair of rows or columns. North/south and east/west act on complementary
+layer pairs. `_reversible_grid_moves()` composes these into four cardinal and
+four diagonal actions. `_random_unitary_move()` exposes success/failure through
+
+```text
+success: sqrt(p) U
+failure: sqrt(1-p) I
+```
+
+so completeness follows from unitarity. Axial actions use `p=1`; diagonals use
+`p=0.715`. The resulting classical transition matrices are doubly stochastic,
+which prevents movement from concentrating a uniform place belief.
+
+The catalog entries are:
+
+- `qudit-grid-3x3-reversible-beacons`;
+- `qudit-grid-3x3-reversible-null-beacons`.
+
+They retain actions 0–7 for motion, 8–11 for QND beacons, and 12 for terminal
+landmark commitment, so the atlas code shares one interface.
+
+## 20.2 Calibration and filtering
+
+`calibrate_beacons()` estimates a tensor with shape
+
+```text
+[beacon, landmark, outcome]
+```
+
+using Jeffreys-like binary pseudocounts of 0.5. The generic
+`learned_transition_model()` now accepts an environment name and estimates
+
+```text
+[move, outcome, source landmark, destination landmark].
+```
+
+`exact_joint_model()` and `exact_beacon_model()` are privileged audit
+functions. They are used only for mean absolute error, total variation, and
+unit tests. Online updates call `update_beacon_belief()` or the existing
+`update_belief()` with learned tables.
+
+## 20.3 Goal-relative value-of-information controller
+
+`policy_partition()` maps every landmark to its fully localized best next
+decision for the current goal. It pushes the place posterior into nine
+decision classes: eight movements plus commitment. This deliberately quotients
+places that are presently behaviorally equivalent.
+
+`choose_policy_partition_action()` evaluates a depth-three binary sensing tree.
+At each node it compares stopping cost
+
+```text
+decision_error_penalty * (1 - largest decision-class mass)
+```
+
+with one unit of sensing plus expected optimal subtree cost. Value and selected
+action are cached by goal and rounded belief. When no probe earns its price, the
+controller executes the modal decision.
+
+## 20.4 Atlas-preserving controller
+
+`choose_entropy_action()` maximizes expected landmark-entropy reduction until
+the posterior maximum exceeds a configured reliability constraint. It then
+uses belief-weighted learned Q costs. Unlike the policy partition, it preserves
+one common landmark representation for every goal. Comparing the two tests the
+cost of global atlas coherence.
+
+## 20.5 Episode and evaluation contract
+
+`run_episode()` begins with a uniform belief except in the named oracle
+condition. Every selected beacon, movement, and terminal probe increments the
+same intervention counter. The terminal probe always ends the episode.
+Privileged true sites are appended only to saved audit trajectories after each
+decision; they never affect beliefs or actions.
+
+`evaluate_condition()` freezes learned tables and evaluates every ordered pair.
+It produces four matrices:
+
+- `success`: empirical terminal accuracy;
+- `movement`: restricted movement cost, with failures assigned the 12-move
+  censoring cost;
+- `sensing`: actual beacon burden, including the actions really taken in failed
+  episodes rather than replacing them by a censoring penalty;
+- `total`: all unit-cost interventions including commitment.
+
+Diagonal entries are set to zero for geometric analysis. This means the total
+matrix asks about relational overhead after choosing a source/goal pair; raw
+episode totals retain self-localization cost.
+
+## 20.6 Base/fiber diagnostics
+
+Movement and total matrices are embedded separately. If movement remains 2D
+but total cost does not, epistemic work cannot be treated as another ordinary
+spatial displacement. `additive_matrix_r2()` tests whether sensing is merely a
+source or goal main effect; the observed low value shows pair-specific
+interaction.
+
+`plot_active_atlas.py` projects each belief to the barycenter of learned spatial
+coordinates and uses normalized entropy as a vertical internal coordinate.
+This is explicitly a provisional fiber visualization. No software component
+claims local trivialization, connection, or holonomy.
+
+## 20.7 Artifact and test contract
+
+`results/active-atlas/` contains a manifest, summary, calibration table, 72
+per-seed matrices, 72 representative trajectory audits, and five figures.
+`tests/test_active_predictive_atlas.py` verifies random-unitary form, double
+stochasticity, exact cost preservation, Bayesian sensing, goal-relative
+partitions, and the active decision boundary.
+
+---
+
+# 21. Low-dimensional exact-hodology miniproject
+
+`low_dimensional_hodology/` is deliberately self-contained. It separates
+proof-level benchmarks from the larger learned-agent pipeline and has no
+dependency on PyTorch or hidden nine-level position states.
+
+## 21.1 Three state spaces
+
+The miniproject never identifies these by default:
+
+- physical state: \(\rho\in\mathcal D(\mathbb C^d)\);
+- predictive/history state: an equivalence class of action/outcome histories;
+- goal-monitor state: a DFA or bounded counter used to recognize a sequence.
+
+The controlled Markov state for a sequence goal is generally \((\rho,q)\).
+Every report says which component carries each coordinate. The null-automaton
+control shows why this matters: nine goal states can remain while all physical
+density operators are identical.
+
+## 21.2 Exact qubit word lattice
+
+`exact_qubit_lattice.py` defines commuting phase unitaries \(U,V\) with a
+trivial projective stabilizer on \(|+\rangle\). The four cardinal actions are
+single-Kraus unitary instruments. `canonical_word()` and
+`exact_word_distance()` give the exact \(\mathbb Z^2\) Manhattan theorem.
+
+`euclidean_waiting_instrument()` uses a binary random-unitary instrument for a
+nonzero displacement \(\delta\):
+
+\[
+K_s=\sqrt{1/\|\delta\|_2}\,U_\delta,\qquad
+K_f=\sqrt{1-1/\|\delta\|_2}\,I.
+\]
+
+Every attempt costs one. Failure preserves the state; success performs the
+translation. Expected attempts are \(\|\delta\|_2\), and the Euclidean triangle
+inequality proves global optimality.
+
+`run_exact_experiments.py` writes all-pairs word and Euclidean costs, finite-
+tolerance shortcuts, dephasing validation, waiting-time validation, and one
+summary figure. The regular-language goal recognizer is explicitly bounded by
+the evaluation horizon; the unbounded exact exponent language requires two
+counters and is not silently called a finite automaton.
+
+## 21.3 Exact qutrit phase manifold
+
+`qutrit_phase_lattice.py` defines the fiducial and commuting generators
+
+\[
+|\psi_0\rangle=(\sqrt{3/8},1/2,\sqrt{3/8})^T,
+\quad A=\operatorname{diag}(0,1,0),
+\quad B=\operatorname{diag}(0,1/2,1).
+\]
+
+For order \(m=11\), \(U=e^{4\pi iA/m}\) and \(V=e^{4\pi iB/m}\) generate a
+faithful 121-state phase torus. `fubini_study_metric()` verifies the analytic
+covariance metric \((3/16)I_2\). `retry_kraus()` supplies unit-cost displacement
+instruments, and `bellman_residual()` checks every analytic Bellman inequality
+over the complete 120-action displacement catalog.
+
+The chosen nine-goal patch has coordinate differences below the wrap radius.
+Its control distance is therefore exactly ordinary Euclidean distance.
+`schoenberg_gram()` verifies positive semidefiniteness and rank two.
+`run_qutrit_phase_experiments.py` saves exact costs, physical trace distances,
+MDS coordinates, Monte Carlo waiting times, a summary, and the qutrit figure.
+
+## 21.4 Skeptical search and operational controls
+
+`search/search_low_dimensional.py` implements four independent diagnostics:
+
+1. a null qubit with a nine-state external automaton;
+2. a 180-angle qubit \(R_x/R_y\) tangent-plane search;
+3. exact qutrit Weyl--Hesse and two-phase covariant POVM models;
+4. independent-coin versus projective-qubit sequence counters.
+
+The qutrit Bellman solvers operate directly on known finite kernels and retain
+goal-progress state for repeated-outcome sequence goals. Saved summaries keep
+state distance, transition/control distance, and goal-automaton distance in
+separate fields.
+
+## 21.5 Exact classification checks
+
+For a finite augmented predictive MDP with target \(g\), a proposed cost
+\(D(\cdot,g)\) is control-realizable precisely when it is the proper solution
+of
+
+\[
+D(i,g)=\min_a\left[c_a+\sum_jP^a_{ij}D(j,g)\right],\qquad D(g,g)=0.
+\]
+
+A symmetric finite matrix is exactly Euclidean in \(k\) dimensions precisely
+when
+
+\[
+B=-\frac12J(D\circ D)J
+\]
+
+is positive semidefinite with rank at most \(k\). These Bellman and Schoenberg
+conditions are the miniproject's mathematical necessary-and-sufficient core.
+Localization, action locality, covariance, trajectory coherence, and memory
+provenance are additional scientific requirements rather than consequences of
+the matrix theorem.
+
+## 21.6 Test and artifact contract
+
+The exact directory contains 13 tests covering Kraus completeness, faithful
+orbits, exact state transitions, Fubini--Study isotropy, Bellman equations,
+rank-two Euclidean geometry, regular sequence languages, dephasing, and qutrit
+wraparound. The skeptical search adds eight tests for POVM completeness,
+covariance, qutrit hitting costs, repeated sequence goals, qubit backaction,
+and null controls.
+
+All generated files remain below `low_dimensional_hodology/results/` or
+`low_dimensional_hodology/search/`. The standalone runners resolve outputs
+relative to their own source directory, keeping the miniproject portable.

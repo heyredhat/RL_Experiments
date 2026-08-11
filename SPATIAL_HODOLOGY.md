@@ -454,7 +454,7 @@ schematic is generated directly by the same script.
 ## 12. Successor result and revised interpretation
 
 The predictive-atlas experiment changes one conclusion of this document. An
-exact observed place symbol is not necessary for the (3\times3) geometry.
+exact observed place symbol is not necessary for the \(3\times3\) geometry.
 What is necessary is an operationally sufficient predictive state. Twelve
 cycles of overlapping beacon evidence allow a recurrent localizer to approach
 its exact Bayes ceiling, and belief-space planning preserves most oracle
@@ -482,3 +482,31 @@ are landmark-anchored, and the scan costs 48 interventions. The revised next
 objective is an active, self-calibrating atlas in which sensing competes with
 movement under the same cost-to-go. Only after this should landmarks
 themselves be discovered from predictive and controllability structure.
+
+---
+
+## 13. Active successor: reversible motion and selective observation
+
+The fixed-scan limitation has now been addressed in
+`ACTIVE_PREDICTIVE_ATLAS.md`. Every sensor, movement, and commitment costs one,
+and the agent chooses its interventions online.
+
+The development revealed that the original open movement channels admit
+boundary homing: a blind agent can erase source uncertainty by repeatedly
+pushing every possible state toward a wall. The active successor therefore
+uses local permutation-unitary layer swaps. Their doubly stochastic kernels
+preserve uniform uncertainty, while their exact shortest-path costs retain the
+same optimized 2D geometry. The null-sensor condition consequently returns to
+\(1/9\) success.
+
+An atlas-preserving active policy reaches \(0.965\pm0.004\) success with
+\(19.12\pm0.53\) total interventions, versus \(0.976\pm0.002\) success and
+\(50.49\pm0.02\) interventions for the fixed scan. Its movement geometry has
+2D stress \(0.111\pm0.006\) and Procrustes
+\(R^2=0.987\pm0.004\).
+
+The study also separates spatial movement from epistemic work. Adding adaptive
+sensing cost to movement cost warps the 2D geometry, and sensing burden is
+almost uncorrelated with spatial distance. Belief entropy can be drawn as an
+internal height over the movement plane. This supplies the first implemented
+base/fiber precursor, while falling well short of a mathematical bundle.

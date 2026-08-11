@@ -1,0 +1,33 @@
+{
+  "hilbert_dimension": 3,
+  "torus_order": 11,
+  "physical_orbit_states": 121,
+  "goal_patch_states": 9,
+  "fubini_study_metric": [
+    [
+      0.1875,
+      6.938893903907228e-18
+    ],
+    [
+      6.938893903907228e-18,
+      0.18749999999999994
+    ]
+  ],
+  "minimum_orbit_frobenius_separation": 0.3450505040955801,
+  "bellman_max_residual": 8.881784197001252e-16,
+  "patch_euclidean_max_error": 0.0,
+  "patch_mds_max_error": 1.3322676295501878e-15,
+  "schoenberg_eigenvalues": [
+    6.000000000000004,
+    5.999999999999999,
+    1.226311697683368e-15,
+    4.7056701701674925e-16,
+    1.728231332364206e-16,
+    1.0549751522072936e-16,
+    -3.4376767412196827e-16,
+    -7.978036093711713e-16,
+    -1.24987950869371e-15
+  ],
+  "control_vs_trace_distance_pearson": 0.9889210428917803,
+  "waiting_time_max_monte_carlo_error": 0.023732875254
+}

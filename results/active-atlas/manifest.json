@@ -1,0 +1,40 @@
+{
+  "created_utc": "2026-08-11T09:18:02.396395+00:00",
+  "method": "equal-cost active predictive atlas",
+  "unit_costs": {
+    "sense": 1.0,
+    "move": 1.0,
+    "commit": 1.0
+  },
+  "matrix_contract": {
+    "movement": "failures receive max_movement_cost",
+    "total": "failures receive max_interventions",
+    "sensing": "actual beacon actions, including failed episodes",
+    "success": "empirical terminal-probe accuracy"
+  },
+  "beacon_trials_per_site_action": 200,
+  "transition_trials_per_source_action": 100,
+  "pair_episodes": 50,
+  "max_interventions": 60,
+  "max_movement_cost": 12,
+  "failure_penalty": 100.0,
+  "confidence_threshold": 0.95,
+  "sensing_lookahead": 3,
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "online_received": [
+    "goal landmark",
+    "chosen intervention and observed outcome",
+    "learned beacon likelihood table",
+    "learned outcome-conditioned movement table"
+  ],
+  "withheld_online": [
+    "current landmark",
+    "density matrix and Kraus operators",
+    "exact beacon fields and transition kernel",
+    "concealed coordinates"
+  ]
+}

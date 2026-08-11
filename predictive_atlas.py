@@ -315,6 +315,7 @@ def learned_transition_model(
     *,
     trials_per_source_action: int,
     seed: int,
+    environment: str = "qudit-grid-3x3-beacons",
 ) -> np.ndarray:
     """Survey landmark-to-landmark dynamics without using coordinates.
 
@@ -323,7 +324,7 @@ def learned_transition_model(
     Counts estimate P(outcome,destination | source, action).
     """
     env = QuantumEnvironment(
-        environment="qudit-grid-3x3-beacons",
+        environment=environment,
         weak_q=DIAGONAL_SUCCESS,
         seed=seed,
     )

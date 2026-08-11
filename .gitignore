@@ -8,6 +8,7 @@ results/*
 !results/comparative/
 !results/spatial-hodology/
 !results/predictive-atlas/
+!results/active-atlas/
 results/comparative/models/
 
 # Disposable LaTeX build state; keep manuscript sources and compiled PDFs.

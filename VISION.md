@@ -1733,3 +1733,245 @@ The key methodological standard remains unchanged: geometry has emerged only
 to the extent that it predicts and improves independent behavior. A map-like
 picture, a decodable hidden coordinate, or a low stress number without
 competence and controls is insufficient.
+
+---
+
+# 36. Implemented active atlas: information has a hodological price
+
+The revised research frontier has now been implemented and is documented in
+`ACTIVE_PREDICTIVE_ATLAS.md`. Sensing, moving, and committing each cost one
+intervention. The agent is no longer given a fixed scan; it chooses whether
+additional place information is valuable for the present decision.
+
+## A failure that sharpened the vision
+
+The first active pilot exposed a new requirement. In the open grid, repeated
+translations could push every unknown starting state against a boundary. A
+blind policy could “home” to corner goals without identifying its source. This
+was successful control but not motion through a source-sensitive atlas.
+
+The correction replaces open translations with local unitary layer swaps.
+Every movement kernel is doubly stochastic, so a uniform prior remains uniform
+under blind action. The null-beacon controller then returns to (1/9) success.
+This yields a stronger design principle:
+
+> A world supports an actively learned spatial atlas only when cheap control
+> cannot erase the distinctions that the atlas is meant to represent.
+
+Reversibility is one sufficient constraint. It also moves the construction
+beyond entanglement-breaking movement: successful actions apply coherent
+permutation unitaries to superpositions.
+
+## Pragmatic state versus common atlas
+
+Two active learners reveal a distinction anticipated earlier in this document.
+The first groups landmarks whenever they require the same next action for the
+current goal. A three-step value-of-information calculation purchases a beacon
+only when its expected reduction in decision error exceeds its unit cost. This
+goal-relative state uses (16.12\pm0.11) total interventions and reaches
+(0.938\pm0.002) success, but its movement geometry has 2D stress
+(0.193\pm0.015).
+
+The second learner preserves the full landmark posterior, actively selecting
+the beacon with maximum expected entropy reduction until 0.95 confidence. It
+uses (19.12\pm0.53) interventions and reaches (0.965\pm0.004) success.
+Its movement costs have 2D stress (0.111\pm0.006), exact-cost correlation
+(0.929\pm0.012), and Procrustes (R^2=0.987\pm0.004).
+
+The fixed 48-probe policy obtains (0.976\pm0.002) success at
+(50.49\pm0.02) total interventions. Active atlas construction therefore
+removes 62.1% of total cost for a 1.1 percentage-point success loss.
+
+This result makes the predictive/pragmatic distinction empirical:
+
+\[
+\text{goal-sufficient state}
+\quad\ne\quad
+\text{state sufficient for a shared geometry}.
+\]
+
+An agent can safely forget distinctions irrelevant to one immediate action.
+But if those equivalences change with the goal, the resulting sequence of
+pragmatic states does not preserve one consistent space. A common spatial atlas
+is an informational achievement above and beyond local competence.
+
+## The first base–fiber separation
+
+Total difficulty now decomposes operationally:
+
+\[
+C^{\rm total}=C^{\rm sensing}+C^{\rm movement}+C^{\rm commitment}.
+\]
+
+Movement cost retains the 2D base. Sensing cost records internal epistemic work
+and has only a weak and seed-variable correlation with movement distance.
+Adding the two into one scalar dissimilarity warps the 2D map. A belief
+trajectory can instead be drawn over the spatial base with normalized entropy as a vertical coordinate:
+the agent descends through an epistemic fiber while localizing, then moves
+horizontally at low uncertainty.
+
+This is not yet a fiber bundle. It is the first implemented example in which
+multiple internal predictive conditions sit over the same spatial base and
+have distinct action costs. It suggests that the correct hodological object is
+not a single metric space of all goals, but a structured projection
+
+\[
+\text{full predictive/goal state}
+\longrightarrow
+\text{spatial affordance base}.
+\]
+
+## Revised frontier
+
+The next decisive step is to make both base and fiber less supervised:
+
+1. learn observation and movement models jointly from uninterrupted history;
+2. replace table-based beliefs with an action-conditional recurrent predictive
+   state and plan directly in that latent space;
+3. introduce internal quantum goals at each landmark and distinguish physical
+   fiber coordinates from epistemic uncertainty;
+4. use noncommuting sensors so acquiring place information changes internal
+   quantum possibilities;
+5. test local chart consistency, transition functions, closed-loop internal
+   transport, and holonomy;
+6. scale reversible locality to larger topologies without hidden
+   synchronization mechanisms;
+7. ask whether different agents, sensor costs, and goal repertoires recover the
+   same spatial base but different fibers.
+
+The active result adds a new validation criterion: an emergent geometry should
+survive rational selective attention. If space appears only when the agent is
+forced to observe everything, its operational status is fragile.
+
+---
+
+# 37. Low-dimensional quantum systems can support larger goal spaces
+
+The nine-level studies made one place goal correspond to one orthogonal basis
+state. That was an excellent first control experiment, but it leaves open the
+central ontological question: did space emerge, or was a classical position
+register merely redescribed through policy cost?
+
+The low-dimensional miniproject answers the mathematical part decisively.
+Hilbert dimension does not bound the number or dimension of an agent's goals.
+It bounds perfect simultaneous distinguishability. A qubit has infinitely
+many density operators, an action history has arbitrarily many equivalence
+classes, and a sequence-goal recognizer adds its own state. The relevant
+operational state is therefore
+
+\[
+(\rho_t,q_t),
+\]
+
+where \(q_t\) is the history-derived goal or predictive state. Geometry may
+live in \(\rho\), in \(q\), in their coupling, or merely in a bookkeeping
+convention. These possibilities must be separated experimentally.
+
+## An exact qubit result—and why it is not yet enough
+
+Two rationally independent qubit phase rotations \(U,V\) act faithfully as
+\(\mathbb Z^2\) on one equatorial ray. Nine nonorthogonal orbit goals
+\(U^iV^j|+\rangle\), with \(i,j\in\{0,1,2\}\), inherit the exact open-grid
+Manhattan word metric. Binary random-unitary retry instruments with
+success probability
+
+\[
+p_{rs}=\frac{1}{\sqrt{r^2+s^2}}
+\]
+
+give exact Euclidean expected intervention cost. The proof is analytic:
+faithfulness removes word shortcuts, a geometric waiting time supplies the
+direct distance, and the triangle inequality excludes cheaper composites.
+
+This is a genuine existence theorem, but the full orbit is dense on one Bloch
+circle. The inverse coordinate map is discontinuous; the nine projectors are
+not exclusive tests; worst one-shot false acceptance is 0.9025; and at
+infidelity tolerance \(10^{-3}\), 30.6% of ordered pairs acquire a shorter
+alias. The qubit construction proves that exact hodological dimension can
+exceed robust physical dimension. It does not yet explain stable perceived
+space.
+
+## A robust two-phase qutrit chart
+
+A qutrit has two independent relative phases. With
+
+\[
+|\psi_0\rangle=
+\sqrt{3/8}|0\rangle+\tfrac12|1\rangle+\sqrt{3/8}|2\rangle,
+\]
+
+and diagonal generators
+
+\[
+A=\operatorname{diag}(0,1,0),\qquad
+B=\operatorname{diag}(0,\tfrac12,1),
+\]
+
+their Fubini--Study covariance metric is exactly isotropic:
+
+\[
+g=\frac{3}{16}I_2.
+\]
+
+Choosing an order-11 phase torus gives 121 distinct nonorthogonal physical
+states in a three-dimensional Hilbert space. The nine goals indexed by
+\((x,y)\in\{0,1,2\}^2\) form a local chart without wraparound. The same
+unit-cost retry construction yields an exact Euclidean Bellman matrix:
+its maximum analytic residual is \(8.9\times10^{-16}\), its Schoenberg Gram
+matrix has rank two, and MDS reconstruction error is
+\(1.3\times10^{-15}\). This is the strongest current exact benchmark.
+
+The success probabilities still encode the Euclidean norm by design. What has
+been derived is the compatibility of a low-dimensional quantum phase manifold,
+sequence-labelled control, and exact planar hodological cost. What has not been
+derived is why generic physics should choose the inverse-distance retry law.
+
+## Fully operational and skeptical controls
+
+The qutrit Hesse SIC supplies nine nonorthogonal outcome goals with no external
+place probe. Weyl controls give the exact Bellman solution
+
+\[
+V_g(s)=6+d_{\mathbb Z_3^2}(s,g).
+\]
+
+This is a homogeneous two-generator quantum control space, but it is a torus,
+not an open Euclidean plane; its planar classical-MDS stress is 0.383. A second
+qutrit phase POVM with goals requiring one, two, or three consecutive target
+outcomes retains 0.996 correlation with control displacement while baseline
+difficulty grows from 5.59 to 72.65 interventions.
+
+A qubit tangent-plane search finds an excellent approximation
+(correlation 0.990, 2D stress 0.0074), but flatness competes with distinguishability
+and translation covariance. A null-qubit control retains a perfect nine-state
+goal automaton while every quantum trace distance is zero. Finally, projective
+\(X/Z\) sequence goals have a nonadditive cost residual of one, whereas matched
+independent coins are exactly additive. Quantum backaction can therefore warp
+a history goal geometry even when it does not supply the base.
+
+## Revised necessary-and-sufficient program
+
+For a finite candidate, exact ordinary-space hodology requires three jointly
+necessary and sufficient mathematical conditions:
+
+1. the desired costs solve the proper stochastic-shortest-path Bellman
+   equations of the augmented predictive process;
+2. the symmetric cost matrix is a metric;
+3. its Schoenberg matrix
+   \(-\tfrac12J(D\circ D)J\) is positive semidefinite of rank at most two or
+   three.
+
+Those conditions classify a distance matrix, not an emergent space. A physical
+identification additionally requires local and approximately homogeneous
+action fields, goal covariance, operational localization, trajectory
+coherence, low external-memory provenance, and robustness to unknown starts
+and hidden disturbances. Perfect one-shot recognition of nine mutually
+exclusive physical places still requires \(d\ge9\); histories evade that bound
+only by changing the premise.
+
+The next frontier is consequently sharper: learn the qutrit phase chart from
+weak outcomes without access to the displacement counter, perturb the exact
+model away from covariance, and measure when Bellman, Schoenberg, localization,
+and memory-provenance conditions fail. Only after those tests should the phase
+base be coupled to internal goal fibers and used for curvature or connection
+experiments.

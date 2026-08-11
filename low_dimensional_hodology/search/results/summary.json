@@ -1,0 +1,128 @@
+{
+  "interpretive_contract": {
+    "automaton_geometry": "distance induced by externally tracked goal progress",
+    "state_geometry": "trace distance among conditional quantum states",
+    "control_geometry": "shortest or optimal hitting cost under physical instruments"
+  },
+  "automaton_null": {
+    "quantum_dimension": 2,
+    "theta": 0.0,
+    "number_of_goal_nodes": 9,
+    "number_of_distinct_quantum_states": 1,
+    "maximum_quantum_trace_distance": 0.0,
+    "automaton_manhattan_2d_mds_stress": 0.1845307534798997,
+    "warning": "The 3x3 geometry is wholly in external goal memory."
+  },
+  "selected_qubit_patch": {
+    "theta": 0.30966480446927375,
+    "min_trace_separation": 0.1255719078003735,
+    "commutator_defect": 0.010249296963367684,
+    "mean_translation_defect": 0.009423724243360207,
+    "max_translation_defect": 0.049082585244914254,
+    "pearson_euclidean": 0.9897490825900807,
+    "spearman_manhattan": 0.9548010287986628,
+    "mds_2d_stress": 0.00736056408000585,
+    "positive_gram_planarity": 0.9924942034928407,
+    "separation_adjusted_score": 4.542475081328049
+  },
+  "qutrit_hesse": {
+    "sic_completeness_residual": 2.3583323324499263e-16,
+    "sic_off_diagonal_overlap_min": 0.24999999999999967,
+    "sic_off_diagonal_overlap_max": 0.24999999999999994,
+    "weyl_projective_commutator_residual": 6.689390627939944e-16,
+    "bellman_iterations": 172,
+    "baseline_goal_cost": 6.0000000000036255,
+    "control_distance_vs_excess_pearson": 1.0,
+    "control_distance_vs_excess_spearman": 1.0,
+    "control_distance_2d_mds_stress": 0.38318332010201567,
+    "control_distance_positive_gram_eigenvalues": [
+      3.5000000000000013,
+      3.5000000000000004,
+      3.4999999999999996,
+      3.4999999999999964,
+      -1.4557557064199122e-27,
+      -0.9999999999999991,
+      -0.9999999999999992,
+      -1.0,
+      -1.0000000000000013
+    ],
+    "distinct_excess_costs": [
+      1.0,
+      2.0
+    ]
+  },
+  "qutrit_phase_grid": {
+    "povm_completeness_residual": 4.917541139746981e-16,
+    "commuting_control_residual": 0.0,
+    "distinct_off_diagonal_fidelities": [
+      0.0,
+      0.3333333333
+    ],
+    "bellman_iterations": 165,
+    "baseline_goal_cost": 5.5882352941211195,
+    "control_distance_vs_state_trace_pearson": 0.5773502691896255,
+    "control_distance_vs_excess_pearson": 0.9961164901835188,
+    "control_distance_vs_excess_spearman": 0.9428090415820635,
+    "distinct_excess_costs": [
+      1.0,
+      1.8823529412,
+      2.0
+    ],
+    "translated_confirmation_sequences": {
+      "1": {
+        "baseline": 5.5882352941211195,
+        "iterations": 165,
+        "distance_correlation": 0.9961164901835189
+      },
+      "2": {
+        "baseline": 22.352941176451495,
+        "iterations": 573,
+        "distance_correlation": 0.9961164901835007
+      },
+      "3": {
+        "baseline": 72.64705882346259,
+        "iterations": 1946,
+        "distance_correlation": 0.9961164901835052
+      }
+    }
+  },
+  "sequence_counter_ablation": {
+    "coin_cost_surface": [
+      [
+        0.0,
+        2.0000000000005116,
+        4.000000000000646
+      ],
+      [
+        2.0000000000005116,
+        4.000000000000646,
+        6.00000000000084
+      ],
+      [
+        4.000000000000646,
+        6.00000000000084,
+        8.000000000000787
+      ]
+    ],
+    "qubit_cost_surface": [
+      [
+        0.0,
+        3.000000000000483,
+        4.000000000000767
+      ],
+      [
+        3.000000000000483,
+        5.000000000001506,
+        6.000000000001037
+      ],
+      [
+        4.000000000000767,
+        6.000000000001037,
+        7.000000000001322
+      ]
+    ],
+    "coin_additivity_residual": 5.044853423896711e-13,
+    "qubit_additivity_residual": 1.0000000000002132,
+    "interpretation": "Both use the same external 3x3 counter DFA; only the qubit has backaction."
+  }
+}
