@@ -56,6 +56,19 @@ class EnvironmentCatalogTests(unittest.TestCase):
             [second.step(action) for action in actions],
         )
 
+    def test_spatial_move_reports_destination_without_coordinates(self) -> None:
+        env = QuantumEnvironment(environment="qudit-grid-3x3", seed=5)
+        # Center is anonymous place symbol 4; north reaches symbol 1.
+        self.assertEqual(env.step(0), 1)
+        rho = env._rho
+        assert rho is not None
+        self.assertAlmostEqual(float(rho[1, 1].real), 1.0)
+
+    def test_blind_spatial_boundary_reports_failure(self) -> None:
+        env = QuantumEnvironment(environment="qudit-grid-3x3-blind", seed=5)
+        self.assertEqual(env.step(0), 0)  # center -> north succeeds
+        self.assertEqual(env.step(0), 1)  # open boundary cannot move farther
+
     def test_invalid_configuration_is_rejected(self) -> None:
         with self.assertRaisesRegex(ValueError, "unknown environment"):
             QuantumEnvironment(environment="not-a-world")
@@ -70,4 +83,3 @@ class EnvironmentCatalogTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

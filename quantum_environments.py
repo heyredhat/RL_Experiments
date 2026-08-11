@@ -25,10 +25,25 @@ Array = np.ndarray
 
 @dataclass(frozen=True)
 class Measurement:
-    """One named quantum instrument represented by outcome Kraus operators."""
+    """One instrument whose observed outcomes may each aggregate Kraus events.
+
+    Ordinary rank-one measurements use one array per observed outcome.  A
+    tuple of arrays represents several unobserved Kraus events reported to the
+    agent as the same classical outcome.  This is required for coarse-grained
+    channels such as ``move east``: the simulator retains the source-site
+    Kraus label, while the agent learns only whether the move succeeded.
+    """
 
     name: str
-    kraus: tuple[Array, ...]
+    kraus: tuple[Array | tuple[Array, ...], ...]
+
+    @property
+    def outcome_kraus(self) -> tuple[tuple[Array, ...], ...]:
+        """Return a uniform ``observed outcome -> Kraus events`` structure."""
+        return tuple(
+            (item,) if isinstance(item, np.ndarray) else tuple(item)
+            for item in self.kraus
+        )
 
 
 @dataclass(frozen=True)
@@ -43,7 +58,7 @@ class EnvironmentDefinition:
 
     @property
     def dimension(self) -> int:
-        return int(self.measurements[0].kraus[0].shape[0])
+        return int(self.measurements[0].outcome_kraus[0][0].shape[0])
 
 
 def _ket_density(ket: Array) -> Array:
@@ -212,12 +227,168 @@ def _qutrit_mub(_: float) -> EnvironmentDefinition:
     )
 
 
+def _grid_states(size: int) -> dict[str, Array]:
+    """Localized states for privileged configuration and validation only."""
+    dimension = size * size
+    states = {
+        f"site-{index}": _ket_density(np.eye(dimension, dtype=complex)[:, index])
+        for index in range(dimension)
+    }
+    states["center"] = states[str(f"site-{dimension // 2}")]
+    states["mixed"] = np.eye(dimension, dtype=complex) / dimension
+    return states
+
+
+def _grid_move_measurement(
+    name: str,
+    size: int,
+    dx: int,
+    dy: int,
+    success_probability: float,
+    report_place: bool = False,
+) -> Measurement:
+    """Open-boundary move reporting success/failure or destination place.
+
+    For a source site ``s``, the unobserved successful Kraus event is
+    ``sqrt(p)|f(s)><s|`` and the unsuccessful event is
+    ``sqrt(1-p)|s><s|``.  At an open boundary ``p=0``.  Summing over source
+    labels makes a completely positive trace-preserving instrument, without
+    revealing the source label to the agent. With ``report_place``, events are
+    instead grouped by their destination, giving coordinate-free localization.
+    """
+    dimension = size * size
+    success: list[Array] = []
+    failure: list[Array] = []
+    place_events: list[list[Array]] = [[] for _ in range(dimension)]
+    for y in range(size):
+        for x in range(size):
+            source = y * size + x
+            nx, ny = x + dx, y + dy
+            can_move = 0 <= nx < size and 0 <= ny < size
+            p = float(success_probability) if can_move else 0.0
+            if p > 0.0:
+                operator = np.zeros((dimension, dimension), dtype=complex)
+                operator[ny * size + nx, source] = np.sqrt(p)
+                success.append(operator)
+                place_events[ny * size + nx].append(operator)
+            if p < 1.0:
+                operator = np.zeros((dimension, dimension), dtype=complex)
+                operator[source, source] = np.sqrt(1.0 - p)
+                failure.append(operator)
+                place_events[source].append(operator)
+    if report_place:
+        # A formally allowed zero Kraus event retains a stable nine-symbol
+        # alphabet even when one direction cannot terminate at every boundary.
+        zero = np.zeros((dimension, dimension), dtype=complex)
+        return Measurement(
+            name,
+            tuple(tuple(events) if events else (zero,) for events in place_events),
+        )
+    return Measurement(name, (tuple(success), tuple(failure)))
+
+
+def _grid_probe(size: int) -> Measurement:
+    """Projective position probe; outcome identities carry no coordinates."""
+    dimension = size * size
+    basis = np.eye(dimension, dtype=complex)
+    return _projective_measurement(
+        "place-probe",
+        tuple(basis[:, index] for index in range(dimension)),
+    )
+
+
+def _qudit_grid_3x3(diagonal_q: float) -> EnvironmentDefinition:
+    """Open 2D lattice with four axial and four cost-matched diagonal moves."""
+    size = 3
+    directions = (
+        ("north", 0, -1, 1.0),
+        ("east", 1, 0, 1.0),
+        ("south", 0, 1, 1.0),
+        ("west", -1, 0, 1.0),
+        ("north-east", 1, -1, diagonal_q),
+        ("south-east", 1, 1, diagonal_q),
+        ("south-west", -1, 1, diagonal_q),
+        ("north-west", -1, -1, diagonal_q),
+    )
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3",
+        description=(
+            "Nine-level open lattice with coarse-grained axial/diagonal movement "
+            "instruments and a common projective place probe."
+        ),
+        measurements=tuple(
+            _grid_move_measurement(name, size, dx, dy, probability, report_place=True)
+            for name, dx, dy, probability in directions
+        )
+        + (_grid_probe(size),),
+        initial_states=_grid_states(size),
+        default_initial_state="center",
+    )
+
+
+def _qudit_grid_3x3_cardinal(_: float) -> EnvironmentDefinition:
+    """An anisotropic/Manhattan ablation with only four axial moves."""
+    size = 3
+    directions = (
+        ("north", 0, -1),
+        ("east", 1, 0),
+        ("south", 0, 1),
+        ("west", -1, 0),
+    )
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-cardinal",
+        description=(
+            "Nine-level open lattice with cardinal movement instruments and a "
+            "common projective place probe."
+        ),
+        measurements=tuple(
+            _grid_move_measurement(name, size, dx, dy, 1.0, report_place=True)
+            for name, dx, dy in directions
+        )
+        + (_grid_probe(size),),
+        initial_states=_grid_states(size),
+        default_initial_state="center",
+    )
+
+
+def _qudit_grid_3x3_blind(diagonal_q: float) -> EnvironmentDefinition:
+    """Partial-observability ablation reporting only move success or failure."""
+    size = 3
+    directions = (
+        ("north", 0, -1, 1.0),
+        ("east", 1, 0, 1.0),
+        ("south", 0, 1, 1.0),
+        ("west", -1, 0, 1.0),
+        ("north-east", 1, -1, diagonal_q),
+        ("south-east", 1, 1, diagonal_q),
+        ("south-west", -1, 1, diagonal_q),
+        ("north-west", -1, -1, diagonal_q),
+    )
+    return EnvironmentDefinition(
+        name="qudit-grid-3x3-blind",
+        description=(
+            "Nine-level lattice whose moves report only success/failure, followed "
+            "by the same common projective place probe."
+        ),
+        measurements=tuple(
+            _grid_move_measurement(name, size, dx, dy, probability)
+            for name, dx, dy, probability in directions
+        )
+        + (_grid_probe(size),),
+        initial_states=_grid_states(size),
+        default_initial_state="center",
+    )
+
+
 _BUILDERS: dict[str, Callable[[float], EnvironmentDefinition]] = {
     "qubit-zx-weak": _qubit_zx_weak,
     "qubit-pauli": _qubit_pauli,
     "qubit-unsharp": _qubit_unsharp,
     "qubit-pauli-sic": _qubit_pauli_sic,
     "qutrit-mub": _qutrit_mub,
+    "qudit-grid-3x3": _qudit_grid_3x3,
+    "qudit-grid-3x3-cardinal": _qudit_grid_3x3_cardinal,
+    "qudit-grid-3x3-blind": _qudit_grid_3x3_blind,
 }
 
 
@@ -241,6 +412,15 @@ DEFAULT_GOALS_BY_ENVIRONMENT: dict[str, str] = {
     "qutrit-mub": (
         "Z0=0:0;Z1=0:1;Z2=0:2;F0=1:0;F1=1:1;"
         "Z0_F0=0:0,1:0;F0_Z0=1:0,0:0;Z0_F0_P0=0:0,1:0,2:0"
+    ),
+    "qudit-grid-3x3": ";".join(
+        f"place-{letter}=8:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-cardinal": ";".join(
+        f"place-{letter}=4:{index}" for index, letter in enumerate("ABCDEFGHI")
+    ),
+    "qudit-grid-3x3-blind": ";".join(
+        f"place-{letter}=8:{index}" for index, letter in enumerate("ABCDEFGHI")
     ),
 }
 
@@ -268,13 +448,16 @@ def _validate_definition(definition: EnvironmentDefinition) -> None:
     dimension = definition.dimension
     eye = np.eye(dimension, dtype=complex)
     for measurement in definition.measurements:
-        if not measurement.kraus:
+        if not measurement.outcome_kraus:
             raise ValueError(f"measurement {measurement.name!r} has no outcomes")
         completeness = np.zeros_like(eye)
-        for operator in measurement.kraus:
-            if operator.shape != (dimension, dimension):
-                raise ValueError(f"invalid Kraus shape in {measurement.name!r}")
-            completeness += operator.conj().T @ operator
+        for outcome in measurement.outcome_kraus:
+            if not outcome:
+                raise ValueError(f"empty observed outcome in {measurement.name!r}")
+            for operator in outcome:
+                if operator.shape != (dimension, dimension):
+                    raise ValueError(f"invalid Kraus shape in {measurement.name!r}")
+                completeness += operator.conj().T @ operator
         if not np.allclose(completeness, eye, atol=1e-9):
             raise ValueError(f"Kraus operators for {measurement.name!r} are incomplete")
     for state_name, rho in definition.initial_states.items():
@@ -311,7 +494,9 @@ class QuantumEnvironment:
         self.weak_q = float(weak_q)
         self.rng = np.random.default_rng(seed)
         self.action_names = tuple(m.name for m in definition.measurements)
-        self.action_outcome_counts = tuple(len(m.kraus) for m in definition.measurements)
+        self.action_outcome_counts = tuple(
+            len(m.outcome_kraus) for m in definition.measurements
+        )
         self.n_actions = len(definition.measurements)
         # Neural heads have a common width; outcomes unavailable for a given
         # action are simply never sampled or used as goal checkpoints.
@@ -321,7 +506,7 @@ class QuantumEnvironment:
         self._initial_states = {
             name: rho.copy() for name, rho in definition.initial_states.items()
         }
-        self._kraus = tuple(m.kraus for m in definition.measurements)
+        self._kraus = tuple(m.outcome_kraus for m in definition.measurements)
         self._rho: Array | None = None
         self.reset()
 
@@ -338,9 +523,15 @@ class QuantumEnvironment:
         if not 0 <= int(action) < self.n_actions:
             raise ValueError(f"invalid action {action}")
         assert self._rho is not None
-        operators = self._kraus[int(action)]
+        outcomes = self._kraus[int(action)]
         probs = np.array(
-            [np.trace(k @ self._rho @ k.conj().T).real for k in operators],
+            [
+                sum(
+                    np.trace(k @ self._rho @ k.conj().T).real
+                    for k in kraus_events
+                )
+                for kraus_events in outcomes
+            ],
             dtype=float,
         )
         probs = np.clip(probs, 0.0, None)
@@ -348,12 +539,16 @@ class QuantumEnvironment:
         if total <= 0.0:
             raise RuntimeError("quantum instrument produced zero total probability")
         probs /= total
-        outcome = int(self.rng.choice(len(operators), p=probs))
-        operator = operators[outcome]
-        unnormalized = operator @ self._rho @ operator.conj().T
+        outcome = int(self.rng.choice(len(outcomes), p=probs))
+        unnormalized = sum(
+            (
+                operator @ self._rho @ operator.conj().T
+                for operator in outcomes[outcome]
+            ),
+            np.zeros_like(self._rho),
+        )
         self._rho = unnormalized / np.trace(unnormalized).real
         # Keep roundoff from accumulating during long experiments.
         self._rho = (self._rho + self._rho.conj().T) / 2.0
         self._rho /= np.trace(self._rho).real
         return outcome
-

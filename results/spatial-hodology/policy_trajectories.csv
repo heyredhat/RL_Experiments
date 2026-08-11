@@ -1,0 +1,11 @@
+environment,seed,target,step,action,place,success
+qudit-grid-3x3,0,0,0,initial-place-probe,4,False
+qudit-grid-3x3,0,0,1,north-west,0,False
+qudit-grid-3x3,0,0,2,place-probe,0,True
+qudit-grid-3x3,1,1,0,initial-place-probe,4,False
+qudit-grid-3x3,1,1,1,west,3,False
+qudit-grid-3x3,1,1,2,north-east,1,False
+qudit-grid-3x3,1,1,3,place-probe,1,True
+qudit-grid-3x3,2,2,0,initial-place-probe,4,False
+qudit-grid-3x3,2,2,1,north-east,2,False
+qudit-grid-3x3,2,2,2,place-probe,2,True

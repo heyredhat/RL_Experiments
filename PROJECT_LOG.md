@@ -109,3 +109,94 @@ regenerated from the manifest.
 - Built the manuscript with `latexmk` under TeX Live 2025. The final PDF is 17
   pages; all citations and cross-references resolve, and representative pages
   were rendered and visually inspected at publication size.
+
+## 2026-08-11 — First emergent-space objective
+
+### Research decision
+
+Reframed “space from goals” as a bilevel inverse-design problem. The outer loop
+chooses quantum instruments and goals to minimize low-dimensional embedding
+error; the inner loop learns goal-conditioned behavior; the final claim is
+evaluated on the learned all-pairs hitting-cost matrix, not on the designed
+latent graph alone.
+
+Chose a nine-dimensional first construction with basis states corresponding to
+nine concealed places. This is intentionally the smallest nontrivial 2D test:
+it permits corners, edges, a center, axial and diagonal displacement, and enough
+points for meaningful dimensional diagnostics while remaining exhaustively
+evaluable.
+
+### Simulator changes
+
+- Generalized `Measurement` so one observed outcome can aggregate multiple
+  unobserved Kraus events. The simulator now sums branch probabilities and
+  conditional post-measurement states correctly.
+- Added three validated environments: `qudit-grid-3x3`,
+  `qudit-grid-3x3-blind`, and `qudit-grid-3x3-cardinal`.
+- Added open-boundary axial/diagonal movement instruments, a common nine-outcome
+  place probe, localized/mixed initial states, and nine place goals.
+- Re-ran quantum completeness and density-matrix invariant tests after each
+  instrument change.
+
+### Inverse design
+
+- Added `spatial_hodology.py` with exact stochastic-shortest-path costs,
+  classical MDS, deterministic SMACOF, normalized stress, spectrum diagnostics,
+  distance correlation, and privileged Procrustes validation.
+- Searched 81 diagonal success probabilities. The objective selected 0.715,
+  close to the analytically motivated value `1/sqrt(2)`.
+- Exact optimized 1D/2D/3D stresses are 0.4305/0.0365/0.0360. The cardinal
+  control's 2D stress is 0.1416, confirming that a grid arrangement does not by
+  itself make shortest-path distance Euclidean.
+
+### Failures that changed the design
+
+1. Training only from the center produced 0.92--0.95 reset success but roughly
+   0.25 arbitrary all-pairs success. This was rejected as a “space”: it learned
+   routes from one origin rather than transferable local navigation.
+2. Uniform random starts with only success/failure move observations reached
+   about 0.48 all-pairs success at 6,000 episodes. The hidden geometry existed,
+   but the learner could not localize itself reliably with finite memory.
+3. Destination place symbols raised success to 0.998, but a six-event literal
+   history treated the same place reached by different routes as distinct and
+   left learned 2D stress around 0.16.
+4. `PlaceQAgent` deliberately quotients histories by latest place symbol. This
+   is Markov-sufficient yet coordinate-free, and produced the final result.
+
+These are conceptual failures, not discarded tuning attempts. They show that
+all-pairs source coverage, operational localization, and the correct history
+equivalence relation are conditions for a usable emergent space.
+
+### Production result
+
+- Completed nine runs: three worlds × three seeds.
+- Completed 54,000 training episodes and 72,900 ordered all-pairs evaluation
+  episodes.
+- The optimized place-observed learner achieved 100% all-pairs success in all
+  seeds. Mean 1D/2D/3D stress is 0.3715/0.0709/0.0642; concealed-coordinate
+  Procrustes `R^2` is 0.9754; learned/exact cost correlation is 0.9355.
+- The blind control achieved 48.2% all-pairs success and 2D stress 0.2330.
+- The cardinal control achieved 100% success but retained 2D stress 0.1416.
+- Generated design, learned-space, performance, and emergent-trajectory plots,
+  plus a clearly labeled non-empirical fiber-bundle schematic.
+
+### Interpretation and next boundary
+
+This is an existence proof in a classical stochastic corner of quantum theory:
+localized qudit states and entanglement-breaking movement instruments. It is
+not evidence that generic coherent quantum dynamics produces space. The next
+step is to remove explicit place localization, optimize general CPTP channels
+and goal subsets, scale topology, then test whether a total spatial/internal
+hodological geometry factorizes locally as a fiber bundle. Connection,
+holonomy, and stochastic curvature diagnostics must precede any general-
+relativistic interpretation.
+
+The complete equations, metrics, results, failures, and staged research program
+are recorded in `SPATIAL_HODOLOGY.md`; aggregate results are also appended to
+`EXPERIMENTS.md`.
+
+- Expanded `GOAL_GEOMETRY_PAPER.tex` from 17 to 24 pages with a full spatial
+  inverse-design section, four new empirical figures, the fiber-bundle
+  schematic, six additional primary references, and a causal/curvature
+  outlook. Rebuilt it successfully with resolved citations and cross-references
+  and visually inspected the new theory, result, and bibliography pages.

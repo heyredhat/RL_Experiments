@@ -11,6 +11,10 @@ in [ARCHITECTURE.md](ARCHITECTURE.md), the reproducible study protocol and
 results are in [EXPERIMENTS.md](EXPERIMENTS.md), and the development record is
 in [PROJECT_LOG.md](PROJECT_LOG.md).
 
+The first inverse-designed emergent-space study, including its quantum
+instruments, failures, dimensional tests, and fiber-bundle research program, is
+in [SPATIAL_HODOLOGY.md](SPATIAL_HODOLOGY.md).
+
 The publication-style account is available as both
 [LaTeX source](GOAL_GEOMETRY_PAPER.tex) and a
 [compiled paper](GOAL_GEOMETRY_PAPER.pdf). It develops the quantum and
@@ -53,6 +57,14 @@ python run_experiment_suite.py --episodes 1000 --seeds 0,1,2 --output results/st
 python plot_results.py results/standard
 ```
 
+Reproduce the first two-dimensional hodological-space study:
+
+```bash
+python spatial_hodology.py \
+  --output results/spatial-hodology \
+  --seeds 0,1,2 --episodes 6000 --pair-episodes 100 --max-steps 12
+```
+
 `plot_results.py` deliberately has no PyTorch dependency. It can run in any
 Python environment containing NumPy and Matplotlib.
 
@@ -65,11 +77,20 @@ Python environment containing NumPy and Matplotlib.
 | `qubit-unsharp` | qubit | weak Z, X, Y | `mixed` |
 | `qubit-pauli-sic` | qubit | projective Z, X, Y, four-outcome tetrahedral SIC | `mixed` |
 | `qutrit-mub` | qutrit | three mutually unbiased projective bases | `two` |
+| `qudit-grid-3x3` | nine-level qudit | eight place-reporting moves plus a common place probe | `center` |
+| `qudit-grid-3x3-blind` | nine-level qudit | eight success/failure moves plus a common place probe | `center` |
+| `qudit-grid-3x3-cardinal` | nine-level qudit | four place-reporting moves plus a common place probe | `center` |
 
 Qubit states include `zero`, `one`, `plus`, `minus`, `plus-i`, `minus-i`, and
 `mixed`. Qutrit states include `zero`, `one`, `two`, `plus`, and `mixed`. Each
 world supplies goals matched to its action and outcome alphabet; passing
 `--goals` overrides that catalog.
+
+The three spatial worlds use the same nine place goals. Their integer outcome
+identities contain no coordinates. The optimized world uses stochastic
+diagonal Kraus maps whose success probability is chosen by a low-dimensional
+geometry objective; the blind and cardinal variants isolate observability and
+metric anisotropy.
 
 ## Backends
 

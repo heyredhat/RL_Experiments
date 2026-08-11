@@ -71,11 +71,24 @@ structure in which outcomes reduce distance to matching goals while often
 increasing distance to alternatives. Goal geometry is thus a productive
 diagnostic and planning language, but its metric interpretation requires
 stronger validation.
+
+We therefore perform a second, inverse-designed study aimed directly at
+emergent space. A nine-dimensional system supports nine place goals and eight
+movement instruments. Optimizing diagonal-move success selects $p_d=0.715$,
+near $1/\sqrt2$, and gives exact 2D stress 0.0365. Three coordinate-free
+Q-learning agents achieve 100\% all-pairs navigation; their learned hitting
+costs have 1D/2D/3D stresses $0.372/0.071/0.064$ and recover the concealed
+$3\times3$ arrangement with Procrustes $R^2=0.975$. Partial-observability and
+Manhattan controls identify operational localization and isotropic action cost
+as necessary ingredients. This constitutes a limited existence proof for
+stochastic motion in an agent's emergent hodological space and motivates a
+spatial-base/internal-fiber research program.
 \end{abstract}
 
 \noindent\textbf{Keywords:} reinforcement learning; quantum measurement;
 partial observability; predictive state; goal-conditioned control;
-reachability; representation learning; QBism
+reachability; representation learning; QBism; hodological space;
+multidimensional scaling; emergent space
 
 \tableofcontents
 \newpage
@@ -117,6 +130,16 @@ Our methodological contribution is a validation framework comparing learned
 Euclidean goal embeddings with held-out policy behavior, trajectory
 signatures, empirical hitting times, finite-horizon success curves, and
 intervention-induced changes in all goal distances.
+
+The stronger motivation is hodological: for an agent, goals that require few
+reliable interventions are near and difficult goals are far. Lewin introduced
+path-structured ``life space'' as a formal language for goal-directed behavior
+\cite{lewin1936}. Such a space is generally directed and high-dimensional.
+Familiar physical space would be a special regime in which a large family of
+place-like goals admits a common low-stress 2D or 3D embedding and learned
+action histories become trajectories through it. We treat that as an inverse
+problem over initial states, Kraus instruments, observation coarse-grainings,
+and goal repertoires, not as an assumption.
 
 \begin{figure}[t]
 \centering
@@ -585,6 +608,187 @@ increase. Completion explicitly sets a matching goal to zero, so diagonals
 should not be overinterpreted; structured off-diagonal change is the more
 interesting signature of backaction.
 
+\section{Inverse-designing emergent two-dimensional space}
+\label{sec:spatial}
+
+\subsection{Hodological criterion and bilevel objective}
+
+The preceding experiments ask whether a finite goal repertoire acquires useful
+structure. We now ask the inverse question: can one choose a quantum world and
+goals such that difficulty itself is compatible with ordinary 2D distance?
+For operational states $s_i$ associated with goals $g_i$, let
+\begin{equation}
+ D_{ij}=\E_{\pi_j}[\tau_{g_j}\mid s_i]-c_{\rm probe},
+ \label{eq:spatial-cost}
+\end{equation}
+where the common terminal-probe cost is removed. A Euclidean interpretation in
+$d$ dimensions is tested by metric multidimensional scaling (MDS), minimizing
+Kruskal-style normalized raw stress \cite{kruskal1964}:
+\begin{equation}
+ \operatorname{Stress}_d(D,X)
+ =\sqrt{\frac{\sum_{i<j}(\lVert x_i-x_j\rVert-D_{ij})^2}
+ {\sum_{i<j}D_{ij}^2}}.
+ \label{eq:stress}
+\end{equation}
+Classical MDS initializes deterministic SMACOF majorization. Manifold learning
+similarly reconstructs global geometry from local metric information
+\cite{tenenbaum2000}, but here the dissimilarities are learned control costs.
+
+Let $\theta$ parameterize the state and instruments and $\mathcal G$ the goals.
+The intended general bilevel design is
+\begin{equation}
+ (\theta^\star,\mathcal G^\star)
+ =\arg\min_{\theta,\mathcal G}
+ \bigl[\lambda_s\operatorname{Stress}_d
+ +\lambda_c P_{\rm calibration}+\lambda_n P_{\rm nonmetric}
+ +\lambda_a P_{\rm asymmetry}+\lambda_f P_{\rm failure}
+ +\lambda_k P_{\rm complexity}\bigr],
+ \label{eq:bilevel}
+\end{equation}
+where the matrix inside the objective is produced by an inner RL learner. The
+first experiment simplifies this expensive problem: its exact stochastic
+shortest paths are known to the privileged outer loop, which searches one
+instrument parameter before independent policies are trained and evaluated.
+
+\subsection{Nine-dimensional quantum construction}
+
+Let
+\begin{equation}
+ \mathcal H_9=\operatorname{span}\{\lvert x,y\rangle:
+ x,y\in\{0,1,2\}\},\qquad
+ \rho_0=\lvert1,1\rangle\!\langle1,1\rvert .
+ \label{eq:grid-hilbert}
+\end{equation}
+The labels $(x,y)$ are private validation metadata; the agent receives only an
+arbitrary place symbol. Four axial and four diagonal actions map a site $s$ to
+an adjacent site $f_a(s)$. Their hidden source-resolved Kraus events are
+\begin{equation}
+ K^{(a)}_{s,+}=\sqrt{p_a(s)}\lvert f_a(s)\rangle\!\langle s\rvert,
+ \qquad
+ K^{(a)}_{s,-}=\sqrt{1-p_a(s)}\lvert s\rangle\!\langle s\rvert .
+ \label{eq:move-kraus}
+\end{equation}
+At open boundaries $p_a(s)=0$, so summing \cref{eq:move-kraus} over sources and
+branches gives $I$. Axial moves have probability one; legal diagonals share
+$p_d$. Several unobserved source events are coarse-grained into one observed
+destination symbol. The corresponding instrument operation is
+\begin{equation}
+ \mathcal I_y^{(a)}(\rho)
+ =\sum_{s:f_a(s)=y}K_{s,+}^{(a)}\rho K_{s,+}^{(a)\dagger}
+ +K_{y,-}^{(a)}\rho K_{y,-}^{(a)\dagger}.
+ \label{eq:grouped-instrument}
+\end{equation}
+A ninth, common place probe has projectors
+$P_s=\lvert s\rangle\!\langle s\rvert$. Goal $g_s$ is simply ``perform this
+probe and obtain symbol $s$.'' No goal-specific destination action exists.
+
+Training uniformly prepares all nine localized sources and supplies one place
+probe before task time. This contextual outcome localizes the agent but gives
+no adjacency, axis, orientation, or metric. Its Markov state is
+$(g,p,\ell)$: goal ID, progress, and latest arbitrary place symbol. Ordinary
+tabular Q-learning then discovers the transitions. Two controls separate
+possible explanations: a \emph{blind} instrument reports only movement
+success/failure, and a place-observed \emph{cardinal} world removes diagonals,
+leaving Manhattan shortest paths.
+
+\subsection{Outer optimization and learned geometry}
+
+One axial displacement costs one intervention; repeated diagonal attempts cost
+$1/p_d$ on average. Euclidean cost matching suggests $p_d\simeq1/\sqrt2$.
+Searching 81 values in $[0.55,0.95]$ selects $p_d=0.715$ by a combination of
+2D stress, negative centered-Gram spectrum, and privileged coordinate recovery.
+The proximity to $1/\sqrt2$ is an outcome of the search, not an input to its
+objective.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.98\textwidth]{results/spatial-hodology/design_optimization.png}
+\caption{Inverse design of diagonal success probability (left) and exact MDS
+of the selected hitting-cost matrix (right). The red line is $1/\sqrt2$; the
+black line is the selected $0.715$. Exact 2D stress is 0.0365. Place labels
+carry no coordinate information.}
+\label{fig:spatial-design}
+\end{figure}
+
+The selected exact matrix has 1D/2D/3D stresses
+$0.4305/0.0365/0.0360$, contains 93.4\% of its positive Gram-spectrum variance
+in two dimensions, and correlates 0.995 with concealed Euclidean distance. The
+cardinal control has 2D stress 0.1416 and negative-spectrum fraction 0.217,
+versus 0.081 for the selected instrument. Thus a grid-like arrangement does
+not by itself make the operational metric Euclidean.
+
+Each of three worlds and three seeds receives 6,000 uniformly sampled
+source--goal episodes. Evaluation uses 100 trials for all 81 ordered pairs:
+54,000 training and 72,900 evaluation episodes in total. Failures contribute a
+finite restricted-mean penalty at horizon 12. The learned matrix is
+symmetrized for MDS, while normalized antisymmetry is retained separately.
+
+\begin{table}[t]
+\centering
+\caption{Learned spatial geometry, mean $\pm$ sample standard deviation over
+three seeds. $R_P^2$ aligns MDS coordinates with concealed coordinates only
+after training.}
+\label{tab:spatial-results}
+\small
+\begin{tabular}{lccc}
+\toprule
+Metric & Optimized observed & Optimized blind & Cardinal observed\\
+\midrule
+All-pairs success & $1.000\pm.000$ & $.482\pm.023$ & $1.000\pm.000$\\
+1D stress & $.372\pm.011$ & $.450\pm.042$ & $.460\pm.000$\\
+2D stress & $\mathbf{.071\pm.011}$ & $.233\pm.032$ & $.142\pm.000$\\
+3D stress & $.064\pm.011$ & $.228\pm.038$ & $.141\pm.000$\\
+Procrustes $R_P^2$ & $.975\pm.005$ & $.965\pm.011$ & $1.000\pm.000$\\
+Exact-cost correlation & $.936\pm.003$ & $.865\pm.010$ & $1.000\pm.000$\\
+Directionality & $.122\pm.037$ & $.264\pm.093$ & $.000\pm.000$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.98\textwidth]{results/spatial-hodology/performance_geometry_comparison.png}
+\caption{Navigation and Euclidean compatibility. Destination-place
+observations make the optimized world fully navigable and halve 2D stress
+relative to the equally competent cardinal/Manhattan control. Binary
+success/failure observation damages both competence and geometry.}
+\label{fig:spatial-performance}
+\end{figure}
+
+The proposed construction has a decisive dimension gap: learned stress falls
+from $0.372$ in 1D to $0.071$ in 2D, while a third coordinate improves it only
+to $0.064$. Procrustes $R^2=0.975$ confirms recovery of the concealed
+arrangement up to rotation, reflection, translation, and scale. Coordinate
+recovery alone would be misleading: the cardinal control has $R_P^2\simeq1$
+but twice the 2D stress because its metric is Manhattan.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.90\textwidth]{results/spatial-hodology/learned_hodological_spaces.png}
+\caption{MDS of empirical policy hitting costs. Rows show the proposed world,
+the partial-observability control, and the cardinal control. Axes have no
+externally meaningful orientation.}
+\label{fig:spatial-spaces}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.98\textwidth]{results/spatial-hodology/emergent_policy_trajectories.png}
+\caption{Observed place sequences under learned policies, drawn in coordinates
+computed only from learned all-pairs difficulty. The green star is the goal;
+numbers mark intervention order. In this limited sense, action histories are
+stochastic motion through emergent hodological space.}
+\label{fig:spatial-trajectories}
+\end{figure}
+
+The negative stages are informative. Center-only training achieved
+$0.92$--$0.95$ reset success but only about $0.25$ arbitrary all-pairs success:
+a star of routes from one origin is not a space. Random-source binary
+observation reached only $0.482$ all-pairs success. Destination observation
+with a six-event literal history achieved nearly perfect control but split one
+place by arrival route and left 2D stress near $0.16$. Quotienting histories by
+their latest place symbol yields the final result.
+
 \section{Discussion and limitations}
 \label{sec:discussion}
 
@@ -594,6 +798,13 @@ strong small-world baseline. Goal embeddings carry moderate behavioral
 meaning, although local policy geometry transfers more reliably than
 whole-trajectory geometry. Directed coordinates expose coherent measurement
 displacements even though scalar cost is poorly calibrated.
+
+The spatial study gives a stronger but narrower positive statement: there
+exists a valid quantum instrument/goal construction in which policy-derived
+difficulty selects two dimensions, recovers a concealed lattice, and turns
+observed action sequences into spatial paths. Its controls show that hidden
+connectivity, coordinate recovery, control success, and Euclidean metric fit
+are distinct requirements.
 
 These results do not show that a Bloch sphere, Hilbert space, or uniquely
 quantum geometry spontaneously emerged. Such a claim would require latent-state
@@ -615,6 +826,15 @@ decoding of quantum invariants. Other limitations are:
  constrained to satisfy stochastic-shortest-path consistency;
  \item simulators omit Hamiltonian dynamics, decoherence, detector error,
  latency, and hardware drift.
+ \item the spatial construction uses localized qudit states and
+ entanglement-breaking measure-and-prepare channels; latent places, open
+ boundaries, and a sharp localization probe are designed into the simulator;
+ \item the $3\times3$ lattice is too small to establish continuum structure,
+ topology recovery, scale dependence, or curvature, and three spatial seeds
+ remain exploratory;
+ \item symmetrizing learned hitting costs is appropriate for testing a
+ Euclidean hypothesis but discards directed information that a more general
+ hodological geometry must retain.
 \end{itemize}
 
 \section{Outlook}
@@ -647,6 +867,49 @@ Explore directed graphs, asymmetric energy models, quasimetrics, hyperbolic
 goal hierarchies, and Finsler-like local costs. Choose geometry through
 predictive validity and planning utility, not aesthetics.
 
+\paragraph{Optimize states, instruments, and landmarks.}
+Generalize \cref{eq:bilevel} from one success probability to positive Choi
+matrices or Stinespring isometries, enforcing complete positivity and trace
+preservation. Jointly select goal landmarks for coverage and stable
+trilateration, penalizing nonlocal teleportation and goal-specific actions.
+Evolutionary search is a robust first outer loop; differentiable meta-learning
+becomes attractive once the inner planner is model-based.
+
+\paragraph{Remove explicit place localization.}
+Alias, weaken, or noise destination outcomes and require a recurrent predictive
+state to recover location. Scaling from grids to tori, cylinders, spheres, and
+defected graphs should be evaluated with out-of-sample stress, local dimension,
+neighborhood preservation, and topology, not only global MDS
+\cite{tenenbaum2000}.
+
+\paragraph{Spatial base and internal fiber.}
+Give each place several internal quantum states and goals, then test whether
+the full hodological state space $E$ locally decomposes as
+$F_b\hookrightarrow E\xrightarrow{\pi}B$, with a stable 2D or 3D spatial base
+$B$ and internal fiber $F_b$ \cite{steenrod1951}. Actions may be horizontal,
+vertical, or coupled. Learned transition maps between local charts and the
+failure of an internal state to return after transport around a closed base
+loop provide operational notions of connection and holonomy.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.72\textwidth]{results/spatial-hodology/fiber_bundle_outlook.png}
+\caption{Proposed spatial-base/internal-fiber program. This is a schematic,
+not an empirical result. Horizontal actions move through emergent place; vertical
+actions alter internal possibilities.}
+\label{fig:fiber-outlook}
+\end{figure}
+
+\paragraph{Curvature and spacetime.}
+Position-dependent transition kernels permit local metric and transport
+curvature tests; Ollivier curvature supplies one principled discrete diagnostic
+for Markov processes \cite{ollivier2009}. This is only a bridge. General
+relativity relates spacetime curvature to dynamics \cite{einstein1916}, so a
+credible analogue would require robust local geometry, connection, sources,
+and an independently tested field relation. Time cannot simply be appended as
+a Euclidean coordinate: future-goal reachability must first yield causal order,
+directed cones, clock tasks, and observer-dependent simultaneity.
+
 \paragraph{Information-seeking action.}
 Replace undirected epsilon exploration with expected information gain,
 prediction uncertainty reduction, or reachability uncertainty reduction. This
@@ -674,6 +937,14 @@ study makes that program concrete but also establishes a demanding standard:
 an attractive embedding is not self-validating. It must predict independent
 behavior, transfer, and reachability.
 
+The inverse-designed qudit world additionally establishes the first spatial
+existence result: all-pairs learned difficulty robustly prefers two dimensions
+and learned policies trace paths in that emergent map. Just as importantly,
+the failures show that a single-origin task, a hidden grid, or a visually
+grid-like embedding is not enough. Broad source coverage, operational
+localization or memory, and approximately isotropic movement costs are jointly
+required.
+
 The geometry-aware agent is competitive but not universally superior. Its
 embedding has measurable, seed-dependent strategic meaning; its directed cost
 orders some goals but is not accurate in absolute units. These shortcomings
@@ -694,11 +965,18 @@ qubit-pauli-sic:mixed,qutrit-mub:two \
   --max-steps 15 --epsilon-decay 0.99 --device cpu \
   --output results/comparative
 python plot_results.py results/comparative
+
+python spatial_hodology.py --output results/spatial-hodology \
+  --seeds 0,1,2 --episodes 6000 --pair-episodes 100 \
+  --max-steps 12
 \end{verbatim}
 
 The manifest records exact runs; episode CSVs retain raw outcomes; geometry
 directories store embeddings, three distance views, reachability, curves, and
 displacements; and the plot tree contains 51 figures.
+The spatial bundle separately retains its 81-point instrument search, exact and
+learned all-pairs matrices, text Q-tables, trajectory records, manifest, and
+five figures.
 
 \section{Goal repertoires}
 
@@ -708,6 +986,8 @@ displacements; and the plot tree contains 51 figures.
 \item[qubit-unsharp] $wZ0,wX0,wY0,wZ0\_wX0,wX0\_wZ0,wZ0\_wX0\_wY0$.
 \item[qubit-pauli-sic] $Z0,X0,Y0,SIC0,SIC1,SIC2,SIC3,Z0\_SIC0,SIC0\_X0$.
 \item[qutrit-mub] $Z0,Z1,Z2,F0,F1,Z0\_F0,F0\_Z0,Z0\_F0\_P0$.
+\item[spatial worlds] $A,B,C,D,E,F,G,H,I$, each denoting one outcome of the
+same common place probe.
 \end{description}
 
 \begin{thebibliography}{99}
@@ -776,6 +1056,24 @@ reinforcement learning,” \emph{Physical Review X} 12, 011059 (2022).
 control with deep reinforcement learning for a double-well nonlinear
 potential,” \emph{Physical Review Letters} 127, 190403 (2021).
 \doi{10.1103/PhysRevLett.127.190403}.
+\bibitem{lewin1936} K.~Lewin, \emph{Principles of Topological Psychology}
+(McGraw--Hill, 1936).
+\url{https://books.google.com/books?id=IGB9AAAAMAAJ}.
+\bibitem{kruskal1964} J.~B. Kruskal, “Multidimensional scaling by optimizing
+goodness of fit to a nonmetric hypothesis,” \emph{Psychometrika} 29, 1--27
+(1964). \doi{10.1007/BF02289565}.
+\bibitem{tenenbaum2000} J.~B. Tenenbaum, V.~de Silva, and J.~C. Langford,
+“A global geometric framework for nonlinear dimensionality reduction,”
+\emph{Science} 290, 2319--2323 (2000).
+\doi{10.1126/science.290.5500.2319}.
+\bibitem{steenrod1951} N.~E. Steenrod, \emph{The Topology of Fibre Bundles}
+(Princeton University Press, 1951). \doi{10.1515/9781400883875}.
+\bibitem{ollivier2009} Y.~Ollivier, “Ricci curvature of Markov chains on metric
+spaces,” \emph{Journal of Functional Analysis} 256, 810--864 (2009).
+\doi{10.1016/j.jfa.2008.11.001}.
+\bibitem{einstein1916} A.~Einstein, “Die Grundlage der allgemeinen
+Relativit\"atstheorie,” \emph{Annalen der Physik} 354, 769--822 (1916).
+\doi{10.1002/andp.19163540702}.
 \end{thebibliography}
 
 \end{document}

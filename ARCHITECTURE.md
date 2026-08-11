@@ -81,6 +81,13 @@ Use `conda activate qbist_spacetime`.
 - `plot_results.py`
   - dependency-light performance and geometry figure generator.
 
+- `spatial_hodology.py`
+  - bilevel inverse design for low-dimensional hitting-cost geometry;
+  - exact stochastic-shortest-path distances and metric MDS/SMACOF;
+  - random-source place-goal Q-learning study and matched ablations;
+  - all-pairs cost evaluation, intrinsic-dimension tests, policy trajectories,
+    and fiber-bundle outlook figures.
+
 ### Focused / compatibility entry points
 
 - `q_learning.py`
@@ -112,6 +119,31 @@ two-/four-outcome Pauli plus tetrahedral SIC repertoire, and three qutrit MUB
 measurements. Run any CLI with `--help` for accepted environment names. Neural
 outcome heads use the maximum outcome count in a world and mask outcomes that
 are impossible for a particular action.
+
+Three nine-dimensional spatial worlds are also available:
+
+| environment | movements | observed move outcome | role |
+|---|---|---|---|
+| `qudit-grid-3x3` | axial and stochastic diagonal | destination place symbol | optimized 2D construction |
+| `qudit-grid-3x3-blind` | same hidden instruments | success/failure | partial-observability ablation |
+| `qudit-grid-3x3-cardinal` | axial only | destination place symbol | Manhattan-metric ablation |
+
+The default spatial state is the central projector in a nine-dimensional
+position basis. A ninth action is a common nine-outcome projective place probe;
+one goal is associated with each probe outcome.
+
+`Measurement.outcome_kraus` supports several unobserved Kraus events grouped
+into one classical outcome. The simulator evaluates
+
+\[
+p(o\mid\rho,a)
+=
+\sum_{k\in o}\operatorname{Tr}(K_k\rho K_k^\dagger)
+\]
+
+and conditions on the summed post-measurement state. This preserves a strict
+agent interface while allowing coarse outcomes such as success/failure or a
+destination symbol.
 
 The environment secretly uses Kraus operators:
 
@@ -1036,3 +1068,77 @@ The hidden density operator remains available only to the simulator for
 generating experience. It is never part of the agent's input.
 
 That separation should be preserved in every future backend.
+
+---
+
+# 18. Spatial inverse-design pipeline
+
+The first spatial study is deliberately separate from the generic suite because
+it contains an outer environment-design loop and all-pairs source--goal
+evaluation.
+
+## 18.1 Outer loop
+
+`exact_movement_costs()` converts legal displacement directions and their
+success probabilities into exact expected edge costs. Dijkstra computes the
+all-pairs stochastic-shortest-path matrix. For each candidate diagonal success
+probability, `geometry_metrics()` reports:
+
+- optimized metric-MDS stress in one, two, and three dimensions;
+- fraction of positive centered-Gram spectrum captured by two dimensions;
+- negative-spectrum fraction as a non-Euclidean diagnostic;
+- Procrustes recovery of concealed coordinates for privileged validation;
+- correlation with concealed Euclidean distances.
+
+`search_diagonal_instrument()` minimizes a documented combination of 2D stress,
+coordinate error, and negative spectrum. It does not train an agent, making the
+first inverse-design stage cheap and exactly interpretable.
+
+## 18.2 Inner learner
+
+Each training episode chooses a source site and goal uniformly. The harness
+prepares a localized source state and performs one place probe before task time.
+The learner receives the resulting arbitrary place symbol, not its coordinate.
+
+The main and cardinal worlds use `PlaceQAgent`, whose sufficient observable
+state is `(goal_id, progress, latest_place_symbol)`. This quotients histories
+that reach the same operational place by different routes. The blind world uses
+the ordinary six-event finite-history table because its latest binary outcome
+is insufficient.
+
+## 18.3 Learned geometry
+
+After training, `empirical_hodological_costs()` starts from every place, pursues
+every goal, and estimates restricted mean hitting cost and finite-horizon
+success. The final probe's common one-step cost is removed, diagonals are set to
+zero, and the directed matrix is symmetrized only for Euclidean embedding.
+Antisymmetry is retained as a separate directionality metric.
+
+Metric MDS uses deterministic SMACOF optimization from classical and seeded
+random initializations. The visible position of a place is therefore a function
+only of learned goal costs. Concealed coordinates enter only the reported
+Procrustes validation.
+
+## 18.4 Outputs
+
+The stable production bundle under `results/spatial-hodology/` contains:
+
+- `manifest.json`: exact construction, optimization result, and run metrics;
+- `design_search.csv`: all outer-loop candidates;
+- `exact_*_distances.csv`: analytic control geometries;
+- `*__costs.csv` and `*__success.csv`: learned all-pairs matrices;
+- `*__q_values.csv`: text-serializable learned policies;
+- `policy_trajectories.csv`: example observed place sequences;
+- four empirical figures plus one clearly labeled fiber-bundle outlook
+  schematic.
+
+Run it with:
+
+```bash
+python spatial_hodology.py \
+  --output results/spatial-hodology \
+  --seeds 0,1,2 --episodes 6000 --pair-episodes 100 --max-steps 12
+```
+
+The interpretation, equations, failures, and research ladder are in
+`SPATIAL_HODOLOGY.md`.

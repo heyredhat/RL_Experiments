@@ -5,6 +5,7 @@ __pycache__/
 # and binary neural checkpoints.
 results/*
 !results/comparative/
+!results/spatial-hodology/
 results/comparative/models/
 
 # Disposable LaTeX build state; keep manuscript sources and compiled PDFs.

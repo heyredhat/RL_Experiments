@@ -59,6 +59,51 @@ It is instead:
 
 This is deliberately an operational and agent-centered problem.
 
+### Space as a special hodological geometry
+
+The ultimate hypothesis is stronger than representation learning. Physical
+space may be unnecessary as a primitive in the agent's description. What the
+agent directly learns is a hodological structure: goals that can be achieved
+with few reliable interventions are near, while goals requiring long, risky,
+or highly constrained strategies are far.
+
+In general this goal-relative space will be high-dimensional, directed,
+history-dependent, and non-Euclidean. Familiar two- or three-dimensional space
+would be a remarkable special regime in which:
+
+1. a large family of place-like goals has an approximately symmetric
+   reachability cost;
+2. those costs admit a low-stress common embedding in two or three dimensions;
+3. interventions act as approximately local displacements in that embedding;
+4. observed action histories become stochastic trajectories through the
+   emergent coordinates.
+
+The inverse scientific question is therefore:
+
+> Which initial quantum states, Kraus instruments, observation coarse-grainings,
+> and goal repertoires make a low-dimensional spatial interpretation possible?
+
+This is not a claim that every goal geometry is space. It is a program for
+identifying the operational conditions under which one hodological factor
+behaves like ordinary space, and then progressively removing the simplifying
+conditions used to produce it.
+
+The longer-term target is a total hodological space containing spatial and
+internal directions. Mathematically, the desired decomposition resembles a
+fiber bundle
+
+\[
+F_b\hookrightarrow E\xrightarrow{\pi}B,
+\]
+
+where the base \(B\) is an emergent 2D or 3D spatial geometry and the fiber
+\(F_b\) contains internal, predictive, or task-specific possibilities at place
+\(b\). Horizontal interventions move in the base, vertical interventions
+change internal state, and coupled actions do both. Only after such a
+decomposition, its connection, and its curvature are operationally measurable
+does it become meaningful to ask whether anything analogous to general
+relativity can emerge.
+
 ---
 
 # 2. The hidden-state problem
@@ -1555,3 +1600,47 @@ These views prevent a visually attractive embedding from being treated as
 self-validating. A useful learned geometry should predict independent behavior,
 calibrate against actual reachability, and make measurement-induced changes in
 future possibility legible.
+
+---
+
+# 34. Implemented first spatial objective
+
+The project now contains an explicit first construction, fully documented in
+`SPATIAL_HODOLOGY.md`.
+
+Its Hilbert space is the nine-dimensional span of localized symbols
+\(\lvert x,y\rangle\) on a concealed \(3\times3\) arrangement. Eight movement
+instruments implement axial and stochastic diagonal displacements, and a
+single projective place probe supplies nine coordinate-free place outcomes.
+The nine goals are simply to obtain each outcome from that common probe.
+
+An outer inverse-design loop searches the diagonal success probability so that
+expected diagonal cost matches Euclidean diagonal length. It selects
+\(p_d=0.715\), close to \(1/\sqrt2\), and yields exact 2D stress 0.0365. Three
+Q-learning seeds then learn all-pairs navigation with 100% held-out success.
+The policy-derived geometry has mean 1D/2D/3D stresses
+0.372/0.071/0.064 and recovers the concealed lattice with Procrustes
+\(R^2=0.975\).
+
+Two controls are essential to the interpretation. Cardinal-only movement
+recovers the coordinate arrangement but retains a less Euclidean Manhattan
+metric (2D stress 0.142). Coarse success/failure observations preserve the same
+hidden Kraus connectivity but reduce all-pairs success to 0.482 and raise 2D
+stress to 0.233. Thus neither a grid-looking plot nor hidden spatial dynamics
+alone is sufficient. Spatial emergence requires calibrated all-pairs behavior,
+adequate operational localization or memory, and a movement repertoire with
+approximately isotropic costs.
+
+This result is intentionally modest. The construction is an
+entanglement-breaking, measure-and-prepare quantum walk on localized inputs.
+It establishes existence and supplies diagnostics; it does not yet show that
+space emerges from generic coherent quantum dynamics. The next ladder is:
+
+1. weaken and alias place observations while learning predictive memory;
+2. optimize complete quantum channels and landmark goals rather than one
+   movement probability;
+3. scale the lattice and vary topology and curvature;
+4. introduce internal states and test a learned base/fiber decomposition;
+5. study holonomy and stochastic curvature;
+6. replace Euclidean time with causal reachability before making any spacetime
+   or gravitational claim.

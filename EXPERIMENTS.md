@@ -140,3 +140,101 @@ Representative per-run views:
   trustworthy metric in absolute units.
 - Generated models and plots are exploratory artifacts, not frozen benchmark
   releases. The manifest and code make a larger rerun straightforward.
+
+---
+
+## Inverse-designed two-dimensional hodological space
+
+The follow-up study asks a different question: can the environment and goals be
+chosen so that learned all-pairs goal difficulty is genuinely compatible with
+two-dimensional Euclidean space?
+
+The full theory and interpretation are in `SPATIAL_HODOLOGY.md`. The executable
+study is:
+
+```bash
+python spatial_hodology.py \
+  --output results/spatial-hodology \
+  --seeds 0,1,2 --episodes 6000 --pair-episodes 100 --max-steps 12
+```
+
+### Construction and protocol
+
+- Hilbert dimension: 9, with canonical state
+  \(\rho_0=\lvert1,1\rangle\langle1,1\rvert\).
+- Actions: four axial moves, four stochastic diagonal moves, and one common
+  nine-outcome projective place probe.
+- Goals: obtain each of the nine outcomes from the common probe.
+- Outer search: 81 diagonal success probabilities from 0.55 to 0.95.
+- Selected probability: 0.715, close to the Euclidean cost-matching value
+  \(1/\sqrt2\).
+- Learner: place-symbol tabular Q-learning, with no coordinate input.
+- Training: 6,000 uniform source--goal episodes per run.
+- Evaluation: 100 trials for every one of 81 ordered source--goal pairs.
+- Controls: identical hidden movement with only binary success/failure
+  observation, and a place-observed cardinal-only Manhattan world.
+- Total: 54,000 training and 72,900 evaluation episodes across nine runs.
+
+### Exact design geometry
+
+| design | 1D stress | 2D stress | 3D stress | 2D positive-spectrum fraction | negative-spectrum fraction | Euclidean distance correlation |
+|---|---:|---:|---:|---:|---:|---:|
+| optimized diagonal | 0.4305 | **0.0365** | 0.0360 | 0.934 | 0.081 | 0.995 |
+| cardinal only | 0.4603 | 0.1416 | 0.1413 | 0.862 | 0.217 | 0.948 |
+
+The optimized instrument has a clear 1D-to-2D stress drop and negligible
+benefit from a third coordinate.
+
+### Learned results
+
+Mean ± sample standard deviation over three seeds:
+
+| metric | optimized observed | optimized blind | cardinal observed |
+|---|---:|---:|---:|
+| all-pairs success | 1.000 ± 0.000 | 0.482 ± 0.023 | 1.000 ± 0.000 |
+| 1D stress | 0.372 ± 0.011 | 0.450 ± 0.042 | 0.460 ± 0.000 |
+| 2D stress | **0.071 ± 0.011** | 0.233 ± 0.032 | 0.142 ± 0.000 |
+| 3D stress | 0.064 ± 0.011 | 0.228 ± 0.038 | 0.141 ± 0.000 |
+| concealed-coordinate Procrustes \(R^2\) | 0.975 ± 0.005 | 0.965 ± 0.011 | 1.000 ± 0.000 |
+| exact-cost correlation | 0.936 ± 0.003 | 0.865 ± 0.010 | 1.000 ± 0.000 |
+| directionality | 0.122 ± 0.037 | 0.264 ± 0.093 | 0.000 ± 0.000 |
+
+The proposed place-observed world satisfies the first objective. Its policy
+reaches every source--goal pair, two dimensions reduce stress by a factor of
+5.2 relative to one dimension, and a third dimension adds only a small
+improvement. The concealed grid is recovered up to rotation/reflection/scale.
+
+The cardinal control shows why Procrustes recovery alone is insufficient: it
+recovers the grid arrangement perfectly while retaining a significantly less
+Euclidean Manhattan metric. The blind control shows why a suitable hidden
+transition graph alone is insufficient: inadequate observability or memory
+damages both navigation and geometric calibration.
+
+### Recorded failures
+
+- Center-only policies reached 0.92--0.95 success from reset but only about 0.25
+  across arbitrary source--goal pairs. A star of routes from one origin is not
+  a navigable space.
+- Random-source training with success/failure observations reached only 0.482
+  all-pairs success at this budget.
+- Place observations combined with a six-event literal history reached high
+  success but fragmented equivalent places by arrival route and left 2D stress
+  near 0.16.
+- Quotienting the learner's state to the latest place symbol produced the final
+  100%-success, 0.071-stress result.
+
+### Figures
+
+- `results/spatial-hodology/design_optimization.png`
+- `results/spatial-hodology/learned_hodological_spaces.png`
+- `results/spatial-hodology/performance_geometry_comparison.png`
+- `results/spatial-hodology/emergent_policy_trajectories.png`
+- `results/spatial-hodology/fiber_bundle_outlook.png` (explicitly a schematic)
+
+### Scientific boundary
+
+The construction uses localized qudit states and measure-and-prepare movement
+channels. It proves that quantum-operational goal difficulty can recover a
+concealed 2D space under controlled conditions. It does not show that space
+generically emerges from coherent quantum dynamics, nor does it yet supply a
+continuum, curvature dynamics, Lorentzian causality, or general relativity.
