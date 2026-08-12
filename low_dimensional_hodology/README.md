@@ -14,6 +14,12 @@ independent skeptical simulations are in
 [`search/SEARCH_REPORT.md`](search/SEARCH_REPORT.md). Implementations depend
 only on NumPy; Matplotlib is used by the artifact generators.
 
+For a self-contained, pedagogical development with complete proofs, worked
+Bellman and Schoenberg calculations, exact qubit and qutrit constructions,
+figures, experimental audits, and research outlook, see
+[`EXACT_LOW_DIMENSIONAL_HODOLOGY.tex`](EXACT_LOW_DIMENSIONAL_HODOLOGY.tex) or
+the compiled [`EXACT_LOW_DIMENSIONAL_HODOLOGY.pdf`](EXACT_LOW_DIMENSIONAL_HODOLOGY.pdf).
+
 Run everything from this directory:
 
 ```bash
@@ -22,6 +28,8 @@ python -m unittest discover -s search -p 'test_*.py' -v
 MPLBACKEND=Agg python run_exact_experiments.py
 MPLBACKEND=Agg python run_qutrit_phase_experiments.py
 MPLBACKEND=Agg python search/search_low_dimensional.py
+latexmk -pdf -interaction=nonstopmode -halt-on-error \
+  EXACT_LOW_DIMENSIONAL_HODOLOGY.tex
 ```
 
 Key files:
