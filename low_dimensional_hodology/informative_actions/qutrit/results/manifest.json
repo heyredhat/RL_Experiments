@@ -1,0 +1,135 @@
+{
+  "seed": 20260812,
+  "episodes_per_navigation_condition": 2000,
+  "total_navigation_episodes": 34000,
+  "geometry": {
+    "eta": 0.6,
+    "distance_vs_sqrt_hamming_correlation": 0.9999999999999998,
+    "mds_2d_stress": 0.4082896811077443,
+    "positive_eigenvalues": [
+      0.05977366493929595,
+      0.05977366493929588,
+      0.0597736649392958,
+      0.059773664939295784
+    ],
+    "coordinates": [
+      [
+        0.021412612428106884,
+        -0.15083324194617936
+      ],
+      [
+        0.09116998560574455,
+        -0.07403970695782114
+      ],
+      [
+        0.14683892361115322,
+        -0.0020015058521991183
+      ],
+      [
+        -0.08818587732791082,
+        -0.025848859611524874
+      ],
+      [
+        -0.018428504150273035,
+        0.05094467537683326
+      ],
+      [
+        0.03724043385513546,
+        0.12298287648245512
+      ],
+      [
+        -0.12841041946088008,
+        -0.04894316952463396
+      ],
+      [
+        -0.05865304628324238,
+        0.02785036546372404
+      ],
+      [
+        -0.002984108277833794,
+        0.09988856656934601
+      ]
+    ]
+  },
+  "hesse_measure_prepare": {
+    "immediate_sic_information_bits": 0.25162916738782276,
+    "predictive_equivalence_classes": 9,
+    "predictive_signature_rank": 8,
+    "learned_opaque_action_group": {
+      "outcome_shuffle": [
+        0,
+        1,
+        3,
+        8,
+        6,
+        7,
+        5,
+        2,
+        4
+      ],
+      "action_shuffle": [
+        1,
+        0,
+        2,
+        3,
+        4
+      ],
+      "learned_group_order": 9,
+      "all_generators_commute": true,
+      "orbit_size_from_token_zero": 9,
+      "identity_action_inferred_by_order_one": 1
+    },
+    "bellman_iterations": 182,
+    "bellman_baseline": 6.000000000000403,
+    "bellman_excess_vs_word_distance_correlation": 1.0,
+    "distinct_bellman_excess": [
+      0.0,
+      1.0,
+      2.0
+    ],
+    "word_metric_2d_mds_stress": 0.38318332010201567,
+    "integrated_action_definition": "K[a,o] = Pi[o] U[a] / sqrt(3)",
+    "integrated_bellman_iterations": 115,
+    "integrated_distinct_values": [
+      4.0,
+      5.0
+    ],
+    "integrated_value_at_goal": 4.00000000000022,
+    "integrated_edge_value": 4.000000000000219,
+    "integrated_diagonal_value": 5.000000000000289,
+    "integrated_offdiagonal_shell_correlation_only": 0.9999999999999998,
+    "integrated_identity_of_indiscernibles_holds": false,
+    "integrated_metric_verdict": "not a metric: self and nearest-neighbor values coincide"
+  },
+  "action_permutation": [
+    2,
+    3,
+    1,
+    0
+  ],
+  "all_translation_meanings_recovered": true,
+  "translation_max_residual": 1.150853615078125e-16,
+  "haar_random_min_residual": 0.30499187233849456,
+  "null_predictive_rank": 0,
+  "external_automaton_quantum_rank": 0,
+  "external_automaton_nodes": 9,
+  "permuted_action_meanings": [
+    [
+      -1,
+      0
+    ],
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      0
+    ],
+    [
+      0,
+      -1
+    ]
+  ],
+  "interpretation": "Action meanings are automorphisms of future outcome laws; action and outcome names are gauge."
+}

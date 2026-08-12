@@ -652,3 +652,88 @@ and was not counted as a code result. Python byte-compilation succeeds.
 GOAL_GEOMETRY_PAPER.tex compiles with resolved references and citations to a
 71-page PDF. The new pages and all four inserted figures were visually
 inspected; only harmless underfull-box typography warnings remain.
+
+## 2026-08-11: local-control obstruction and operational localization
+
+Selected the removal of the displacement-specific retry catalog as the most
+promising next step. Three parallel strands developed the exact theory, a
+fixed-local-control experiment, and hidden-start qutrit localization.
+
+The theory proves that retry Kraus primitives reduce to a weighted word metric
+and that a finite translation direction set has polygonal stable unit ball
+\(\operatorname{conv}\{a/c_a\}\). Exact global Euclidean geometry is therefore
+impossible for any fixed finite catalog. The worst angular excess is governed
+by \(\sec(\Delta_{\max}/2)-1\), giving \(O(K^{-2})\) convergence as direction
+count grows; exact radius-\(R\) patches require \(O(R^2)\) primitive slopes.
+
+Implemented translation-covariant qutrit D4/D8/D16/D32 Kraus repertoires,
+deterministic symmetry-tied cost optimization, exact Bellman solution, and
+held-out radius 4-to-12 diagnostics. Euclidean RMSE is 30.03%, 3.85%, 3.85%,
+and 1.62%. D16's added knight moves are Bellman-dominated, showing that exposed
+velocity-hull directions matter rather than action count. Quantum validity and
+Bellman residuals are below \(2.3\times10^{-15}\).
+
+Implemented an exact nine-hypothesis Bayesian quantum filter for a hidden
+qutrit phase preparation, including density-matrix backaction on every branch.
+The 60,000-episode production study validates the one-shot formulas
+\(P(\hat S=S)=(1+2\eta)/9\) and \(F=(1+2\eta)/3\). Sharp measurement can
+prepare a perfectly controllable present state while retaining only one-third
+accuracy about the origin. This separates the translation base from posterior
+and conditioned-state fibers and prevents state preparation from being called
+localization.
+
+Added the self-contained `emergent_local_metric/` theory, control,
+localization, integrated results, machine-readable artifacts, and three
+inspected figures. The two new strands contribute 15 passing tests. Updated
+the project README, low-dimensional README, vision, architecture, experiment
+ledger, and publication manuscript. The next target is continuous qutrit
+control with quadratic effort and a learned predictive filter, followed by
+position-dependent metric tensors and closed-loop internal holonomy tests.
+
+Final validation passed all 39 pre-existing tests, 13 exact low-dimensional
+tests, eight skeptical-search tests, seven local-control tests, and eight
+localization tests: 75 total. The deterministic control runner reproduced its
+saved summary, and the localization artifact audit confirmed 40 aggregate
+rows of 1,500 episodes each. `GOAL_GEOMETRY_PAPER.pdf` now builds to 73 pages,
+`EXACT_LOW_DIMENSIONAL_HODOLOGY.pdf` to 29 pages, and the new pedagogical
+`EMERGENT_LOCAL_METRIC.pdf` to 20 pages with resolved references and citations.
+The newly inserted and standalone figure pages were visually inspected.
+
+## 2026-08-12: informative actions and predictive geometry
+
+The project revisited a hidden assumption in earlier spatial models: movement
+meanings were partly supplied by the action catalog. Three parallel strands
+developed an operational theory, a minimal nonunitary qubit search, and an
+integrated qutrit construction under
+`low_dimensional_hodology/informative_actions/`.
+
+The theory defines action meaning by controlled future-outcome laws and proves
+the relevant no-information-without-disturbance obstruction. Its P/A/B/M/E/L
+tests prevent action naming, external counters, or MDS alone from serving as
+evidence of emergent space.
+
+The qubit search evaluated 11,799 parameter triples. It found a robust opaque
+two-axis chart with 100% recovery at ten common-probe samples, but none of 33
+multiple-word displacement classes is predictively path independent. The
+qutrit strand integrates Weyl interventions with Hesse-SIC outcomes. Outcomes
+carry 0.251629 bits and scrambled empirical kernels recover a commuting,
+transitive \(\mathbb Z_3^2\) topology. Exact Bellman analysis then reveals the
+decisive failure: report cost is 4 from both the goal and a neighbor and 5 from
+a diagonal. Weakening the measurement never separates self from edge. The
+separated unitary/SIC control restores \(6+d_T\) but restores uninformative
+movement as well.
+
+This productive negative result defines the next search: optimize
+outcome-conditioned group-covariant qutrit channels for positive information,
+predictive path closure, strict metric margins, Bellman consistency, and
+rank-two or rank-three Schoenberg structure simultaneously. The integrated
+Markdown report and pedagogical LaTeX paper preserve the derivations, controls,
+figures, and reproduction contract.
+
+Final validation passed all 39 shared tests, 13 exact-construction tests, eight
+skeptical-search tests, seven local-control tests, eight localization tests,
+seven informative-qubit tests, and nine informative-qutrit tests: 91 total.
+Python byte-compilation and `git diff --check` pass. The focused informative-
+actions paper compiles to 19 pages, the expanded main manuscript to 76 pages,
+and the new exact-obstruction and predictive-learning figure pages were
+visually inspected.

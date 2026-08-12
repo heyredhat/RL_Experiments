@@ -42,6 +42,33 @@ Euclidean optimal cost. Matched qutrit SIC, qubit tangent-plane, sequence-
 counter, and null-automaton studies distinguish geometry in quantum dynamics
 from geometry supplied only by goal memory.
 
+Its [emergent-local-metric successor](low_dimensional_hodology/emergent_local_metric/README.md)
+removes the displacement-specific retry catalog. A single translation-covariant
+qutrit action stencil is fitted at radius four and tested through radius
+twelve: held-out Euclidean error falls from 30.03% with four directions to
+1.62% with 32. The accompanying theorem proves that every fixed finite catalog
+has a polygonal, Finsler large-scale unit ball, so exact global Euclidean
+geometry requires continuous or asymptotically dense local controls. A
+60,000-episode hidden-start study then separates localization of an initial
+preparation from control of the present measurement-conditioned state, giving
+the miniproject's first operational base--fiber split.
+
+The latest [informative-actions study](low_dimensional_hodology/informative_actions/README.md)
+removes an additional hidden assumption: a button does not mean ``east'' merely
+because the simulator gives it that name. Action and outcome labels are
+shuffled, and meanings must be reconstructed from controlled future-outcome
+statistics. A nonunitary qubit learns a two-axis action chart but fails
+predictive path independence. An exactly solvable qutrit instrument has
+informative outcomes (0.251629 bits), and its observed kernels recover a
+commuting, transitive \(\mathbb Z_3^2\) action group, but its integrated Bellman
+cost has self = neighbor and is only a pseudometric. This identifies the next
+design target precisely: combine observable action semantics, compositional
+predictive states, and a nondegenerate low-dimensional goal metric in the same
+instrument family. The focused account is available as a
+[19-page pedagogical paper](low_dimensional_hodology/informative_actions/INFORMATIVE_ACTIONS_AND_PREDICTIVE_GEOMETRY.pdf)
+with its
+[LaTeX source](low_dimensional_hodology/informative_actions/INFORMATIVE_ACTIONS_AND_PREDICTIVE_GEOMETRY.tex).
+
 The publication-style account is available as both
 [LaTeX source](GOAL_GEOMETRY_PAPER.tex) and a
 [compiled paper](GOAL_GEOMETRY_PAPER.pdf). It develops the quantum and
@@ -127,6 +154,17 @@ python -m unittest discover -s low_dimensional_hodology/search -p 'test_*.py' -v
 MPLBACKEND=Agg python low_dimensional_hodology/run_exact_experiments.py
 MPLBACKEND=Agg python low_dimensional_hodology/run_qutrit_phase_experiments.py
 MPLBACKEND=Agg python low_dimensional_hodology/search/search_low_dimensional.py
+
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/control/tests -v
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/localization \
+  -p 'test_*.py' -v
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/emergent_local_metric/control/run_local_control.py
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/emergent_local_metric/localization/localization_experiment.py \
+  --episodes 1500 --seed 20260811
 ```
 
 `plot_results.py` deliberately has no PyTorch dependency. It can run in any

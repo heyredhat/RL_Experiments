@@ -1535,3 +1535,98 @@ and null controls.
 All generated files remain below `low_dimensional_hodology/results/` or
 `low_dimensional_hodology/search/`. The standalone runners resolve outputs
 relative to their own source directory, keeping the miniproject portable.
+
+---
+
+# 22. Emergent local metric successor
+
+`low_dimensional_hodology/emergent_local_metric/` is a self-contained bridge
+between the exact macro-action constructions and a learned continuous-control
+atlas. It has three deliberately separated layers.
+
+## 22.1 Theory layer
+
+`theory/THEORY_LOCAL_METRIC.md` derives the effective weighted word metric of
+retry Kraus actions, its convex velocity body, the finite-direction polygonal
+obstruction, exact patch-size requirements, and angular convergence bounds.
+It also specifies falsifiers before the simulations are interpreted.
+
+## 22.2 Control layer
+
+`control/local_control.py` contains:
+
+- the equilateral-phase qutrit encoding and translation unitaries;
+- binary random-unitary Kraus instruments;
+- fixed symmetry-tied D4/D8/D16/D32 action stencils;
+- a deterministic projected coordinate optimizer for primitive costs;
+- exact Dijkstra/Bellman values on padded displacement lattices;
+- locality, anisotropy, Schoenberg, MDS, covariance, and Kraus diagnostics.
+
+`control/run_local_control.py` fits on a radius-four disk and evaluates through
+radius twelve against both ordinary Euclidean distance and the locally scaled
+Fubini--Study distance. Its CSV and JSON output make training membership and
+held-out errors explicit. No current site or requested goal is an input to an
+action instrument.
+
+## 22.3 Localization layer
+
+`localization/localization_experiment.py` defines a nine-state qutrit phase
+frame, covariant weak Lüders instruments, and an exact filter over hidden
+preparation hypotheses. Each filter branch stores both a classical posterior
+weight and a conditioned density matrix. The simulation compares:
+
+- label-MAP movement, which tries to invert the hidden initial preparation;
+- predictive-state movement, which controls the present Bayesian ensemble;
+- null sensing and known-start controls;
+- fixed and posterior-threshold sensing rules.
+
+The two terminal criteria must remain separate in future code. Relabeling
+target fidelity as localization accuracy would erase the experiment's central
+backaction result.
+
+## 22.4 Extension contract
+
+The next implementation should add a continuous or high-resolution control
+interface rather than another hard-coded macro catalog. The preferred state is
+\((x,b,\rho)\): base chart coordinate \(x\), belief/predictive state \(b\), and
+conditional physical state \(\rho\). Movement effort, sensing effort, and
+terminal loss should remain separately logged. Position-dependent control
+tensors should be introduced behind a flat constant-tensor baseline, and
+closed-loop internal transport should be compared at fixed base displacement.
+
+The successor contributes 15 focused tests, deterministic control artifacts,
+60,000 seeded localization episodes, three inspected figures, an integrated
+Markdown report, and a standalone pedagogical LaTeX paper.
+
+---
+
+# 23. Informative-action predictive geometry
+
+`low_dimensional_hodology/informative_actions/` is an isolated research layer
+for learning what interventions mean from observable consequences. It does
+not alter the shared simulator API.
+
+The theory layer defines controlled instruments, histories/tests, causal
+equivalence, predictive-state representations, finite Hankel rank, and the
+gauges under which a learned model is identifiable. Its finite P/A/B/M/E/L
+criterion keeps predictive separation, action identification, Bellman
+realizability, metric validity, Euclidean embeddability, and learned local
+composition as independent acceptance checks.
+
+The qubit layer implements opaque binary instruments
+\(K_{b,o}=\sqrt{(I+osX)/2}R_z(\theta_b)\). The learner sees resets, binary
+outcomes, and common terminal X/Y/Z probes, not hidden phases. Its
+word-equivalence audit prevents an external signed counter from being mistaken
+for predictive state geometry.
+
+The qutrit layer uses Hesse SIC projectors and Weyl controls in the integrated
+instrument \(K_o^{(a)}=\Pi_oU_a/\sqrt3\). Each outcome prepares \(\Pi_o\), so
+the last scrambled token is a sufficient operational state. Empirical
+previous-token/action/next-token kernels recover the action permutations
+without coordinates. Exact Bellman solvers compare integrated report-and-move
+goals with a separated move/report benchmark.
+
+Each strand owns deterministic code, tests, tables, and figures. Offline code
+may use hidden labels only to score a recovered permutation after the learner
+has operated on scrambled tokens. Null quantum dynamics, external automata,
+random unitaries, and token permutations are mandatory controls.

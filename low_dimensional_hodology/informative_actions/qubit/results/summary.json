@@ -1,0 +1,90 @@
+{
+  "selected": {
+    "alpha": 0.64,
+    "beta": 2.02,
+    "strength": 0.45,
+    "score": 2.826949432637605,
+    "goal_separation": 0.6399999999999997,
+    "action_separation": 1.2800000000000002,
+    "alias_margin_h8": 0.10000000000000009,
+    "outcome_axis_gap": 0.5563548468011669,
+    "signed_probe_gap": 0.5333125820372681,
+    "information_margin": 0.5333125820372681
+  },
+  "coherence_retention": 0.8930285549745876,
+  "chart_recovery": {
+    "2": {
+      "chart_recovery": 0.8733333333333333,
+      "mean_phase_rmse": 0.7101447574840467
+    },
+    "5": {
+      "chart_recovery": 0.9866666666666667,
+      "mean_phase_rmse": 0.4112909565426234
+    },
+    "10": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.26040804236250664
+    },
+    "25": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.16093741019274335
+    },
+    "50": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.11296408953638999
+    },
+    "100": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.08090182160307667
+    },
+    "200": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.05727853236388333
+    },
+    "500": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.037323023733536666
+    },
+    "1000": {
+      "chart_recovery": 1.0,
+      "mean_phase_rmse": 0.02608610869099
+    }
+  },
+  "mean_tomography_trace_distance_300_probes": 0.03502390463799771,
+  "finite_control_recovery_200_trials": {
+    "informative-nonunitary": {
+      "identifiable_rate": 1.0,
+      "correct_chart_and_identifiable_rate": 1.0
+    },
+    "random-unitary": {
+      "identifiable_rate": 1.0,
+      "correct_chart_and_identifiable_rate": 1.0
+    },
+    "null": {
+      "identifiable_rate": 0.0,
+      "correct_chart_and_identifiable_rate": 0.0
+    }
+  },
+  "max_goal_geometry_error_from_manhattan": 0.0,
+  "predictive_path_independence": {
+    "equivalent_repeated_path_classes": 0,
+    "tested_repeated_path_classes": 33,
+    "singleton_classes": 8,
+    "total_displacement_classes": 41,
+    "worst_common_probe_difference": 0.12849017496614937
+  },
+  "search_candidates": 11799,
+  "seed": 20260812,
+  "artifacts": [
+    "search_top.csv",
+    "exact_predictive_signatures.csv",
+    "chart_recovery.csv",
+    "predictive_state_reconstruction.csv",
+    "controls.csv",
+    "finite_control_recovery.csv",
+    "goal_geometry.csv",
+    "word_equivalence_audit.csv",
+    "figures/informative_qubit_summary.png",
+    "figures/predictive_compositionality.png"
+  ]
+}

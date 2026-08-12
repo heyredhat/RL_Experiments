@@ -563,7 +563,7 @@ The next theorem is the common engine behind the exact Euclidean examples.
 
 \begin{theorem}[Projective-orbit retry construction]
 \label{thm:retry}
-Let $G$ be a finite or countable group with a left-invariant metric $d_G$,
+Let $G$ be a finite or countable group with a right-invariant metric $d_G$,
 rescaled so that
 $\min_{h\ne e}d_G(e,h)=1$. Suppose $G$ has a projective unitary
 representation $U:G\to PU(d)$ and a fiducial density operator $\rho_0$ with
@@ -588,6 +588,17 @@ is exactly
   \label{eq:retry-result}
 \end{equation}
 \end{theorem}
+
+\begin{remark}[Multiplication and invariance convention]
+The theorem uses left-action dynamics $x\mapsto hx$, so the identity
+$d_G(x,hx)=d_G(e,h)$ requires right invariance. Equivalently, one may use a
+left-invariant metric with right-action dynamics $x\mapsto xh$ and direct
+displacement $h=x^{-1}g$. All applications below use abelian groups, whose
+metrics are bi-invariant, so the distinction changes no construction or
+result. A line-by-line proof and the full calculation of
+\cref{eq:pauli-cost} appear in the companion note
+\texttt{THEOREM\_7\_1\_EXPANDED.tex}.
+\end{remark}
 
 \begin{proof}
 The instrument is valid because
@@ -1437,6 +1448,31 @@ the added coupling rather than uncertainty about base geometry.
 \label{sec:future}
 
 \subsection{Remove the displacement lookup table}
+
+This proposed experiment has now been completed in the companion
+`emergent\_local\_metric' study.  Its exact conclusion is sharper than the
+original optimization proposal: for any fixed finite translation catalog with
+effective edge costs $c_a$, the stable unit ball is
+\begin{equation}
+ \operatorname{conv}\{a/c_a\}.
+\end{equation}
+It is polygonal and therefore cannot equal a Euclidean disk globally.
+Direction refinement produces $O(K^{-2})$ worst-angle convergence, but every
+fixed finite $K$ retains a Finsler anisotropy floor.  Held-out Euclidean RMSE
+in the implemented qutrit study falls from 30.03\% (four directions) to
+1.62\% (32 directions), confirming this prediction rather than evading it.
+
+The same companion hides the qutrit preparation coordinate and uses an exact
+Bayesian quantum filter.  One weak outcome gives origin-label accuracy
+$(1+2\eta)/9$ but present-state target fidelity $(1+2\eta)/3$.  Hence sharp
+measurement can prepare a perfectly controllable state without localizing its
+origin.  This supplies the first operational separation between the
+translation base and an epistemic/conditional-state fiber.
+
+The remaining target is now continuous qutrit control with quadratic effort,
+followed by a learned recurrent predictive filter.  Position-dependent effort
+tensors and closed-loop transport should be introduced only after that flat
+baseline passes held-out metric and calibration tests.
 
 The exact retry catalog contains one action for every displacement class.
 That makes the theorem transparent but places too much geometry in the action

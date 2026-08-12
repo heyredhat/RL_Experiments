@@ -1,0 +1,7 @@
+samples_per_anchor_action,all_permutations_recovered
+5,0.0
+10,0.048
+25,0.53
+50,0.966
+100,1.0
+250,1.0

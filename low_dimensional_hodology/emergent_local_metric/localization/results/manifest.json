@@ -1,0 +1,62 @@
+{
+  "seed": 20260811,
+  "episodes_per_condition": 1500,
+  "etas": [
+    0.0,
+    0.2,
+    0.5,
+    0.8,
+    1.0
+  ],
+  "strategies": [
+    {
+      "name": "no-sense",
+      "fixed_senses": 0,
+      "threshold": null,
+      "max_senses": 6
+    },
+    {
+      "name": "fixed-1",
+      "fixed_senses": 1,
+      "threshold": null,
+      "max_senses": 6
+    },
+    {
+      "name": "fixed-3",
+      "fixed_senses": 3,
+      "threshold": null,
+      "max_senses": 6
+    },
+    {
+      "name": "fixed-5",
+      "fixed_senses": 5,
+      "threshold": null,
+      "max_senses": 6
+    },
+    {
+      "name": "adaptive-0.25",
+      "fixed_senses": null,
+      "threshold": 0.25,
+      "max_senses": 6
+    },
+    {
+      "name": "adaptive-0.32",
+      "fixed_senses": null,
+      "threshold": 0.32,
+      "max_senses": 6
+    },
+    {
+      "name": "adaptive-0.50",
+      "fixed_senses": null,
+      "threshold": 0.5,
+      "max_senses": 6
+    }
+  ],
+  "total_episodes": 60000,
+  "maximum_monte_carlo_error_against_one_shot_formula": 0.019555555555555548,
+  "criteria": {
+    "label_success": "whether inferred translation maps hidden preparation label to target",
+    "operational_score": "final state fidelity with target phase-grid projector",
+    "state_controller": "counterfactual move centered on current Bayesian ensemble state"
+  }
+}

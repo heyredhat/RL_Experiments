@@ -1,0 +1,590 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools,bm}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage[nameinlink,capitalise]{cleveref}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!55!black,
+  citecolor=green!35!black,
+  urlcolor=blue!55!black
+}
+\setlist{itemsep=2pt,topsep=4pt}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\E}{\mathbb E}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\id}{\mathsf e}
+
+\title{\textbf{The Projective-Orbit Retry Theorem, Expanded}\\
+\large A detailed proof of Theorem 7.1 and a complete calculation of the
+unit-square distance matrix}
+\author{Quantum Hodology Research Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Theorem 7.1 of \emph{Exact Low-Dimensional Hodology} gives a simple but
+powerful recipe: encode a group orbit in a quantum system, make a displacement
+of metric length \(r\) succeed with probability \(1/r\), and charge one unit
+for every attempt. Retrying then costs \(r\) on average, and the triangle
+inequality proves that no adaptive sequence of other actions is cheaper.
+This note explains every assumption and every inequality in that argument.
+It also corrects a left-versus-right invariance convention that is harmless
+for the abelian examples in the paper but matters for nonabelian groups.
+Finally, it derives every entry of the four-by-four matrix \(D\) in Eq.~(43),
+checks the Bellman equations directly, and performs the complete Schoenberg
+calculation showing that \(D\) is exactly the Euclidean metric of a unit
+square.
+\end{abstract}
+
+\tableofcontents
+
+\section{What the theorem is trying to accomplish}
+
+Suppose an agent has operational situations indexed by elements \(x\) of a
+group \(G\). An action indexed by \(h\in G\) attempts to translate the
+situation. The desired difficulty of displacement \(h\) is a prescribed
+group metric length
+\[
+  r_h=d_G(\id,h).
+\]
+The construction turns this length into a waiting time.  One attempt costs
+one intervention and succeeds with probability
+\[
+  p_h=\frac{1}{r_h}.
+\]
+If failure changes nothing, repeated attempts have geometric mean waiting time
+\(1/p_h=r_h\). This immediately supplies a policy whose expected cost equals
+the desired distance.  The nontrivial half of the theorem is to prove that a
+clever combination of shorter displacements, stochastic choices, or
+history-dependent actions cannot do better.
+
+The proof uses the metric distance to the goal as a \emph{potential}:
+\[
+  V_g(x)=d_G(x,g).
+\]
+The triangle inequality bounds how much any successful action can reduce this
+potential. The probability \(p_h=1/r_h\) is calibrated so that the
+\emph{expected} decrease of \(V_g\) in one unit-cost intervention is at most
+one. Reducing an initial potential \(V_g(x)\) to zero therefore costs at least
+\(V_g(x)\) on average. Direct retry attains this bound.
+
+\section{The assumptions, one by one}
+
+\subsection{A group of displacements}
+
+A group \(G\) has an identity \(\id\), inverses, and an associative product.
+The product records composition of displacements.  For example, in the square
+construction
+\[
+  G=\Z_2\times\Z_2,
+\]
+with componentwise addition modulo two.  Its elements are
+\(00,10,01,11\). Every nonidentity element is its own inverse.
+
+\subsection{A translation-invariant metric}
+
+A metric \(d_G\) is \emph{left invariant} if
+\[
+  d_G(ax,ay)=d_G(x,y)
+  \qquad\text{for every }a,x,y\in G,
+\]
+and \emph{right invariant} if
+\[
+  d_G(xa,ya)=d_G(x,y).
+\]
+It is \emph{bi-invariant} if it has both properties.  On an abelian group the
+left and right translations coincide, so either invariance implies the other.
+
+The normalization
+\[
+  \min_{h\ne\id}d_G(\id,h)=1
+  \label{eq:normalization}
+\]
+is not cosmetic. It guarantees \(r_h\ge1\), hence
+\(0<p_h=1/r_h\le1\), as required for a probability. It also fixes the unit
+of cost: the shortest nontrivial displacement costs one expected
+intervention.
+
+\subsection{A projective quantum orbit}
+
+A projective unitary representation assigns a unitary \(U_g\) to every
+\(g\in G\), with multiplication respected up to global phase:
+\[
+  U_gU_h=e^{i\phi(g,h)}U_{gh}.
+\]
+Global phase disappears under conjugation, so the density operators
+\[
+  \rho_g=U_g\rho_0U_g^\dagger
+\]
+carry an exact group action.  The distinct-orbit assumption is
+\[
+  \rho_g=\rho_h\quad\Longrightarrow\quad g=h.
+  \label{eq:distinct}
+\]
+It says that two different group labels do not denote exactly the same
+physical density operator.  It does \emph{not} say that the states are
+orthogonal or perfectly distinguishable in one shot.
+
+The cost proof itself is a statement about the induced controlled group
+process.  Assumption~\eqref{eq:distinct} supplies its physical quantum
+realization and prevents an exact stabilizer from silently identifying two
+purported places.
+
+\subsection{The retry instrument}
+
+For every nonidentity displacement \(h\), set
+\begin{equation}
+  K^{(h)}_{\rm s}=\sqrt{p_h}\,U_h,
+  \qquad
+  K^{(h)}_{\rm f}=\sqrt{1-p_h}\,I,
+  \qquad
+  p_h=\frac{1}{d_G(\id,h)}.
+  \label{eq:retry}
+\end{equation}
+The labels \({\rm s}\) and \({\rm f}\) mean success and failure.  This is a
+valid two-outcome quantum instrument because
+\begin{align}
+ K_{\rm s}^{(h)\dagger}K_{\rm s}^{(h)}
+ +K_{\rm f}^{(h)\dagger}K_{\rm f}^{(h)}
+ &=p_hU_h^\dagger U_h+(1-p_h)I\\
+ &=p_hI+(1-p_h)I=I.
+ \label{eq:complete}
+\end{align}
+Conditional on failure, normalization removes the scalar and the state is
+unchanged. Conditional on success, normalization removes \(\sqrt{p_h}\) and
+the state is conjugated by \(U_h\).
+
+\section{A convention issue in the printed statement}
+
+The printed theorem lets success act by left multiplication,
+\(x\mapsto hx\), but assumes only that \(d_G\) is left invariant. It then
+uses
+\[
+ d_G(x,hx)=d_G(\id,h).
+\]
+For a general nonabelian group, that equality follows from \emph{right}
+invariance, not left invariance: right multiplication of both arguments by
+\(x^{-1}\) sends \((x,hx)\) to \((\id,h)\).
+
+There are two equally valid repairs.
+
+\begin{enumerate}
+\item Keep the printed dynamics \(x\mapsto hx\) and assume that \(d_G\) is
+right invariant. The direct displacement is \(h=gx^{-1}\).
+\item Keep a left-invariant metric but use right-action dynamics
+\(x\mapsto xh\). The direct displacement is \(h=x^{-1}g\).
+\end{enumerate}
+
+The paper's exact examples use abelian groups such as \(\Z_2^2\), \(\Z^2\),
+and finite phase tori.  Their metrics are bi-invariant, so the displayed proof
+and every reported result are unchanged.  The distinction matters only when
+generalizing the theorem to nonabelian action groups.
+
+For definiteness, the next section gives the corrected left-action/right-
+invariant form.  Reversing every product gives the left-invariant/right-action
+form verbatim.
+
+\section{The theorem with a fully explicit proof}
+
+\begin{theorem}[Projective-orbit retry construction, convention-correct form]
+\label{thm:retry}
+Let \(G\) be finite or countable and let \(d_G\) be a right-invariant metric
+normalized by \eqref{eq:normalization}. Suppose \(G\) has a projective
+unitary representation and a fiducial density operator satisfying
+\eqref{eq:distinct}. Under action \(h\ne\id\), failure leaves \(x\) fixed and
+success sends \(x\) to \(hx\), with the instrument \eqref{eq:retry}. Every
+attempt costs one. If the goal is \(g\), then the optimal expected hitting
+cost is
+\[
+  D(x,g)=d_G(x,g).
+\]
+\end{theorem}
+
+\begin{proof}
+We separate the proof into validity, achievability, and optimality.
+
+\paragraph{1. The quantum actions are valid.}
+Equation~\eqref{eq:complete} proves trace preservation after summing over the
+two reported branches. Because \(d_G(\id,h)\ge1\), both coefficients are real
+and lie between zero and one.
+
+\paragraph{2. Direct retry achieves the metric distance.}
+Assume \(x\ne g\) and choose
+\[
+  h_*=gx^{-1}.
+\]
+On success, \(h_*x=g\), so one successful event reaches the goal. On failure,
+the state and group coordinate remain at \(x\), so the same experiment starts
+again from exactly the same situation. The number \(T\) of attempts until
+the first success therefore has
+\[
+  \Pr(T=t)=(1-p_{h_*})^{t-1}p_{h_*},\qquad t=1,2,\ldots.
+\]
+This is the geometric distribution, whose mean is
+\[
+  \E T=\frac{1}{p_{h_*}}=d_G(\id,h_*).
+\]
+Right invariance, applied by multiplying both arguments by \(x\), gives
+\[
+  d_G(\id,gx^{-1})=d_G(x,g).
+\]
+Thus direct retry has expected cost \(d_G(x,g)\), proving
+\begin{equation}
+  D(x,g)\le d_G(x,g).
+  \label{eq:upper}
+\end{equation}
+
+\paragraph{3. No single action can beat the distance potential.}
+Define
+\[
+  V(y)=d_G(y,g).
+\]
+If the current point is \(y\) and action \(h\) is selected, the expected
+one-step cost plus future potential is
+\begin{equation}
+  Q_h(y)=1+(1-p_h)V(y)+p_hV(hy).
+  \label{eq:q}
+\end{equation}
+The reverse triangle inequality follows from the ordinary triangle
+inequality:
+\[
+  V(y)=d_G(y,g)
+  \le d_G(y,hy)+d_G(hy,g)
+  =d_G(y,hy)+V(hy).
+\]
+Consequently
+\[
+  V(y)-V(hy)\le d_G(y,hy).
+\]
+Right invariance gives
+\[
+  d_G(y,hy)=d_G(\id,h)=\frac1{p_h},
+\]
+and hence
+\begin{equation}
+  p_h\bigl[V(y)-V(hy)\bigr]\le1.
+  \label{eq:progress}
+\end{equation}
+Rearranging \eqref{eq:q},
+\begin{equation}
+ Q_h(y)=V(y)+1-p_h\bigl[V(y)-V(hy)\bigr]\ge V(y).
+ \label{eq:bellman-lower}
+\end{equation}
+Thus every allowed action has Bellman cost at least the metric potential.
+
+\paragraph{4. Why this also rules out adaptive policies and mixtures.}
+Conditioned on the complete past, a policy may choose any action, possibly at
+random.  Inequality~\eqref{eq:progress} says that the conditional expected
+decrease of \(V\) during that intervention is at most one for every pure
+choice. Averaging preserves the inequality for a randomized choice. After
+\(n\) interventions, the expected total decrease is therefore at most \(n\).
+For a policy with hitting time \(\tau\), apply this statement to
+\(\tau\wedge n\) and let \(n\to\infty\). At the goal, \(V=0\), so every proper
+policy of finite expected duration obeys
+\[
+  V(x)\le\E\tau.
+\]
+Policies with infinite expected duration cannot improve the optimum.  Hence
+\begin{equation}
+  D(x,g)\ge V(x)=d_G(x,g).
+  \label{eq:lower}
+\end{equation}
+Combining \eqref{eq:upper} and \eqref{eq:lower} proves equality.
+\end{proof}
+
+\subsection{Where equality occurs}
+
+For the direct action \(h_*=gx^{-1}\), success lands at \(g\), so
+\(V(h_*x)=0\), while \(1/p_{h_*}=V(x)\). Therefore
+\[
+ Q_{h_*}(x)
+ =1+\left(1-\frac1{V(x)}\right)V(x)
+ =V(x).
+\]
+All alternative actions satisfy \(Q_h(x)\ge V(x)\); some may tie, but none can
+be smaller.  This is the precise sense in which the triangle inequality is
+the optimality certificate.
+
+\section{Eq.~(43): the unit-square example}
+
+\subsection{The group and its desired metric}
+
+Take
+\[
+  G=\Z_2\times\Z_2=\{00,10,01,11\}.
+\]
+Addition is componentwise modulo two.  We associate these labels with the
+four Euclidean points
+\begin{equation}
+  00\leftrightarrow(0,0),\quad
+  10\leftrightarrow(1,0),\quad
+  01\leftrightarrow(0,1),\quad
+  11\leftrightarrow(1,1).
+  \label{eq:coords}
+\end{equation}
+Define the translation-invariant group metric by its displacement lengths:
+\begin{equation}
+ d_G(\id,10)=1,\qquad
+ d_G(\id,01)=1,\qquad
+ d_G(\id,11)=\sqrt2,
+ \label{eq:lengths}
+\end{equation}
+and
+\[
+ d_G(x,g)=d_G(\id,g-x).
+\]
+Here subtraction equals addition because every element has order two.  The
+only nontrivial triangle inequality is
+\(\sqrt2\le1+1\); hence this is indeed a metric. Since \(G\) is abelian, it
+is both left and right invariant.
+
+\subsection{The qubit orbit}
+
+The physical system is a qubit with fiducial Bloch vector
+\[
+  \bm r_{00}=\frac1{\sqrt3}(1,1,1).
+\]
+Conjugation by Pauli \(X\) and \(Z\) generates four states:
+\begin{align*}
+ \bm r_{00}&=(+,+,+)/\sqrt3,&
+ \bm r_{10}&=(+,-,-)/\sqrt3,\\
+ \bm r_{01}&=(-,-,+)/\sqrt3,&
+ \bm r_{11}&=(-,+,-)/\sqrt3.
+\end{align*}
+They are distinct and form a tetrahedron on the Bloch sphere.  Every distinct
+pair has overlap
+\[
+  \Tr(\rho_x\rho_g)=\frac13.
+\]
+Thus their \emph{physical-state geometry} is equidistant.  The square below
+is instead the geometry of optimal controlled cost.
+
+\subsection{The three displacement actions}
+
+The axial displacements \(10\) and \(01\) have length one, so their retry
+probabilities are one.  They are deterministic Pauli channels:
+\[
+  10:\rho\mapsto X\rho X,
+  \qquad
+  01:\rho\mapsto Z\rho Z.
+\]
+The diagonal displacement \(11\) is implemented by \(Y\), projectively
+equivalent to \(XZ\), and has
+\[
+ p_{11}=\frac1{\sqrt2}.
+\]
+Therefore
+\begin{equation}
+ K_{\rm s}=\sqrt{p_{11}}Y=2^{-1/4}Y,
+ \qquad
+ K_{\rm f}=\sqrt{1-\frac1{\sqrt2}}I.
+ \label{eq:diagonal-kraus}
+\end{equation}
+Repeated diagonal attempts have expected cost
+\[
+  \frac1{p_{11}}=\sqrt2.
+\]
+Taking two deterministic axial steps would cost \(2\), so direct diagonal
+retry is better. The theorem proves that no adaptive alternative costs less
+than \(\sqrt2\).
+
+\subsection{Computing every entry of \(D\)}
+
+Order rows and columns as \(00,10,01,11\). The diagonal entries vanish because
+the agent is already at its goal:
+\[
+ D(00,00)=D(10,10)=D(01,01)=D(11,11)=0.
+\]
+Pairs differing in exactly one bit are axial neighbors and cost one:
+\begin{align*}
+ D(00,10)&=1,&D(00,01)&=1,\\
+ D(10,11)&=1,&D(01,11)&=1.
+\end{align*}
+Pairs differing in both bits require displacement \(11\) and cost
+\(\sqrt2\):
+\[
+ D(00,11)=\sqrt2,
+ \qquad
+ D(10,01)=\sqrt2.
+\]
+The metric is symmetric, so reversing any pair gives the same entry.  Hence
+\begin{equation}
+\boxed{
+ D=\begin{pmatrix}
+ 0&1&1&\sqrt2\\
+ 1&0&\sqrt2&1\\
+ 1&\sqrt2&0&1\\
+ \sqrt2&1&1&0
+ \end{pmatrix}.}
+ \label{eq:D}
+\end{equation}
+
+The same calculation can be displayed as a displacement table:
+\begin{center}
+\begin{tabular}{c c c c}
+\toprule
+source & goal & group difference & optimal expected cost\\
+\midrule
+\(00\)&\(10\)&\(10\)&\(1\)\\
+\(00\)&\(01\)&\(01\)&\(1\)\\
+\(00\)&\(11\)&\(11\)&\(\sqrt2\)\\
+\(10\)&\(01\)&\(11\)&\(\sqrt2\)\\
+\(10\)&\(11\)&\(01\)&\(1\)\\
+\(01\)&\(11\)&\(10\)&\(1\)\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{A direct Bellman check for the square}
+
+It is useful to verify one column of \(D\) without invoking the theorem as a
+black box. Choose goal \(g=11\). From \eqref{eq:D}, the proposed values are
+\[
+ V(00)=\sqrt2,\qquad V(10)=1,\qquad V(01)=1,\qquad V(11)=0.
+\]
+
+At \(00\), deterministic \(X\) or \(Z\) gives
+\[
+ Q_X(00)=1+V(10)=2,
+ \qquad
+ Q_Z(00)=1+V(01)=2.
+\]
+The diagonal action succeeds at \(11\) with probability \(1/\sqrt2\) and
+otherwise remains at \(00\), so
+\begin{align*}
+ Q_Y(00)
+ &=1+\left(1-\frac1{\sqrt2}\right)V(00)
+   +\frac1{\sqrt2}V(11)\\
+ &=1+\left(1-\frac1{\sqrt2}\right)\sqrt2\\
+ &=1+\sqrt2-1=\sqrt2.
+\end{align*}
+Thus the diagonal action attains the proposed value and the axial alternatives
+are more expensive.
+
+At \(10\), the deterministic \(Z\) action reaches \(11\) in one step, so
+\(V(10)=1\). Similarly, \(X\) sends \(01\) to \(11\) in one step. At the
+goal, the process terminates with value zero.  The other goal columns follow
+by translation symmetry.  This explicitly verifies the stochastic-shortest-
+path Bellman equations whose solution is \eqref{eq:D}.
+
+\section{Why \(D\) is exactly a two-dimensional Euclidean metric}
+
+The entries of \(D\) already match the familiar side and diagonal lengths of
+a unit square.  Schoenberg's test certifies this without presupposing the
+coordinates in \eqref{eq:coords}.
+
+First square every entry:
+\begin{equation}
+ D^{\circ2}=\begin{pmatrix}
+ 0&1&1&2\\
+ 1&0&2&1\\
+ 1&2&0&1\\
+ 2&1&1&0
+ \end{pmatrix}.
+ \label{eq:D2}
+\end{equation}
+Every row mean, every column mean, and the grand mean of this matrix equal
+one.  With
+\[
+ J=I-\frac14\bm1\bm1^T,
+\]
+the double-centered Gram matrix is
+\begin{align}
+ B&=-\frac12JD^{\circ2}J\\
+ &=\begin{pmatrix}
+ \frac12&0&0&-\frac12\\
+ 0&\frac12&-\frac12&0\\
+ 0&-\frac12&\frac12&0\\
+ -\frac12&0&0&\frac12
+ \end{pmatrix}.
+ \label{eq:B}
+\end{align}
+
+To see the geometry directly, center the square coordinates:
+\begin{equation}
+ X=\begin{pmatrix}
+ -\frac12&-\frac12\\
+  \frac12&-\frac12\\
+ -\frac12& \frac12\\
+  \frac12& \frac12
+ \end{pmatrix}.
+ \label{eq:X}
+\end{equation}
+Multiplication gives \(XX^T=B\). Therefore \(B\) is positive semidefinite.
+The two columns of \(X\) are orthonormal, so the eigenvalues of \(B\) are
+\[
+  1,\ 1,\ 0,\ 0.
+\]
+It has rank two, and classical multidimensional scaling reconstructs the four
+rows of \(X\), up to rotation and reflection. This proves intrinsically that
+the hodological metric \eqref{eq:D} is an exact two-dimensional Euclidean
+metric.
+
+\section{What the theorem proves---and what it assumes}
+
+The theorem proves three useful facts.
+\begin{enumerate}
+\item The Kraus operators form valid quantum instruments.
+\item The desired metric is achieved by a concrete policy.
+\item The triangle inequality is a global certificate against every adaptive
+shortcut.
+\end{enumerate}
+
+It does not derive the metric from an otherwise neutral quantum dynamics.  The
+desired length is inserted into the success law \(p_h=1/d_G(\id,h)\). In the
+square, the Euclidean diagonal is obtained because the diagonal action was
+assigned success probability \(1/\sqrt2\). A different probability would
+produce a different hodological diagonal.
+
+It also does not imply that instrument outcomes localize the agent.  In a
+random-unitary retry action, success/failure reports whether a chosen
+translation occurred; it need not reveal the starting state.  Finally, the
+four qubit states form a tetrahedron in Bloch-state geometry even though their
+optimal costs form a square.  This separation is intentional: hodological
+distance measures difficulty of controlled goal achievement, not quantum
+state overlap.
+
+\section{A compact checklist for using the theorem}
+
+Before applying the retry theorem to a new construction, check:
+\begin{enumerate}
+\item Is every desired displacement represented by a valid group element?
+\item Is the orbit faithful after quotienting global phase and the fiducial
+stabilizer?
+\item Does the side of multiplication match the side of metric invariance?
+\item Has the metric been normalized so every \(p_h\le1\)?
+\item Does failure truly leave the operational coordinate unchanged?
+\item Is the goal defined by the physical orbit, a predictive equivalence
+class, or an external group-product monitor?  These are not interchangeable.
+\item Is \(p_h=1/d_G(\id,h)\) physically motivated, learned, or simply supplied
+by design?
+\end{enumerate}
+
+For Eq.~(43), all algebraic conditions hold exactly.  The remaining scientific
+limitation is the last one: the Euclidean success law is engineered rather
+than derived.
+
+\end{document}

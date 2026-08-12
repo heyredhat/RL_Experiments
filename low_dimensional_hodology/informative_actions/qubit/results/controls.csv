@@ -1,0 +1,5 @@
+condition,minimum_signature_distance,centered_signature_rank,action_semantics_identifiable,quantum_goal_chart,external_counter_goal_chart,state_disturbance_per_action
+informative-nonunitary,0.533312582037,2,1,1,1,0.106971445025
+random-unitary,0.597195441362,2,1,1,1,0.000000000000
+null,0.000000000000,0,0,0,1,0.000000000000
+external-counter-only,0.000000000000,0,0,0,1,0.000000000000

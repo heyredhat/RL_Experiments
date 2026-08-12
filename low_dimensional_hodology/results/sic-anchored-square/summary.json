@@ -1,0 +1,11 @@
+{
+  "sic_completeness_error": 2.220446049250313e-16,
+  "sic_branch_state_error": 0.0,
+  "analytic_baseline": 3.1380711874576988,
+  "bellman_analytic_max_error": 2.5757174171303632e-14,
+  "baseline_subtracted_distance_max_error": 9.103828801926284e-15,
+  "monte_carlo_max_error": 0.02830881254232409,
+  "monte_carlo_episodes_per_pair": 50000,
+  "opaque_recovery_at_100": 1.0,
+  "seed": 20260813
+}

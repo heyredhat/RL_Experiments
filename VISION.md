@@ -1975,3 +1975,123 @@ model away from covariance, and measure when Bellman, Schoenberg, localization,
 and memory-provenance conditions fail. Only after those tests should the phase
 base be coupled to internal goal fibers and used for curvature or connection
 experiments.
+
+## The local-control boundary: why a finite action alphabet is Finsler
+
+The next frontier has now been tested. Replacing the displacement-specific
+retry table by one finite translation-covariant action stencil does produce a
+geometry that extrapolates beyond its fitting patch, but it also exposes a
+general obstruction. If local vector \(a\) has effective expected cost
+\(c_a\), the large-scale unit ball is
+
+\[
+B=\operatorname{conv}\{a/c_a\}.
+\]
+
+A finite action alphabet makes \(B\) a polygon. Thus its stable hodological
+metric is Finsler-like and cannot be exactly the circular Euclidean norm on all
+scales. With approximately uniform directions the worst angular error falls
+as \(O(K^{-2})\), so highly accurate apparent space is possible, but every
+fixed \(K\) retains an anisotropy floor. The experiments recover this pattern:
+held-out Euclidean relative RMSE falls from 30.03% for four directions to
+3.85% for eight and 1.62% for 32. The 32-direction metric has low 2D stress
+but still fails the exact Schoenberg test, as the theorem predicts.
+
+This changes the conceptual target. Ordinary Riemannian space should not be
+expected from a finite menu of unstructured primitive actions. Its
+infinitesimal admissible-control body must become a disk or ellipsoid. Natural
+mechanisms include continuous Hamiltonian controls, quadratic control energy,
+an isotropic diffusion tensor, or learned multiscale options whose directional
+resolution grows with scale.
+
+## Localization creates an epistemic fiber
+
+The hidden-start qutrit experiment also sharpens what the agent's “position”
+can mean. A weak-measurement history defines both a posterior over initial
+preparations and a present conditioned density operator. These generally give
+different navigation policies. After one strength-\(\eta\) observation,
+
+\[
+P(\text{correct origin})={1+2\eta\over9},\qquad
+F(\text{target after present-state routing})={1+2\eta\over3}.
+\]
+
+At sharp strength, measurement prepares a state that can be routed perfectly
+while retaining only one-third accuracy about the origin. Later sharp outcomes
+cannot recover the erased information. This is the cleanest current warning
+against identifying successful target preparation with spatial localization.
+
+It is also the clearest current base--fiber model. The qutrit translation law
+provides a homogeneous base; the posterior and conditioned quantum state form
+an internal epistemic fiber; sensing transports and couples them. A future
+fiber-bundle claim should be earned by learned predictive filtering, local
+trivializations, and reproducible closed-loop holonomy—not inferred from a 3D
+plot of uncertainty.
+
+## Revised most promising direction
+
+The next decisive model should combine:
+
+1. a continuous two-generator qutrit control family;
+2. quadratic local effort \(\tfrac12u^TR(x)u\), yielding an ellipsoidal
+   infinitesimal metric;
+3. weak, inequivalent probes chosen actively by a recurrent predictive agent;
+4. an exact Bayesian/Hamilton--Jacobi benchmark;
+5. position-dependent \(R(x)\) and internal transport only after the flat
+   learned baseline passes calibration and held-out geometry tests.
+
+This route derives Euclidean geometry from a resource principle instead of a
+lookup table. Varying \(R(x)\) then supplies a controlled path to curvature,
+while transporting internal goal state around base loops supplies a falsifiable
+path to connection and holonomy.
+
+# 38. Action semantics must themselves emerge
+
+The local-metric program still left one semantic input exposed: the modeler
+knew which primitive was a displacement in which direction. If an agent
+updates an internal coordinate because a button was declared to mean ``east,''
+the purported space resides partly in the experimental description rather
+than wholly in the agent's experience.
+
+The operational replacement is predictive. Histories \(h\) and \(h'\) denote
+the same situation only when every contemplated future intervention sequence
+induces the same outcome law. Likewise, two opaque actions have distinct
+meanings only when their controlled future laws differ. Coordinate names,
+origins, axis exchange, sign, and outcome-token permutations are gauges; the
+observable content lies in relational composition and prediction.
+
+This sharpens the emergence claim into six tests. Candidate places must be
+predictively separated (P), actions identifiable (A), proposed costs proper
+Bellman solutions (B), those costs a genuine metric (M), their Schoenberg
+matrix positive semidefinite of the desired rank (E), and learned action
+effects locally compositional in that embedding (L). Passing only a visually
+compelling MDS plot, or only recovering a group table, is insufficient.
+
+The first experiments reveal a genuine tradeoff. A connected family of
+nonorthogonal states cannot be translated branch by branch without disturbance
+while branch probabilities also reveal which state was present. Informative
+motion must therefore obtain its semantics from later probes or accept
+outcome-conditioned backaction as part of the dynamics.
+
+A qubit realizes a learned action chart, yet different words with the same
+alleged displacement remain predictively inequivalent. A qutrit Hesse-SIC
+measure-and-prepare construction goes further: action and outcome names may be
+independently scrambled, immediate outcomes carry 0.251629 bits, and empirical
+kernels recover a transitive commuting group of order nine. Thus a
+\(\mathbb Z_3^2\) translation topology genuinely arises from consequences.
+But its exact integrated Bellman cost equates the target with every nearest
+neighbor. It is a pseudometric, not space.
+
+The central objective is now:
+
+> Find the smallest quantum instrument family whose raw controlled outcomes
+> jointly identify a two-dimensional predictive atlas, compose consistently,
+> and induce a nondegenerate low-dimensional Bellman metric.
+
+The most promising search uses outcome-conditioned, group-covariant qutrit
+channels with non-rank-one effects and retained quantum memory, optimized
+jointly for positive immediate information, predictive closure, strict
+self--edge--diagonal separation, Bellman consistency, and held-out
+Schoenberg/locality tests. Only after a flat example satisfies all six
+conditions should position-dependent costs, internal fibers, and holonomy be
+introduced.

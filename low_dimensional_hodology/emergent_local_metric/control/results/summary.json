@@ -1,0 +1,32 @@
+{
+  "model": "translation-covariant equilateral-phase qutrit with binary random-unitary local instruments",
+  "training_radius": 4,
+  "evaluation_radius": 12,
+  "phase_scale": 0.15,
+  "training_displacement_count": 48,
+  "heldout_displacement_count": 392,
+  "repertoires": {
+    "D4": 4,
+    "D8": 8,
+    "D16": 16,
+    "D32": 32
+  },
+  "best_euclidean_heldout_rmse": {
+    "repertoire": "D32",
+    "value": 0.016174139928
+  },
+  "best_fubini_study_heldout_rmse": {
+    "repertoire": "D32",
+    "value": 0.036541755911
+  },
+  "maximum_bellman_residual": 1.776e-15,
+  "maximum_covariance_residual": 1.666e-16,
+  "maximum_kraus_residual": 2.22e-16,
+  "artifacts": [
+    "optimized_costs.csv",
+    "heldout_displacements.csv",
+    "anisotropy_by_radius.csv",
+    "diagnostics.csv",
+    "figures/local_control_summary.png"
+  ]
+}

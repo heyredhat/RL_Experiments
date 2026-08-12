@@ -3367,6 +3367,133 @@ the Euclidean norm, large-scale locality, and robust operational localization
 from a simple untuned quantum law. That gap is the most promising direction
 for the next stage rather than a defect to hide.
 
+\section{When the meaning of an action is itself learned}
+\label{sec:informative-actions}
+
+The preceding constructions still permit a subtle form of privileged
+information. Even when an action is presented to the learner under an opaque
+token, the scientific interpretation may inherit the fact that its matrix was
+designed as a translation. A genuinely operational spatial claim must recover
+that meaning from changes in observable probability laws.
+
+\subsection{Predictive equivalence and two notions of information}
+
+A \emph{test} is a contemplated future action string together with an outcome
+event. Two histories are causally or predictively equivalent when every test
+has the same conditional probability after either history. An operational
+state is therefore an equivalence class of histories, as in a predictive state
+representation~\cite{littman2001}. The meaning of an opaque action is the map
+it induces on these predictive classes, not its source-code label.
+
+Two senses of informativeness must be separated. Immediate information is
+\begin{equation}
+ I(S;O_t\mid A_t=a),
+\end{equation}
+where $S$ is the pre-action predictive class. Future operational information
+is the distinguishability of later common-test laws with and without the
+action. A one-outcome unitary has zero immediate information but may be fully
+identifiable by later probes. Conversely, a destructive measurement can have
+an informative outcome while erasing distinctions needed for spatial
+composition.
+
+This tension is principled. If every branch of an instrument maps a connected
+nonorthogonality graph of pure states to the same prescribed translated rays
+without conditional disturbance, linearity forces the branch amplitudes---and
+hence outcome probabilities---to be state independent along each connected
+component. Otherwise the classical outcome would reveal which nonorthogonal
+input was present while leaving it undisturbed. This is the relevant
+no-information-without-disturbance obstruction~\cite{fuchs1996,busch2009}; it
+does not forbid informative motion, but it says that information must come
+from later probes, backaction, or an additional memory system.
+
+\subsection{A nonunitary qubit action chart is not yet a plane}
+
+The minimal numerical experiment uses the reset state $|+x\rangle$ and opaque
+binary instruments
+\begin{equation}
+ K_{b,o}=\sqrt{\frac{I+osX}{2}}R_z(\theta_b),
+ \qquad o\in\{-1,+1\}.
+\end{equation}
+For hidden phases $\{\pm0.64,\pm2.02\}$ and strength $s=0.45$, immediate
+outcomes and common terminal $X,Y,Z$ probes allow the learner to recover two
+inverse button pairs, modulo the dihedral gauge of a square. Across 300 fixed
+replications, chart recovery is 87.3\%, 98.7\%, and 100\% at two, five, and ten
+samples per common test. With 300 samples per probe, predictive tomography has
+mean trace-distance error 0.035.
+
+The stronger quotient test fails. Among 41 external displacement classes made
+from words of length at most four, 33 contain more than one word; none of those
+33 has path-independent future-test statistics. The worst common-probe
+discrepancy is 0.12849. Thus the qubit has an empirically learned two-axis
+\emph{action chart}, but the putative lattice position still lives in a word
+counter rather than in predictive equivalence classes of the quantum process.
+
+\subsection{An exactly soluble informative qutrit topology}
+
+Let $\{\Pi_o\}_{o=0}^8$ be the Hesse SIC and let
+$U_a\in\{I,X,X^\dagger,Z,Z^\dagger\}$ be qutrit Weyl translations. Combine
+motion and reporting into a single nine-outcome instrument,
+\begin{equation}
+ K_o^{(a)}=\frac{1}{\sqrt3}\Pi_oU_a.
+ \label{eq:integrated-hesse-instrument}
+\end{equation}
+Completeness follows from $\sum_o\Pi_o=3I$. If the pre-action class is the SIC
+state $\Pi_s$, then
+\begin{equation}
+ P_a(o\mid s)=\frac13\Tr(\Pi_oU_a\Pi_sU_a^\dagger)
+ =\begin{cases}
+ 1/3,&o=T_a(s),\\
+ 1/12,&o\ne T_a(s).
+ \end{cases}
+\end{equation}
+The conditional branch state is exactly $\Pi_o$, so the last observed token is
+a sufficient predictive state. With a uniform prior, one action carries
+\begin{equation}
+ \log_2 9-H(1/3,1/12,\ldots,1/12)=0.251629\ \text{bits}.
+\end{equation}
+
+Action IDs and outcome tokens were independently permuted before learning.
+From 2,000 observations per source/action pair, all 45 maximum-likelihood token
+images were recovered, with kernel mean absolute error 0.00505--0.00579. The
+inferred permutations contain one identity and four order-three generators;
+they commute, generate a group of order nine, and act transitively. Hence the
+agent recovers a $\mathbb Z_3^2$ translation topology up to origin, axis, sign,
+and token gauges, without receiving coordinates.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/informative_actions/qutrit/figures/integrated_action_no_go.png}
+\caption{\textbf{Informative topology is not sufficient for metric space.}
+The integrated Hesse kernel has a learned translated peak and positive mutual
+information. Weakening the measurement never separates self from edge. After
+subtracting the common baseline, the integrated Bellman cost assigns distance
+zero to a distinct neighbor, whereas a separated move/report benchmark retains
+the toroidal graph levels.}
+\label{fig:integrated-action-no-go}
+\end{figure}
+
+The exact Bellman audit is nevertheless negative. For the goal ``report token
+$g$,'' every action costs one and
+\begin{equation}
+ V_g(s)=\min_a\left[1+\sum_{o\ne g}P_a(o\mid s)V_g(o)\right].
+\end{equation}
+Symmetry and direct substitution give $V_{\rm self}=V_{\rm edge}=4$ and
+$V_{\rm diagonal}=5$. Subtracting the common self baseline therefore assigns
+zero separation to a distinct nearest neighbor, violating identity of
+indiscernibles. A continuous weakening from null reporting to the sharp
+measure-and-prepare instrument preserves this equality. By contrast, separating
+unitary movement from a SIC report gives the exact solution
+$V_g(s)=6+d_T(s,g)$, but the movement action again has no informative outcome.
+
+The combined result is a sharper research target, not a failed search. Exact
+predictive action semantics exist in a qubit, and informative outcomes can
+reveal exact two-dimensional translation topology in a qutrit. What remains is
+to realize predictive separation, action identifiability, Bellman
+realizability, metric validity, rank-two or rank-three Schoenberg structure,
+and local compositionality in one instrument family. Outcome-conditioned,
+group-covariant qutrit channels with non-rank-one effects and retained quantum
+memory are the most promising next search space.
+
 \section{Discussion and limitations}
 \label{sec:discussion}
 
@@ -3507,17 +3634,45 @@ goal hierarchies, and Finsler-like local costs. Choose geometry through
 predictive validity and planning utility, not aesthetics.
 
 \paragraph{Derive, rather than prescribe, the Euclidean norm.}
-The strongest next experiment starts from the robust qutrit phase manifold but
-removes displacement-specific retry instruments. Parameterize a small,
-translation-covariant family of local CPTP maps and a common covariant goal
-instrument. Optimize the microscopic Kraus parameters against a multi-scale
-loss containing Bellman residual, Schoenberg negativity, rank above two,
-anisotropy of the local Fubini--Study/control metric, nonlocal action support,
-and degradation under detector tolerance. Train on a subset of displacements
-and evaluate on held-out radii and directions. This tests whether $L^2$ cost is
-an emergent effective law rather than a lookup table. A successful model should
-also preserve its chart after the goal automaton is erased and after small
-instrument perturbations.
+This experiment has now been performed for fixed local qutrit control
+catalogs. If translation $a$ has effective retry cost $c_a$, the Bellman
+distance is a weighted word metric whose stable unit ball is
+\begin{equation}
+ B_{\rm vel}=\operatorname{conv}\{a/c_a\}.
+ \label{eq:velocity-hull}
+\end{equation}
+A finite catalog therefore has a polygonal unit ball and cannot globally equal
+the circular Euclidean norm. With maximum angular gap $\Delta_{\max}$, its
+worst asymptotic directional excess is
+$\sec(\Delta_{\max}/2)-1$; approximately uniform $K$-direction families
+converge as $O(K^{-2})$ but retain a nonzero floor at fixed $K$.
+
+The deterministic experiment fits only radius-four displacements and tests
+through radius twelve. Held-out Euclidean relative RMSE falls from 30.03\%
+with four axial directions to 3.85\% with eight and 1.62\% with 32. The
+32-direction metric has 2D MDS stress 0.0289, but its Schoenberg negative
+eigenmass remains 0.082. Sixteen nominal directions do no better than eight
+because the added knight actions are Bellman-dominated. Thus the experiment
+both removes the source--target lookup table and proves why a fixed finite
+alphabet remains Finsler rather than exactly Riemannian.
+
+The stronger next step is continuous qutrit control with quadratic effort,
+$\frac12u^TR(x)u$. A constant positive-definite $R$ induces a flat
+ellipsoidal infinitesimal metric without installing one macro-action per
+displacement. Position-dependent $R(x)$ then gives a controlled route to
+curvature. The open learning question is whether rotational symmetry and the
+control tensor can be inferred from weak histories rather than supplied.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/emergent_local_metric/control/results/figures/local_control_summary.png}
+\caption{\textbf{Held-out geometry from reusable local qutrit actions.}
+Primitive costs are fitted only inside radius four (gray). Increasing exposed
+directions improves extrapolation, anisotropy, Schoenberg negativity, and 2D
+stress, but a fixed finite velocity hull remains polygonal. D16 overlaps D8
+because its added moves are not Bellman-optimal.}
+\label{fig:local-control-metric}
+\end{figure}
 
 \paragraph{Scale the exact analytic benchmark.}
 Use the Hesse-SIC Bellman solution as a unit test for learned solvers, then
@@ -3548,6 +3703,22 @@ local dimension, neighborhood preservation, and topology, not only global MDS
 \cite{tenenbaum2000}.
 
 \paragraph{Spatial base and internal fiber.}
+The low-dimensional hidden-start benchmark now makes the need for this split
+exact. For nine nonorthogonal qutrit phase preparations and a strength-$\eta$
+covariant sensor, a single outcome-directed move has
+\begin{equation}
+ P(\widehat S=S)=\frac{1+2\eta}{9},\qquad
+ F_{\rm target}=\frac{1+2\eta}{3}.
+ \label{eq:localization-preparation-gap}
+\end{equation}
+At $\eta=1$, measurement prepares a state that can be routed with unit
+fidelity while identifying the original preparation only one third of the
+time; subsequent sharp outcomes cannot recover erased origin information.
+Across 60,000 seeded episodes, a present-predictive-state controller greatly
+outperforms origin-label movement after repeated strong sensing. Predictive
+likelihood, posterior calibration, and current-state control must therefore be
+evaluated separately.
+
 Give each place several internal quantum states and goals, then test whether
 the full hodological state space $E$ locally decomposes as
 $F_b\hookrightarrow E\xrightarrow{\pi}B$, with a stable 2D or 3D spatial base
@@ -3555,6 +3726,17 @@ $B$ and internal fiber $F_b$ \cite{steenrod1951}. Actions may be horizontal,
 vertical, or coupled. Learned transition maps between local charts and the
 failure of an internal state to return after transport around a closed base
 loop provide operational notions of connection and holonomy.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{low_dimensional_hodology/emergent_local_metric/localization/figures/localization_performance.png}
+\caption{\textbf{Origin localization is not present-state control.} Weak
+measurements improve hidden-label accuracy above chance, but information costs
+interventions and backaction changes the state. Filled circles route according
+to the inferred origin; hollow triangles route the current predictive state.
+Their separation is an operational epistemic-fiber effect.}
+\label{fig:qutrit-localization}
+\end{figure}
 
 \begin{figure}[t]
 \centering
@@ -3691,6 +3873,16 @@ python low_dimensional_hodology/run_qutrit_phase_experiments.py
 python -m unittest discover -s low_dimensional_hodology/search \
   -p 'test_*.py' -v
 python low_dimensional_hodology/search/search_low_dimensional.py
+
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/control/tests -v
+python low_dimensional_hodology/emergent_local_metric/control/run_local_control.py
+
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/localization \
+  -p 'test_*.py' -v
+python low_dimensional_hodology/emergent_local_metric/localization/localization_experiment.py \
+  --episodes 1500 --seed 20260811
 \end{verbatim}
 
 The manifest records exact runs; episode CSVs retain raw outcomes; geometry
@@ -3710,6 +3902,9 @@ The low-dimensional bundle adds analytic all-pairs matrices, finite-tolerance
 and dephasing sweeps, 1.2 million retry samples, qutrit Bellman and Schoenberg
 audits, a 180-angle qubit search, sequence-counter controls, four figures, and
 21 focused unit tests.
+The emergent-local-metric bundle adds local-control fits and held-out
+diagnostics, an exact hidden-start quantum filter, 60,000 localization
+episodes, three figures, and 15 focused tests.
 
 \section{Goal repertoires}
 
@@ -3847,6 +4042,15 @@ Discrete Stochastic Dynamic Programming} (Wiley, 1994).
 \bibitem{littman2001} M.~L. Littman, R.~S. Sutton, and S.~Singh,
 “Predictive representations of state,” in \emph{NeurIPS 14} (2001).
 \url{https://papers.nips.cc/paper/2001/hash/1e4d36177d71bbb3558e43af9577d70e-Abstract.html}.
+\bibitem{fuchs1996} C.~A. Fuchs,
+``Information gain vs. state disturbance in quantum theory,''
+\emph{Fortschritte der Physik} 46, 535--565 (1998).
+\doi{10.1002/(SICI)1521-3978(199806)46:4/5<535::AID-PROP535>3.0.CO;2-J}.
+\bibitem{busch2009} P.~Busch,
+``No information without disturbance: quantum limitations of measurement,''
+in \emph{Quantum Reality, Relativistic Causality, and Closing the Epistemic
+Circle} (Springer, 2009), pp.~229--256.
+\doi{10.1007/978-1-4020-9107-0\_13}.
 \bibitem{cho2014} K.~Cho et al., “Learning phrase representations using RNN
 encoder--decoder,” in \emph{EMNLP}, 1724--1734 (2014).
 \doi{10.3115/v1/D14-1179}.

@@ -640,3 +640,118 @@ MPLBACKEND=Agg python low_dimensional_hodology/run_exact_experiments.py
 MPLBACKEND=Agg python low_dimensional_hodology/run_qutrit_phase_experiments.py
 MPLBACKEND=Agg python low_dimensional_hodology/search/search_low_dimensional.py
 ```
+
+---
+
+## Emergent local metric and hidden-start localization
+
+### Question
+
+Can one fixed, reusable qutrit control repertoire generate ordinary distance
+outside its training patch, and can an agent operationally localize on the
+same kind of nonorthogonal phase orbit?
+
+### Predetermined controls and diagnostics
+
+- fit primitive costs only for displacements of radius at most four;
+- evaluate without refitting through radius twelve;
+- compare D4, D8, D16, and D32 fixed translation stencils;
+- report locality as maximum primitive reach divided by evaluation radius;
+- check Kraus completeness, translation covariance, and Bellman residual;
+- report angular anisotropy, held-out error, Schoenberg negative eigenmass,
+  positive dimension, and 2D MDS stress;
+- for localization, separate initial-label success from final-state fidelity;
+- include null-sensor and known-start controls and exact one-shot formulas.
+
+### Local-control results
+
+| repertoire | held-out Euclidean RMSE | held-out maximum error | interpretation |
+|---|---:|---:|---|
+| D4 | 30.03% | 41.42% | Manhattan polygon |
+| D8 | 3.85% | 6.07% | strong local/accuracy compromise |
+| D16 | 3.85% | 6.07% | knight actions Bellman-dominated |
+| D32 | 1.62% | 4.91% | best approximation, weaker locality |
+
+D32 achieves 2D MDS stress 0.0289, but Schoenberg negative eigenmass remains
+0.082. Maximum numerical residuals are \(1.78\times10^{-15}\) (Bellman),
+\(1.67\times10^{-16}\) (covariance), and \(2.22\times10^{-16}\) (Kraus
+completeness). The observed persistent anisotropy agrees with the proof that a
+finite velocity hull is polygonal.
+
+### Localization results
+
+The production bundle contains 60,000 episodes at seed 20260811. One-shot
+origin-label accuracy and target-state fidelity agree with the exact formulas
+\((1+2\eta)/9\) and \((1+2\eta)/3\) within 0.020. At \(\eta=0.8\), five
+measurements give label success \(0.302\pm0.012\); label-directed final fidelity
+is 0.510 while predictive-state-directed fidelity is 0.901. At \(\eta=1\),
+five measurements give final fidelities 0.356 and 1.000 respectively. Null
+sensing stays at chance and known-start navigation is exact.
+
+### Reproduction
+
+```bash
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/control/tests -v
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/emergent_local_metric/control/run_local_control.py
+python -m unittest discover \
+  -s low_dimensional_hodology/emergent_local_metric/localization \
+  -p 'test_*.py' -v
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/emergent_local_metric/localization/localization_experiment.py \
+  --episodes 1500 --seed 20260811
+```
+
+The 15 focused tests pass. Full arguments and artifacts are in
+`low_dimensional_hodology/emergent_local_metric/RESULTS.md`.
+
+---
+
+## Informative actions and predictive semantics
+
+### Question and acceptance conditions
+
+Can an agent infer a two-dimensional action/goal geometry from raw controlled
+outcomes when action names, outcome names, hidden states, and displacement
+coordinates are withheld? Immediate mutual information and future-test
+distinguishability are reported separately; actions are learned up to gauge;
+same-displacement paths must be predictively equivalent; proposed costs must
+pass Bellman, metric, and embedding tests; and random-unitary, null-dynamics,
+external-memory, and relabeling controls are required.
+
+### Results
+
+The selected qubit family was chosen from 11,799 deterministic candidates.
+Chart recovery over 300 replications is 87.3% with two samples per common test,
+98.7% with five, and 100% with ten. Predictive tomography with 300 samples per
+X/Y/Z probe has mean trace-distance error 0.035. But zero of the 33
+multiple-word displacement classes is predictively equivalent; the largest
+common-probe discrepancy is 0.12849.
+
+For the integrated Hesse qutrit, immediate mutual information is 0.251629
+bits. With 2,000 samples per source/action pair, all 45 permutation images are
+recovered after independent action/outcome scrambling; per-entry kernel MAE is
+0.00505--0.00579. The learned permutations recover \(\mathbb Z_3^2\) topology.
+The integrated goal nevertheless has exact costs 4 at self, 4 at a nearest
+neighbor, and 5 at a diagonal, and weakening the instrument never opens the
+self--edge gap. The separated benchmark has exact \(V_g(s)=6+d_T(s,g)\), but
+its movement outcomes remain uninformative.
+
+### Reproduction
+
+```bash
+python -m unittest discover \
+  -s low_dimensional_hodology/informative_actions/qubit/tests -v
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/informative_actions/qubit/run_qubit_experiment.py
+python -m unittest -v \
+  low_dimensional_hodology/informative_actions/qutrit/test_informative_qutrit.py
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/informative_actions/qutrit/informative_qutrit.py \
+  --episodes 2000 --seed 20260812
+```
+
+The strands contribute sixteen tests, deterministic tables, and five inspected
+figures. The integrated report and paper are in
+`low_dimensional_hodology/informative_actions/`.
