@@ -201,6 +201,11 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
         writer.writerow(["source/goal", *LABELS])
         for label, row in zip(LABELS, exact):
             writer.writerow([label, *row])
+    with (output / "monte_carlo_values.csv").open("w", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["source/goal", *LABELS])
+        for label, row in zip(LABELS, mc):
+            writer.writerow([label, *row])
     with (output / "opaque_recovery.csv").open("w", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["samples_per_anchor_action", "all_permutations_recovered"])

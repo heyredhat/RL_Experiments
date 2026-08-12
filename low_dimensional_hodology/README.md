@@ -25,6 +25,13 @@ left/right invariance convention, its complete Bellman proof, and an entrywise
 derivation and Schoenberg analysis of Eq. (43), see
 [`THEOREM_7_1_EXPANDED.tex`](THEOREM_7_1_EXPANDED.tex) or the compiled
 [`THEOREM_7_1_EXPANDED.pdf`](THEOREM_7_1_EXPANDED.pdf).
+The expanded note now adds the tetrahedral SIC as an operational anchor: every
+outcome prepares the corresponding orbit state, reported-outcome goals have
+exact value (V_g(x)=(8+\sqrt2)/3+D(x,g)), and subtracting the common report
+overhead recovers the unit-square metric without giving the agent a hidden
+binary position label. The accompanying exact solver, Monte Carlo validation,
+opaque-action learning experiment, five tests, and figure are implemented in
+[`sic_anchored_square.py`](sic_anchored_square.py).
 
 Run everything from this directory:
 

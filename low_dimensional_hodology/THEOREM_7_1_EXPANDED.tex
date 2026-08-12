@@ -7,6 +7,7 @@
 \usepackage{microtype}
 \usepackage{amsmath,amssymb,amsthm,mathtools,bm}
 \usepackage{booktabs,tabularx,array}
+\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{enumitem}
 \usepackage{hyperref}
@@ -18,6 +19,7 @@
   citecolor=green!35!black,
   urlcolor=blue!55!black
 }
+\graphicspath{{results/sic-anchored-square/figures/}}
 \setlist{itemsep=2pt,topsep=4pt}
 
 \newtheorem{theorem}{Theorem}[section]
@@ -56,7 +58,10 @@ for the abelian examples in the paper but matters for nonabelian groups.
 Finally, it derives every entry of the four-by-four matrix \(D\) in Eq.~(43),
 checks the Bellman equations directly, and performs the complete Schoenberg
 calculation showing that \(D\) is exactly the Euclidean metric of a unit
-square.
+square. Finally, it removes the assumption that the agent is handed its group
+label: a tetrahedral SIC outcome prepares and reports the current operational
+anchor, and SIC-outcome goals retain the same square geometry after subtraction
+of a derived common reporting overhead.
 \end{abstract}
 
 \tableofcontents
@@ -382,6 +387,54 @@ pair has overlap
 Thus their \emph{physical-state geometry} is equidistant.  The square below
 is instead the geometry of optimal controlled cost.
 
+\subsection{Removing the hidden-location assumption with the SIC instrument}
+\label{sec:sic-anchor}
+
+The labels \(00,10,01,11\) should not be supplied as an unobserved location
+register. The tetrahedral orbit itself defines a four-outcome qubit SIC. Let
+\(\Pi_o=\rho_o\) be its rank-one projectors and define
+\begin{equation}
+ M_o=\frac{1}{\sqrt2}\Pi_o,
+ \qquad o\in\{00,10,01,11\}.
+ \label{eq:sic-kraus}
+\end{equation}
+Because a qubit SIC obeys \(\sum_o\Pi_o=2I\),
+\[
+ \sum_oM_o^\dagger M_o=\frac12\sum_o\Pi_o=I.
+\]
+Thus \(\{M_o\}\) is a valid four-outcome instrument.
+
+If its input is orbit state \(\rho_x\), then
+\begin{equation}
+ p(o\mid x)=\Tr(M_o\rho_xM_o^\dagger)
+ =\frac12\Tr(\Pi_o\Pi_x)
+ =\begin{cases}
+ 1/2,&o=x,\\
+ 1/6,&o\ne x.
+ \end{cases}
+ \label{eq:sic-kernel}
+\end{equation}
+The outcome does not reveal the \emph{premeasurement} orbit label perfectly;
+four nonorthogonal qubit states cannot be perfectly discriminated. The key
+fact is instead the conditional update
+\begin{equation}
+ \frac{M_o\rho_xM_o^\dagger}{p(o\mid x)}=\Pi_o.
+ \label{eq:sic-prepares}
+\end{equation}
+Every possible outcome \(o\) prepares the corresponding tetrahedral state.
+Immediately after the SIC action, the agent therefore knows its current
+operational state: it is the last observed outcome token. There is no hidden
+coordinate inference in this statement. The binary strings are convenient
+theorist names and may be replaced by arbitrary colors or integers.
+
+The agent can learn what opaque movement buttons do as well. Starting from an
+observed SIC anchor \(o\), it presses a button and performs the same SIC again.
+The next-outcome law has its \(1/2\) peak at the translated anchor and \(1/6\)
+elsewhere. Repeating this common test recovers the induced permutations of the
+four outcome tokens, up to the unavoidable choice of origin, axes, and signs.
+Thus both ``where I am'' and ``what this action does'' can be grounded in
+observed statistics rather than privileged binary coordinates.
+
 \subsection{The three displacement actions}
 
 The axial displacements \(10\) and \(01\) have length one, so their retry
@@ -490,6 +543,107 @@ goal, the process terminates with value zero.  The other goal columns follow
 by translation symmetry.  This explicitly verifies the stochastic-shortest-
 path Bellman equations whose solution is \eqref{eq:D}.
 
+\section{The stronger operational goal: obtain a SIC outcome}
+\label{sec:reported-goal}
+
+We can now eliminate even the assumption that a goal means occupying a hidden
+group label. Let goal \(g\) mean: perform the SIC action and observe outcome
+token \(g\). Every movement and every SIC report costs one intervention. If a
+SIC outcome is not \(g\), the episode continues from the newly prepared state
+\(\Pi_o\). After the first SIC outcome this is a fully observed finite MDP,
+because the most recent token is a sufficient operational state.
+
+By square symmetry, write \(v_0,v_1,v_2\) for optimal cost when the current
+anchor is respectively the goal, an axial neighbor, or the opposite corner.
+The proposed policy reports at the goal, moves deterministically from an edge
+to the goal, and retries the diagonal displacement from the opposite corner.
+The two movement rules give
+\begin{equation}
+ v_1=1+v_0,
+ \qquad
+ v_2=\sqrt2+v_0.
+ \label{eq:sic-shell-moves}
+\end{equation}
+At the goal state, the SIC reports \(g\) with probability \(1/2\), terminating
+the episode. Its two edge outcomes have total probability \(1/3\), and its
+diagonal outcome has probability \(1/6\). Consequently
+\begin{align}
+ v_0
+ &=1+\frac13v_1+\frac16v_2\\
+ &=1+\frac13(v_0+1)+\frac16(v_0+\sqrt2),
+\end{align}
+so
+\begin{equation}
+ \boxed{v_0=c:=\frac{8+\sqrt2}{3}}.
+ \label{eq:sic-baseline}
+\end{equation}
+It follows that the full reported-goal value matrix is
+\begin{equation}
+ \boxed{V_g(x)=c+D(x,g).}
+ \label{eq:sic-value}
+\end{equation}
+
+The remaining Bellman inequalities confirm optimality. At the goal, moving
+first costs \(c+2>c\). At an edge, reporting immediately costs
+\[
+ 1+\frac23v_1+\frac16v_2>v_1,
+\]
+while the axial move attains \(v_1\). At the diagonal, reporting costs
+\[
+ 1+\frac13v_1+\frac12v_2>v_2,
+\]
+and an axial two-step route costs \(c+2>c+\sqrt2\); diagonal retry attains
+\(v_2\). Thus \eqref{eq:sic-value} is the optimal Bellman solution, not merely
+the value of a selected policy.
+
+The nonzero self-value \(V_g(g)=c\) is the common overhead of requesting a
+stochastic SIC report. Hodological separation is obtained by subtracting this
+goal-specific self baseline:
+\begin{equation}
+ V_g(x)-V_g(g)=D(x,g).
+ \label{eq:baseline-subtraction}
+\end{equation}
+The exact Euclidean square therefore survives when places and goals are both
+defined entirely by experienced SIC outcomes.
+
+Before the first SIC action, an agent with an unknown preparation occupies an
+epistemic initial condition rather than one of four known anchors. Its first
+SIC outcome both reports a token and prepares the associated state. Subsequent
+tracking uses only that token, chosen actions, and observed success/failure
+events; the policy needs no concealed binary-coordinate variable.
+
+\section{Exact computation and finite-sample simulation}
+
+The companion program \texttt{sic\_anchored\_square.py} constructs all density
+matrices and Kraus operators, solves the four stochastic-shortest-path
+problems, runs Monte Carlo navigation, and learns randomly renamed Pauli
+permutations from anchor--action--SIC experiments. Five focused tests verify
+Kraus completeness, branch preparation, the \(1/2,1/6\) response kernel, the
+analytic Bellman solution, and optimal-policy structure.
+
+At seed 20260813, exact value iteration gives
+\[
+ \max_{x,g}|V_g(x)-c-D(x,g)|=2.58\times10^{-14},
+\]
+and baseline subtraction recovers \(D\) to \(9.10\times10^{-15}\). Across
+50,000 Monte Carlo episodes for each of the 16 ordered pairs, maximum mean-cost
+error is \(0.02831\). In 500 independent opaque-label trials per sample size,
+the complete four-action response permutations are recovered in every trial
+at 100 samples per anchor/action pair.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{sic_anchored_square.png}
+\caption{\textbf{The square grounded in SIC outcomes.} Left: after an observed
+SIC anchor, the same outcome has probability \(1/2\), every other outcome has
+probability \(1/6\), and every branch prepares the state named by its token.
+Center: subtracting the common reporting baseline from exact Bellman costs
+recovers side \(1\) and diagonal \(\sqrt2\). Right: randomly renamed Pauli
+response permutations are learned from future SIC tests without exposing
+binary coordinates.}
+\label{fig:sic-anchored-square}
+\end{figure}
+
 \section{Why \(D\) is exactly a two-dimensional Euclidean metric}
 
 The entries of \(D\) already match the familiar side and diagonal lengths of
@@ -566,6 +720,14 @@ four qubit states form a tetrahedron in Bloch-state geometry even though their
 optimal costs form a square.  This separation is intentional: hodological
 distance measures difficulty of controlled goal achievement, not quantum
 state overlap.
+
+The SIC extension in \cref{sec:sic-anchor,sec:reported-goal} repairs the
+location-token problem in a precise sense: an outcome prepares and therefore
+identifies the \emph{postmeasurement} anchor, and place goals are future SIC
+outcomes. It does not retrospectively identify the unknown premeasurement
+state, nor make the retry movement outcome itself location-informative. Its
+virtue is that the agent's current-state token and its goal tokens now arise
+from one actual measurement alphabet.
 
 \section{A compact checklist for using the theorem}
 
