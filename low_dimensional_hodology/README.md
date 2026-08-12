@@ -99,11 +99,39 @@ opaque data with 100% success at ten samples per common test, but none of its
 integrated Hesse-qutrit instrument
 \(K_o^{(a)}=\Pi_oU_a/\sqrt3\) is stronger: each outcome carries 0.251629 bits,
 the last outcome is a sufficient predictive state, and learned kernels recover
-the full \(\mathbb Z_3^2\) translation topology. Nevertheless its exact report
-cost is 4 both at the target and at a nearest neighbor, so it violates identity
-of indiscernibles. The separated move/report benchmark recovers \(6+d_T\), but
-its movement outcomes are uninformative. The resulting gap is the current
-research frontier, not hidden by a favorable embedding plot.
+the full \(\mathbb Z_3^2\) translation topology. Its exact *report-again* cost
+is 4 both at the target and at a nearest neighbor, so that event goal violates
+identity of indiscernibles. The successor below shows that the standard
+state-hitting boundary instead gives the valid metric \((0,4,5)\). This is a
+correction of goal semantics, not of the earlier transition calculation.
 
 See the integrated Markdown results and the pedagogical LaTeX paper in
 `informative_actions/` for proofs, controls, data, and reproduction commands.
+
+## Successor: informative covariant memory and torus geometry
+
+The [covariant-memory miniproject](covariant_memory_geometry/README.md)
+implements the outcome-conditioned qutrit direction proposed above. With the
+proper state-hitting boundary, the integrated Hesse model has exact shells
+\((0,4,5)\), a nondegenerate \(\mathbb Z_3^2\) torus metric.
+
+It then adds an observed full-rank memory/translation branch with probability
+\(\mu\) and informative Hesse reset branches. The sharp family's exact shells
+are
+
+\[
+E={4\over(1+\mu)^2},\qquad
+D={3\mu+5\over(1+\mu)^2}.
+\]
+
+At \(\mu=(4\sqrt2-5)/3\), every elementary cell is an exact Euclidean square
+and outcomes retain 0.196535 bits of state information. Opaque kernels recover
+the order-nine commuting action group. The full object is nevertheless a
+torus rather than a plane. Different-length cancelling paths change the exact
+family's outcome-discarded ensemble, but not its fully observed conditional
+Hesse state. A higher-rank Lüders study separately detects predictive memory
+through an oracle held-out prediction gap, while honestly finding that a
+finite-suffix learner does not yet learn the candidate fiber.
+
+See [`covariant_memory_geometry/RESULTS.md`](covariant_memory_geometry/RESULTS.md)
+and the standalone pedagogical paper in that directory.

@@ -18,13 +18,22 @@ contract:
   action chart, but same-displacement paths are not predictively equivalent;
 - integrated Hesse-SIC qutrit actions recover an exact opaque
   \(\mathbb Z_3^2\) translation topology and carry 0.251629 bits of immediate
-  information, but their Bellman values satisfy self = edge rather than
-  self < edge < diagonal;
+  information. Their *report-again* Bellman values satisfy self = edge, but
+  the successor's standard state-hitting boundary gives the valid shells
+  \((0,4,5)\);
 - separating qutrit movement and reporting restores the exact toroidal word
   metric, \(V_g(s)=6+d_T(s,g)\), but the moves are uninformative unitaries.
 
 The synthesis, comparison table, operational criteria, and proposed next
 experiment are in [`RESULTS.md`](RESULTS.md).
+
+**Semantic correction (2026-08-12).** The negative \((4,4,5)\) theorem in
+this miniproject concerns the event goal “make the instrument report \(g\)
+again,” including when the current predictive state is already \(g\). It is
+not a no-go for state-hitting distance. With the absorbing boundary
+\(V_g(g)=0\), the same transition law yields the strict torus metric
+\((0,4,5)\). The complete successor is
+[`../covariant_memory_geometry/`](../covariant_memory_geometry/README.md).
 
 The self-contained pedagogical treatment, including the complete proofs,
 reinforcement-learning background, exact Bellman obstruction, figures,

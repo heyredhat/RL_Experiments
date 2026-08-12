@@ -1,0 +1,50 @@
+{
+  "artifact_schema_version": 2,
+  "seed": 20260812,
+  "train_sequences_per_model": 12000,
+  "test_sequences_per_model": 3000,
+  "total_sequences": 90000,
+  "sequence_length": 7,
+  "learner_inputs": "opaque action/outcome histories only except explicitly labeled register-exposed control",
+  "suffix_estimator": "previous opaque action + last opaque token, hierarchically smoothed to token model",
+  "external_dfa_control": {
+    "register_states": 9,
+    "transition_group": "Z3 x Z3",
+    "quantum_emissions": "iid uniform over nine tokens",
+    "token_only_interface": "register withheld and geometry rejected",
+    "register_exposed_interface": "register supplied and hand-coded geometry recovered"
+  },
+  "rankone_exact": {
+    "state_hitting_shells": [
+      0.0,
+      4.000000000023056,
+      5.0000000000305
+    ],
+    "report_again_shells": [
+      4.000000000023057,
+      4.000000000023056,
+      5.0000000000305
+    ],
+    "state_hitting_identity_holds": true,
+    "report_again_identity_holds": false
+  },
+  "artifacts": [
+    "action_algebra.csv",
+    "external-dfa-null_hankel_singular_values.csv",
+    "external-dfa-null_learned_kernel.csv",
+    "external_register_exposed_kernel.csv",
+    "external_register_interfaces.csv",
+    "haar-luders-0.55_hankel_singular_values.csv",
+    "haar-luders-0.55_learned_kernel.csv",
+    "higher-rank-luders-0.55_hankel_singular_values.csv",
+    "higher-rank-luders-0.55_learned_kernel.csv",
+    "higher-rank-luders-0.80_hankel_singular_values.csv",
+    "higher-rank-luders-0.80_learned_kernel.csv",
+    "learning_summary.csv",
+    "manifest.json",
+    "null-luders_hankel_singular_values.csv",
+    "null-luders_learned_kernel.csv",
+    "rankone-measure-prepare_hankel_singular_values.csv",
+    "rankone-measure-prepare_learned_kernel.csv"
+  ]
+}

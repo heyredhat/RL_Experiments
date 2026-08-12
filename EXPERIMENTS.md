@@ -733,10 +733,12 @@ For the integrated Hesse qutrit, immediate mutual information is 0.251629
 bits. With 2,000 samples per source/action pair, all 45 permutation images are
 recovered after independent action/outcome scrambling; per-entry kernel MAE is
 0.00505--0.00579. The learned permutations recover \(\mathbb Z_3^2\) topology.
-The integrated goal nevertheless has exact costs 4 at self, 4 at a nearest
-neighbor, and 5 at a diagonal, and weakening the instrument never opens the
-self--edge gap. The separated benchmark has exact \(V_g(s)=6+d_T(s,g)\), but
-its movement outcomes remain uninformative.
+The integrated *report-again* goal has exact costs 4 at self, 4 at a nearest
+neighbor, and 5 at a diagonal, and weakening that report protocol never opens
+the self--edge gap. This is not the standard state-hitting distance: the
+successor study imposes \(V_g(g)=0\) and obtains the valid shells \((0,4,5)\)
+from the same transition law. The separated benchmark has exact
+\(V_g(s)=6+d_T(s,g)\), but its movement outcomes remain uninformative.
 
 ### Reproduction
 
@@ -755,3 +757,68 @@ MPLBACKEND=Agg python \
 The strands contribute sixteen tests, deterministic tables, and five inspected
 figures. The integrated report and paper are in
 `low_dimensional_hodology/informative_actions/`.
+
+---
+
+## Covariant memory and operational torus geometry
+
+### Question
+
+Can informative outcome-conditioned qutrit actions recover a valid spatial
+hitting metric when movement meanings are learned from their effects, and can
+retained quantum memory be represented as a fiber over that geometry?
+
+### Exact design and selection
+
+Each Weyl control has an observed memory branch
+\(K_r=\sqrt\mu U_a\) and nine sharpness-\(\xi\) reset branches. The 380-point
+search required positive memory, at least 0.05 bits of immediate information,
+metric validity, and minimum scaled error to the \(\mathbb Z_3^2\) word
+metric. It selected \((\mu,\xi)=(0.8,1)\).
+
+| model | information (bits) | edge cost | diagonal cost | interpretation |
+|---|---:|---:|---:|---|
+| state-hitting Hesse | 0.251629 | 4.000000 | 5.000000 | exact valid torus metric |
+| exact local square | 0.196535 | 2.692075 | 3.807169 | diagonal/edge \(=\sqrt2\) |
+| selected torus | 0.050326 | 1.234568 | 2.283951 | 3.33% scaled torus RMSE |
+| memory only | 0 | 1.000000 | 2.000000 | exact word metric, uninformative |
+
+All 380 candidates satisfy the metric inequalities. Maximum Kraus and
+finite-Hesse-kernel covariance residuals for the reported candidates are below
+\(1.6\times10^{-15}\). For the outcome-discarded channel, the equal-length
+closure residual is at that scale and the different-length residual is
+0.31866. This is a coarse-grained ensemble effect; the fully observed exact
+family remains on pure Hesse rays. The separate Lüders oracle gap, not this
+nonselective residual, is the evidence for a candidate predictive fiber.
+
+### Opaque learning
+
+The production study uses six models, 12,000 training and 3,000 held-out
+seven-step sequences per model: 90,000 sequences total. The rank-one baseline
+recovers a commuting transitive group of order nine and shells
+\((0,3.955,4.923)\). Higher-rank Lüders models at \(\eta=0.55\) and 0.80 also
+recover order-nine torus topology and strict token-shell ordering.
+
+The exact quantum filter improves held-out NLL over last-token prediction by
+0.0354 and 0.0568 bits/outcome respectively, demonstrating retained memory.
+The finite two-event suffix estimator is slightly worse than last-token
+prediction, so it does not constitute successful learning of that memory.
+Null, Haar, and external-DFA controls fail the bijective action-group test.
+
+### Reproduction
+
+```bash
+python -m unittest discover \
+  -s low_dimensional_hodology/covariant_memory_geometry/search/tests -v
+MPLBACKEND=Agg python \
+  low_dimensional_hodology/covariant_memory_geometry/search/run_search.py
+cd low_dimensional_hodology/covariant_memory_geometry/learning
+python -m unittest -v test_opaque_learning.py
+MPLBACKEND=Agg python opaque_learning.py \
+  --train 12000 --test 3000 --seed 20260812
+```
+
+The focused search and learning suites pass all current tests. Full
+derivations, exact data, learned kernels,
+controls, and figures are in
+`low_dimensional_hodology/covariant_memory_geometry/`.

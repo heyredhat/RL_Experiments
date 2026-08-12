@@ -2079,8 +2079,11 @@ measure-and-prepare construction goes further: action and outcome names may be
 independently scrambled, immediate outcomes carry 0.251629 bits, and empirical
 kernels recover a transitive commuting group of order nine. Thus a
 \(\mathbb Z_3^2\) translation topology genuinely arises from consequences.
-But its exact integrated Bellman cost equates the target with every nearest
-neighbor. It is a pseudometric, not space.
+Under the event goal ``report the target again,'' its exact integrated Bellman
+cost equates the target with every nearest neighbor. That event cost is a
+pseudometric. The successor study corrects the interpretation: for a
+place-like state-hitting goal, the target is terminal before another action and
+the same instrument has the valid metric shells \((0,4,5)\).
 
 The central objective is now:
 
@@ -2095,3 +2098,58 @@ self--edge--diagonal separation, Bellman consistency, and held-out
 Schoenberg/locality tests. Only after a flat example satisfies all six
 conditions should position-dependent costs, internal fibers, and holonomy be
 introduced.
+
+# 39. Informative action meaning yields a toroidal base with a memory fiber
+
+The proposed qutrit search has now produced a positive result, together with a
+necessary correction. ``The present predictive state is the goal'' and
+``perform another measurement that reports the goal'' are different terminal
+conditions. The latter gives the previously reported Hesse shells
+\((4,4,5)\); the former has the absorbing boundary \(V_g(g)=0\) and gives
+\((0,4,5)\). Only the state-hitting convention is appropriate when a
+hodological distance asks how far the agent presently is from a place-like
+goal. Under it, the integrated informative Hesse instrument already supplies
+a nondegenerate translation-invariant metric on \(\mathbb Z_3^2\).
+
+The stronger retained-memory construction combines a full-rank Weyl branch
+with informative outcome-conditioned reset branches. Its action and outcome
+labels may be hidden: controlled transition laws still recover two commuting
+order-three generators and a transitive nine-state orbit. For sharp reports,
+the exact edge and toroidal-diagonal hitting costs are
+
+\[
+E={4\over(1+\mu)^2},\qquad
+D={3\mu+5\over(1+\mu)^2}.
+\]
+
+Both strict separation and the triangle inequality hold for every
+\(0\le\mu\le1\). The analytic value
+\(\mu=(4\sqrt2-5)/3\) makes \(D/E=\sqrt2\), so every elementary cell is an
+exact Euclidean square while immediate outcomes still carry 0.196535 bits.
+This is the first exact construction here in which a locally Euclidean
+hodological cell, informative consequences, and retained physical memory
+coexist.
+
+The global conclusion is deliberately toroidal. The nine-state Hesse metric
+does not embed isometrically in the Euclidean plane: its periodic topology is
+recovered through the action algebra, while its full Schoenberg rank or
+negative eigenmass diagnoses nonplanarity. A torus is not a failed plane; it
+is a learned two-dimensional base with global identifications.
+
+The exact memory/reset model makes an important distinction. For its
+outcome-discarded channel, equal-length same-displacement words coincide while
+a cancelling detour changes accumulated noise. But an agent observing every
+branch remains on a pure Hesse ray, so that noise age is not part of its
+conditional predictive state. The separate Lüders family does retain latent
+future-predictive memory after the same last token. A quantum-filter oracle
+detects it on held-out strings, whereas a finite-suffix learner does not yet
+exploit it. The phrase ``learned fiber'' is therefore reserved for a future
+controlled spectral predictive-state model.
+
+The revised frontier is a larger odd torus with an open central patch, a
+higher-rank covariant instrument, and a learned low-rank controlled PSR.
+Periodic shortcuts should be excluded within a radius below half the torus
+size. If the PSR separates a two-dimensional base from a reproducible
+memory/purity fiber, closed loops can then test operational parallel transport
+and holonomy. This supplies a staged route from local flat space to the
+fiber-bundle and curvature questions in the long-term vision.

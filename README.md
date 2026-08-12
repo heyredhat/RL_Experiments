@@ -280,3 +280,17 @@ upper-bound control and offline calibration metric. The movement instruments
 are coherent random-unitary channels, but delayed landmark supervision and a
 designed place basis remain. The entropy-height “fiber” is explicitly a
 provisional operational visualization, not yet a mathematical fiber bundle.
+
+## Focused exact hodology studies
+
+The [`low_dimensional_hodology/`](low_dimensional_hodology/README.md) tree
+contains self-contained theory/simulation miniprojects that test when qubits or
+qutrits can support spatial goal geometry without orthogonal place-basis
+states. The latest
+[`covariant_memory_geometry/`](low_dimensional_hodology/covariant_memory_geometry/README.md)
+study constructs informative qutrit actions yielding a \(\mathbb Z_3^2\)
+torus metric, recovers the action group from a separate opaque-history model,
+derives an exact locally Euclidean square, and detects a candidate predictive
+memory fiber that remains to be learned. Its code, tests, generated data,
+figures, integrated Markdown report, and pedagogical LaTeX paper are confined
+to that folder.

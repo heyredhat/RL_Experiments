@@ -298,8 +298,9 @@ transitive orbit of size nine. This operationally establishes
 \(\mathbb Z_3\times\mathbb Z_3\) topology up to origin, axes, signs, and token
 gauge. No hidden coordinate is needed by the learner.
 
-This topology is exact, but its integrated hitting geometry is degenerate.
-For the terminal goal “report token \(g\),” exact Bellman analysis gives
+This topology is exact, but its integrated *report-again event cost* is
+degenerate. For the terminal goal “report token \(g\),” exact Bellman analysis
+gives
 
 \[
  V_{\rm self}=4,\qquad V_{\rm edge}=4,
@@ -311,6 +312,12 @@ self and edge coincide. Weakening the measurement from strength zero to one
 never restores a self--edge gap: both values move together from 9 to 4, while
 the diagonal moves from 9 to 5. This is an analytic no-go for the symmetric
 measure-and-prepare grammar, not a training failure.
+
+This no-go does not apply to the different goal “the current predictive state
+is \(g\).” That state-hitting problem terminates before another action, so
+\(V_g(g)=0\); the same transition kernel then has exact shells \((0,4,5)\), a
+valid torus metric. The correction and its retained-memory successor are
+developed in `../covariant_memory_geometry/`.
 
 The Cayley graph is a genuine two-generator \(3\times3\) torus, but its graph
 metric itself is not a planar Euclidean distance matrix: 2D MDS stress is

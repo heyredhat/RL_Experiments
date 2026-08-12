@@ -836,7 +836,7 @@ Solving \cref{eq:v0,eq:v1,eq:v2} gives
 Direct enumeration of the five Bellman actions verifies the assumed
 minimizers and the minimal nonnegative solution.
 
-\begin{proposition}[Exact self--edge no-go for the integrated Hesse protocol]
+\begin{proposition}[Exact self--edge no-go for the report-again Hesse protocol]
 The goal-normalized cost \(C(s,g)=V_g(s)-V_g(g)\) is zero for every state
 adjacent to \(g\). It therefore violates identity of indiscernibles and cannot
 be a metric, regardless of embedding algorithm.
@@ -845,6 +845,19 @@ be a metric, regardless of embedding algorithm.
 Equation \cref{eq:exact-values} gives \(V_g(s)=V_g(g)=4\) for an edge state.
 Thus \(C(s,g)=0\) although \(s\ne g\).
 \end{proof}
+
+\paragraph{Terminal-semantics correction.}
+This proposition concerns the event goal ``make the instrument report \(g\)
+again,'' so another intervention is charged even when the present predictive
+state is already \(g\). It is not a no-go for state-hitting hodology. For the
+place-like goal ``the current predictive state is \(g\),'' the Bellman boundary
+is instead \(V_g(g)=0\). Keeping the same transition kernel, the edge and
+diagonal equations give \(V_{\rm edge}=4\) and
+\(V_{\rm diagonal}=5\), hence the strict metric shells \((0,4,5)\). The
+covariant-memory successor develops this corrected semantics and adds
+full-rank retained-memory branches. Thus the calculation above remains exact,
+but its scope is an event/report cost rather than distance from the present
+state to a place.
 
 \begin{figure}[H]
 \centering

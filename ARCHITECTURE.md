@@ -1630,3 +1630,65 @@ Each strand owns deterministic code, tests, tables, and figures. Offline code
 may use hidden labels only to score a recovered permutation after the learner
 has operated on scrambled tokens. Null quantum dynamics, external automata,
 random unitaries, and token permutations are mandatory controls.
+
+---
+
+# 24. Covariant-memory torus layer
+
+`low_dimensional_hodology/covariant_memory_geometry/` is the implemented
+successor to the informative-action study. It remains isolated from the
+shared simulator and contains three coordinated layers.
+
+## 24.1 Theory
+
+`theory/THEORY_COVARIANT_MEMORY.md` derives controlled covariant instruments,
+predictive path closure, a positive-cost group-metric theorem, the exact Hesse
+state-hitting solution, its Schoenberg spectrum, and a Choi-rank-two branch
+family that retains input dependence after a common observed outcome.
+
+Terminal semantics is an API-level contract: state-hitting sets \(V_g(g)=0\)
+before an action; report-again executes another instrument at \(g\). Code and
+reports must never compare these as if they were the same goal.
+
+## 24.2 Exact search
+
+`search/covariant_memory.py` constructs one full-rank memory branch and nine
+measure-and-prepare reset branches for each Weyl action. It provides exact
+Kraus and covariance checks, full Bellman iteration, analytic shell formulas,
+mutual information, metric/Schoenberg/MDS diagnostics, oracle-labelled
+permutation identifiability, held-out finite-state likelihood, and
+nonselective path-closure tests. Observable-only action learning belongs to the
+learning layer unless a future common-probe protocol is explicitly used.
+
+`search/run_search.py` performs a deterministic 380-point \((\mu,\xi)\) scan
+and writes tables and the integrated search figure beneath `search/results/`.
+The selected candidate is determined by a recorded information threshold and
+scaled torus error; the exact local-square candidate is analytic.
+
+## 24.3 Opaque predictive learning
+
+`learning/opaque_learning.py` learns transition kernels and controlled
+history--test tables from independently shuffled action/outcome strings. It
+tests rank-one Hesse, higher-rank covariant Lüders, null, Haar, and
+external-DFA models. Transformation group order is reported only when every
+learned argmax map is bijective; noninvertible monoids are not mislabeled as
+groups.
+
+The token quotient is exact for measure-and-prepare actions but approximate
+for retained-memory branches. Held-out quantum-filter likelihood is an audit
+oracle, not an online learner input. The current suffix estimator fails to
+exploit the oracle memory gap; a controlled spectral PSR is the designated
+successor.
+
+## 24.4 Artifact contract
+
+- `RESULTS.md`: integrated claims, derivations, qualifications, and commands;
+- `COVARIANT_MEMORY_GEOMETRY.tex/.pdf`: self-contained pedagogical paper;
+- `search/results/`: exact scan, Bellman, closure, learning, and figure data;
+- `learning/results/`: opaque kernels, spectra, summaries, and manifest;
+- `learning/figures/`: prediction, topology, Bellman, and control plots.
+
+The focused tests cover physicality, covariance, analytic Bellman
+values, metricity, exact local-square ratio, closure, Hesse identities,
+retained memory, null information, action algebra, token gauge, and terminal
+semantics.

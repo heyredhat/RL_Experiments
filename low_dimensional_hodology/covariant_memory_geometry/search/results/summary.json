@@ -1,0 +1,43 @@
+{
+  "seed": 20260812,
+  "search_candidates": 380,
+  "minimum_selected_mi_bits": 0.05,
+  "corrected_hesse_baseline": {
+    "edge_value": 3.9999999999999982,
+    "diagonal_value": 4.999999999999998,
+    "is_metric": true,
+    "immediate_mi_bits": 0.25162916738782287
+  },
+  "exact_local_square": {
+    "memory": 0.2189514164974602,
+    "immediate_mi_bits": 0.19653460475618262,
+    "edge_value": 2.692075270314926,
+    "diagonal_value": 3.8071693582085837,
+    "diagonal_edge_ratio": 1.414213562373095,
+    "is_metric": true
+  },
+  "selected_torus": {
+    "memory": 0.7999999999999999,
+    "sharpness": 1.0,
+    "immediate_mi_bits": 0.05032583347756446,
+    "edge_value": 1.2345679012345678,
+    "diagonal_value": 2.2839506172839505,
+    "relative_rmse_after_scale": 0.03328713326492664,
+    "strict_shell_margin": 1.049382716049411,
+    "is_metric": true,
+    "opaque_action_accuracy": 1.0,
+    "learned_nll_bits": 1.3989008674599175,
+    "marginal_nll_bits": 3.896353096331303,
+    "equal_length_path_closure_residual": 1.0173589278895273e-15,
+    "all_length_path_closure_residual": 0.3186625000000002
+  },
+  "maximum_kraus_residual": 1.5543122344752192e-15,
+  "maximum_covariance_residual": 3.191891195797325e-16,
+  "artifacts": [
+    "search_grid.csv",
+    "candidate_diagnostics.csv",
+    "path_closure.csv",
+    "bellman_*.csv",
+    "figures/covariant_memory_search.png"
+  ]
+}

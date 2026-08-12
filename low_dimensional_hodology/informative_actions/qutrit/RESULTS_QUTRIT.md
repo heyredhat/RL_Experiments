@@ -45,7 +45,10 @@ separated move-then-report comparison, the exact solution is
 
 Thus opaque action statistics robustly recover two-dimensional translation
 topology, while fully integrating movement and informative reporting destroys
-identity of indiscernibles in this minimal symmetric family.
+identity of indiscernibles for this report-again event goal in the minimal
+symmetric family. A later semantic audit showed that the standard
+state-hitting boundary \(V_g(g)=0\) instead gives the valid shells \((0,4,5)\)
+from the same kernel; see `../../covariant_memory_geometry/`.
 
 ## Reproduction
 

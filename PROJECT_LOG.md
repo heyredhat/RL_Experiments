@@ -737,3 +737,45 @@ Python byte-compilation and `git diff --check` pass. The focused informative-
 actions paper compiles to 19 pages, the expanded main manuscript to 76 pages,
 and the new exact-obstruction and predictive-learning figure pages were
 visually inspected.
+
+## 2026-08-12: covariant quantum memory and learned torus geometry
+
+Pursued the outcome-conditioned group-covariant qutrit direction in a new
+`low_dimensional_hodology/covariant_memory_geometry/` miniproject with theory,
+exact-search, and opaque-learning strands.
+
+The first result is a correction of terminal semantics. The earlier integrated
+Hesse shells \((4,4,5)\) measure time to *report the goal again*. For the
+standard state-hitting goal, the target is already terminal and the same
+physics gives \((0,4,5)\), a valid \(\mathbb Z_3^2\) torus metric. Its
+nearest-neighbor graph recovers torus topology, although Schoenberg analysis
+requires Euclidean rank eight rather than two.
+
+Implemented a retained-memory family with a full-rank Weyl branch and
+informative Hesse reset branches. The sharp family's exact edge/diagonal
+shells are \(4/(1+\mu)^2\) and \((3\mu+5)/(1+\mu)^2\). The analytic value
+\(\mu=(4\sqrt2-5)/3\) makes every elementary cell an exact Euclidean square
+with 0.196535 bits of immediate information. A deterministic 380-candidate
+search selected \((\mu,\xi)=(0.8,1)\) as the best torus approximation above a
+0.05-bit information floor; its scaled torus RMSE is 3.33%.
+
+An initial oracle-labelled finite-state audit recovers all five translations;
+it is structural validation, not opaque-string learning. A separate
+90,000-sequence full-matrix-rank Lüders study uses only shuffled
+action/outcome histories and recovers the token-level commuting order-nine
+torus. Quantum-filter held-out likelihood detects retained memory beyond the
+last token, but a finite-suffix learner fails to exploit it. This negative
+result motivates a controlled spectral PSR.
+
+For the exact family's nonselective channel, equal-length same-displacement
+words close to \(10^{-15}\); different-length detours differ by 0.31866. This
+is an outcome-discarded ensemble effect, not an extra coordinate for the fully
+observing agent. The Lüders oracle gap supplies the candidate predictive
+memory fiber, which is not yet learned. The full torus is not globally planar;
+exact Euclidean geometry is presently local to elementary cells.
+
+Added integrated Markdown results, a self-contained theory report, exact code
+and artifacts, opaque-learning code and controls, focused tests, three
+inspected figures, and a pedagogical standalone LaTeX manuscript. Updated the
+project vision, architecture, experiment ledger, and both README layers to
+make the semantic correction and the torus/base--fiber conclusion persistent.
