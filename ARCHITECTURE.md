@@ -1655,10 +1655,11 @@ reports must never compare these as if they were the same goal.
 `search/covariant_memory.py` constructs one full-rank memory branch and nine
 measure-and-prepare reset branches for each Weyl action. It provides exact
 Kraus and covariance checks, full Bellman iteration, analytic shell formulas,
-mutual information, metric/Schoenberg/MDS diagnostics, oracle-labelled
-permutation identifiability, held-out finite-state likelihood, and
-nonselective path-closure tests. Observable-only action learning belongs to the
-learning layer unless a future common-probe protocol is explicitly used.
+mutual information, metric/Schoenberg/MDS diagnostics, an observable
+anchor/action/future-probe protocol, oracle-labelled held-out finite-state
+likelihood as a separate benchmark, and nonselective path-closure tests. The
+common-probe learner never receives successor-state labels; hidden maps are
+used only for offline scoring after inference.
 
 `search/run_search.py` performs a deterministic 380-point \((\mu,\xi)\) scan
 and writes tables and the integrated search figure beneath `search/results/`.

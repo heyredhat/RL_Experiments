@@ -27,10 +27,17 @@ derivation and Schoenberg analysis of Eq. (43), see
 [`THEOREM_7_1_EXPANDED.pdf`](THEOREM_7_1_EXPANDED.pdf).
 The expanded note now adds the tetrahedral SIC as an operational anchor: every
 outcome prepares the corresponding orbit state, reported-outcome goals have
-exact value (V_g(x)=(8+\sqrt2)/3+D(x,g)), and subtracting the common report
+exact value \(V_g(x)=(8+\sqrt2)/3+D(x,g)\), and subtracting the common report
 overhead recovers the unit-square metric without giving the agent a hidden
-binary position label. The accompanying exact solver, Monte Carlo validation,
-opaque-action learning experiment, five tests, and figure are implemented in
+binary position label. It now specifies the complete MDP and reward convention:
+each \(X\), \(Z\), retry-\(Y\), or SIC instrument use has reward \(-1\);
+the requested SIC report terminates the episode; and the hodological objective
+uses the undiscounted stochastic-shortest-path choice \(\gamma=1\). A closed
+form discounted analysis finds policy transitions at \(\gamma=1/2\) and
+\(\gamma=(3+3\sqrt2-\sqrt{15+12\sqrt2})/2\), showing that \(\gamma<1\)
+generally changes the geometry. The accompanying exact solver, Monte Carlo
+validation, opaque-action learning experiment, eight focused tests, action
+table, discount scan, and two figures are implemented in
 [`sic_anchored_square.py`](sic_anchored_square.py).
 
 Run everything from this directory:
@@ -41,8 +48,11 @@ python -m unittest discover -s search -p 'test_*.py' -v
 MPLBACKEND=Agg python run_exact_experiments.py
 MPLBACKEND=Agg python run_qutrit_phase_experiments.py
 MPLBACKEND=Agg python search/search_low_dimensional.py
+MPLBACKEND=Agg python sic_anchored_square.py
 latexmk -pdf -interaction=nonstopmode -halt-on-error \
   EXACT_LOW_DIMENSIONAL_HODOLOGY.tex
+latexmk -pdf -interaction=nonstopmode -halt-on-error \
+  THEOREM_7_1_EXPANDED.tex
 ```
 
 Key files:

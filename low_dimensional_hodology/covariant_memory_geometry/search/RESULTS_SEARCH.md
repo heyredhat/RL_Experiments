@@ -278,7 +278,7 @@ toroidal distances an open planar \(3\times3\) grid. Periodic wraparound makes
 opposite boundaries adjacent, so the full finite torus has a different global
 topology.
 
-## 6. Predictive closure and the memory fiber
+## 6. Nonselective closure and coarse-grained noise age
 
 The nonselective channel has the covariant form
 
@@ -296,16 +296,13 @@ cancelling loop therefore need not agree with a shorter word having the same
 net displacement. The selected candidate's all-length trace-distance closure
 residual is approximately 0.319.
 
-This admits two readings:
-
-1. under a strict spatial quotient of all histories by displacement, closure
-   fails;
-2. under a base/fiber interpretation, displacement is the toroidal base and
-   accumulated noise age or purity is an internal fiber coordinate.
-
-The second is promising but must be stated explicitly. The model does not
-erase its internal history merely because two paths meet at the same base
-point.
+This diagnostic deliberately discards the observed branch record. For the
+fully observing agent, every conditional branch ends on a pure Hesse ray and
+the history determines that class; noise age is therefore not an extra
+predictive coordinate in this exact model. Under explicit outcome
+coarse-graining, displacement may be treated as a toroidal base and
+nonselective noise age as an ensemble fiber. A genuinely predictive candidate
+fiber is instead detected by the separate Lüders experiment.
 
 ## 7. Geometry diagnostics and open-flat limitation
 
@@ -369,15 +366,17 @@ Established numerically:
 
 1. The constrained grid search selects a high-memory, positive-information
    candidate with 3.33% scaled torus distortion.
-2. Opaque action permutations are recovered from observed memory transitions.
-3. Learned predictive kernels generalize to held-out length-eight strings.
-4. Kraus completeness, covariance, Bellman, metric, and equal-length path
-   closure residuals are at floating-point scale.
+2. Opaque action permutations are recovered from observable
+   anchor/action/future-report triples without successor-state labels.
+3. Oracle-labelled transition tables generalize to held-out length-eight
+   strings; this is a separate benchmark.
+4. Kraus completeness, covariance, Bellman, metric, and restricted
+   nonselective equal-length closure residuals are at floating-point scale.
 
 Not established:
 
-1. All histories with equal displacement are not predictively equivalent;
-   noise age remains as a fiber.
+1. A predictive internal fiber has not been learned; the exact family's
+   detour residual is for its outcome-discarded ensemble channel.
 2. The full nine-state torus is not a flat open \(3\times3\) Euclidean patch.
 3. The observed memory/reset mode is engineered rather than discovered by an
    unconstrained optimizer.

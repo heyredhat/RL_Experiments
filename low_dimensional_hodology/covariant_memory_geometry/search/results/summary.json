@@ -2,6 +2,11 @@
   "seed": 20260812,
   "search_candidates": 380,
   "minimum_selected_mi_bits": 0.05,
+  "exhaustive_grid_bellman_verification": {
+    "points": 380,
+    "maximum_analytic_bellman_error": 6.821210263296962e-13,
+    "all_metric": true
+  },
   "corrected_hesse_baseline": {
     "edge_value": 3.9999999999999982,
     "diagonal_value": 4.999999999999998,
@@ -25,19 +30,40 @@
     "relative_rmse_after_scale": 0.03328713326492664,
     "strict_shell_margin": 1.049382716049411,
     "is_metric": true,
-    "opaque_action_accuracy": 1.0,
-    "learned_nll_bits": 1.3989008674599175,
-    "marginal_nll_bits": 3.896353096331303,
     "equal_length_path_closure_residual": 1.0173589278895273e-15,
     "all_length_path_closure_residual": 0.3186625000000002
   },
-  "maximum_kraus_residual": 1.5543122344752192e-15,
-  "maximum_covariance_residual": 3.191891195797325e-16,
+  "observable_action_probe": {
+    "attempts": 22500,
+    "accepted_memory_events": 17982,
+    "memory_acceptance_rate": 0.7992,
+    "offline_mean_map_accuracy": 1.0,
+    "valid_permutation_action_set": true,
+    "commuting": true,
+    "learned_group_order": 9,
+    "orbit_size": 9,
+    "learner_fields": "opaque_anchor_token,opaque_action_token,opaque_future_probe_token"
+  },
+  "oracle_labelled_transition_benchmark": {
+    "oracle_labelled_action_accuracy": 1.0,
+    "oracle_joint_exact_nll_bits": 1.3132367606579356,
+    "oracle_joint_learned_nll_bits": 1.3989008674599175,
+    "oracle_joint_state_marginal_nll_bits": 3.896353096331303
+  },
+  "maximum_reported_candidate_kraus_completeness_residual": 1.5543122344752192e-15,
+  "maximum_reported_candidate_hesse_kernel_covariance_residual": 3.191891195797325e-16,
   "artifacts": [
     "search_grid.csv",
+    "bellman_grid_verification.csv",
     "candidate_diagnostics.csv",
+    "observable_action_probe.csv",
     "path_closure.csv",
-    "bellman_*.csv",
+    "bellman_state-hitting-hesse.csv",
+    "bellman_exact-local-square.csv",
+    "bellman_selected-torus.csv",
+    "bellman_null-report.csv",
+    "bellman_memory-only.csv",
+    "bellman_weak-report.csv",
     "figures/covariant_memory_search.png"
   ]
 }

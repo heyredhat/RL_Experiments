@@ -224,13 +224,16 @@ word metric.  Among 380 candidates it selected
  E=1.2345679,\quad D=2.2839506.
 \]
 
-The best-scaled torus RMSE is 3.33%. The original finite-state audit recovers
-all five permutations when Hesse source/successor classes are supplied as
-oracle labels. It is a structural identifiability check, not by itself opaque
-learning from emitted tokens. On independent length-eight labelled strings,
-learned, exact, and state-marginal negative log likelihoods are 1.3989, 1.3132,
-and 3.8964 bits per event. The independent Lüders strand below is the study
-whose learner is restricted to opaque action/outcome histories.
+The best-scaled torus RMSE is 3.33%. An observable common-probe protocol
+recovers all five permutations from 17,982 accepted memory events in 22,500
+trials. The learner receives only opaque anchor, action, and future Hesse-report
+tokens—never translated-state or successor-state labels. The maps are
+bijective and commuting, generate a transitive group of order nine, and score
+100% against hidden maps only after learning. A separate oracle-labelled
+benchmark gives learned, exact, and state-marginal negative log likelihoods
+1.3989, 1.3132, and 3.8964 bits per joint event; those NLL values validate
+finite-state estimation conditional on labels and are not part of the
+observable-only claim.
 
 ### Exactly Euclidean elementary squares
 
@@ -339,8 +342,8 @@ Established exactly:
   integrated qutrit actions;
 - analytic CP, trace-preservation, covariance, information, and Bellman
   formulas;
-- numerical opaque recovery of the translation group in the separate Lüders
-  study, and oracle-labelled identifiability in the exact family;
+- numerical opaque recovery of the translation group from a common future
+  probe in the exact family and from histories in the separate Lüders study;
 - an exact Euclidean elementary square with positive information;
 - analytic same-length displacement closure for nonselective exact-family
   channels; and
@@ -392,7 +395,8 @@ MPLBACKEND=Agg python opaque_learning.py \
 ```
 
 The search contributes 380 exact candidates, analytic and numerical Bellman
-tables, path-closure audits, opaque-action trials, and a summary figure.  The
+tables, exhaustive Bellman verification, restricted path-closure audits,
+observable-only action trials, and a summary figure. The
 learning study contributes 72,000 training and 18,000 held-out seven-step
 sequences across six models, controlled kernels, action-algebra tables,
 Hankel spectra, and two figures. The focused search and learning suites pass.

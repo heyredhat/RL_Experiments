@@ -1,0 +1,6 @@
+opaque_action,accepted_probe_records,offline_map_accuracy,inferred_permutation_order,unique_inferred_targets,mean_peak_probability
+0,3616,1.0,3,9,0.326938028289291
+1,3582,1.0,3,9,0.3276685161975285
+2,3595,1.0,1,9,0.33262869239329007
+3,3602,1.0,3,9,0.33537381496904684
+4,3587,1.0,3,9,0.33336642176802894

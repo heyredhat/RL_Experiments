@@ -19,6 +19,10 @@ import numpy as np
 LABELS = ("00", "10", "01", "11")
 BITS = np.array([[0, 0], [1, 0], [0, 1], [1, 1]], dtype=int)
 SQRT2 = float(np.sqrt(2.0))
+ACTION_NAMES = ("X", "Z", "retry-Y", "SIC")
+DISCOUNT_POLICY_THRESHOLD = float(
+    (3.0 + 3.0 * SQRT2 - np.sqrt(15.0 + 12.0 * SQRT2)) / 2.0
+)
 
 I2 = np.eye(2, dtype=complex)
 X = np.array([[0, 1], [1, 0]], dtype=complex)
@@ -72,30 +76,45 @@ def movement_transition(action: int) -> np.ndarray:
     return transition
 
 
-def bellman_values(goal: int, tolerance: float = 1e-14) -> tuple[np.ndarray, np.ndarray]:
+def action_values(value: np.ndarray, goal: int, discount: float = 1.0) -> np.ndarray:
+    """Return Q(x,a) for the four movement/report actions.
+
+    The immediate cost is one for *every* instrument use, including a SIC use
+    that produces the requested terminal outcome.  Future cost is multiplied
+    by ``discount``.  The terminal branch is absent from the continuation sum.
+    """
+    if not 0.0 <= discount <= 1.0:
+        raise ValueError("discount must lie in [0,1]")
+    kernel = sic_kernel()
+    movements = [movement_transition(a) for a in (1, 2, 3)]
+    q = [1.0 + discount * transition.T @ value for transition in movements]
+    report = np.ones(4)
+    for state in range(4):
+        report[state] += discount * sum(
+            kernel[outcome, state] * value[outcome]
+            for outcome in range(4)
+            if outcome != goal
+        )
+    q.append(report)
+    return np.stack(q, axis=1)
+
+
+def bellman_values(
+    goal: int, discount: float = 1.0, tolerance: float = 1e-14
+) -> tuple[np.ndarray, np.ndarray]:
     """Solve the SSP whose terminal event is SIC outcome ``goal``.
 
     Available actions are X, Z, retry-Y, and the SIC instrument.  Every action
     costs one.  A SIC outcome equal to ``goal`` terminates; every other SIC
-    outcome prepares its corresponding tetrahedral state.
+    outcome prepares its corresponding tetrahedral state.  ``discount=1`` is
+    the stochastic-shortest-path problem used for hodological distance.
     """
-    kernel = sic_kernel()
-    movements = [movement_transition(a) for a in (1, 2, 3)]
+    if not 0.0 <= discount <= 1.0:
+        raise ValueError("discount must lie in [0,1]")
     value = np.zeros(4, dtype=float)
     policy = np.zeros(4, dtype=int)
     for _ in range(200_000):
-        q = []
-        for transition in movements:
-            q.append(1.0 + transition.T @ value)
-        report = np.ones(4)
-        for state in range(4):
-            report[state] += sum(
-                kernel[outcome, state] * value[outcome]
-                for outcome in range(4)
-                if outcome != goal
-            )
-        q.append(report)
-        q_array = np.stack(q, axis=1)
+        q_array = action_values(value, goal, discount)
         updated = np.min(q_array, axis=1)
         if np.max(np.abs(updated - value)) < tolerance:
             value = updated
@@ -112,12 +131,44 @@ def analytic_value_matrix() -> np.ndarray:
     return baseline + square_distance()
 
 
-def all_bellman_values() -> tuple[np.ndarray, np.ndarray]:
+def all_bellman_values(discount: float = 1.0) -> tuple[np.ndarray, np.ndarray]:
     values = np.zeros((4, 4), dtype=float)
     policies = np.zeros((4, 4), dtype=int)
     for goal in range(4):
-        values[:, goal], policies[:, goal] = bellman_values(goal)
+        values[:, goal], policies[:, goal] = bellman_values(goal, discount=discount)
     return values, policies
+
+
+def analytic_discounted_shell_values(discount: float) -> tuple[np.ndarray, str]:
+    """Closed-form values for goal 00, ordered as self, edge, diagonal.
+
+    The optimal policy has three exact regimes.  At the two boundary values
+    the adjacent policies tie; the formulas agree there.
+    """
+    gamma = float(discount)
+    if not 0.0 <= gamma <= 1.0:
+        raise ValueError("discount must lie in [0,1]")
+    if gamma <= 0.5:
+        edge = 6.0 / (6.0 - 5.0 * gamma)
+        self_value = (6.0 - 2.0 * gamma) / (6.0 - 5.0 * gamma)
+        return np.array([self_value, edge, edge]), "SIC/SIC/SIC"
+    if gamma <= DISCOUNT_POLICY_THRESHOLD:
+        delta = 2 * gamma**3 - 6 * gamma**2 - 9 * gamma + 18
+        self_value = 2 * (9 - gamma**2) / delta
+        edge = 3 * (-2 * gamma**2 + 3 * gamma + 6) / delta
+        diagonal = 6 * (gamma + 3) / delta
+        return np.array([self_value, edge, diagonal]), "SIC/move/SIC"
+    p = 1.0 / SQRT2
+    stay = 1.0 - p
+    denominator = 1.0 - gamma * stay
+    self_value = (
+        1.0 + gamma / 3.0 + gamma / (6.0 * denominator)
+    ) / (
+        1.0 - gamma**2 / 3.0 - gamma**2 * p / (6.0 * denominator)
+    )
+    edge = 1.0 + gamma * self_value
+    diagonal = (1.0 + gamma * p * self_value) / denominator
+    return np.array([self_value, edge, diagonal]), "SIC/move/retry-Y"
 
 
 def sample_optimal_costs(episodes: int, seed: int) -> np.ndarray:
@@ -191,6 +242,11 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
     recovery_samples = (5, 10, 25, 50, 100, 250)
     recovery = [opaque_permutation_recovery(n, 500, seed + n) for n in recovery_samples]
 
+    goal = 0
+    goal_values, goal_policy = bellman_values(goal)
+    goal_q = action_values(goal_values, goal)
+    shell_names = ("self", "edge", "edge", "diagonal")
+
     with (output / "sic_kernel.csv").open("w", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerow(["outcome/input", *LABELS])
@@ -210,6 +266,57 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
         writer = csv.writer(handle)
         writer.writerow(["samples_per_anchor_action", "all_permutations_recovered"])
         writer.writerows(zip(recovery_samples, recovery))
+    with (output / "action_values_gamma_1.csv").open("w", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["state", "shell", "action", "Q", "optimal"])
+        for state in range(4):
+            for action, name in enumerate(ACTION_NAMES):
+                writer.writerow(
+                    [
+                        LABELS[state],
+                        shell_names[state],
+                        name,
+                        goal_q[state, action],
+                        int(action == goal_policy[state]),
+                    ]
+                )
+
+    discounts = np.unique(
+        np.concatenate(
+            [np.linspace(0.0, 1.0, 501), [0.5, DISCOUNT_POLICY_THRESHOLD]]
+        )
+    )
+    discount_rows = []
+    for gamma in discounts:
+        shell, regime = analytic_discounted_shell_values(float(gamma))
+        numerical, numerical_policy = bellman_values(goal, discount=float(gamma))
+        discount_rows.append(
+            (
+                gamma,
+                *shell,
+                shell[1] - shell[0],
+                shell[2] - shell[0],
+                regime,
+                "/".join(ACTION_NAMES[index] for index in numerical_policy),
+                float(np.max(np.abs(numerical - shell[[0, 1, 1, 2]]))),
+            )
+        )
+    with (output / "discount_scan.csv").open("w", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(
+            [
+                "gamma",
+                "self_value",
+                "edge_value",
+                "diagonal_value",
+                "edge_excess",
+                "diagonal_excess",
+                "analytic_regime",
+                "numerical_policy_00_10_01_11",
+                "analytic_numerical_max_error",
+            ]
+        )
+        writer.writerows(discount_rows)
 
     summary = {
         "sic_completeness_error": float(
@@ -224,6 +331,8 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
         "monte_carlo_max_error": float(np.max(np.abs(mc - exact))),
         "monte_carlo_episodes_per_pair": episodes,
         "opaque_recovery_at_100": float(recovery[4]),
+        "discount_policy_threshold": DISCOUNT_POLICY_THRESHOLD,
+        "discount_closed_form_max_error": float(max(row[-1] for row in discount_rows)),
         "seed": seed,
     }
     (output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
@@ -253,6 +362,44 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
     axes[2].set_xlabel("samples per anchor/action")
     axes[2].set_ylabel("complete permutation recovery")
     fig.savefig(figures / "sic_anchored_square.png", dpi=180)
+    plt.close(fig)
+
+    discount_array = np.asarray([row[:6] for row in discount_rows], dtype=float)
+    gamma = discount_array[:, 0]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4.4), constrained_layout=True)
+    axes[0].plot(gamma, discount_array[:, 1], label=r"$v_0$ (self)")
+    axes[0].plot(gamma, discount_array[:, 2], label=r"$v_1$ (edge)")
+    axes[0].plot(gamma, discount_array[:, 3], label=r"$v_2$ (diagonal)")
+    axes[0].set_title("Discounted intervention costs")
+    axes[0].set_xlabel(r"discount $\gamma$")
+    axes[0].set_ylabel("optimal discounted cost")
+    axes[0].legend()
+
+    axes[1].plot(gamma, discount_array[:, 4], label="edge excess")
+    axes[1].plot(gamma, discount_array[:, 5], label="diagonal excess")
+    axes[1].axhline(1.0, color="C0", ls="--", lw=1)
+    axes[1].axhline(SQRT2, color="C1", ls="--", lw=1)
+    axes[1].set_title("Baseline subtraction depends on discounting")
+    axes[1].set_xlabel(r"discount $\gamma$")
+    axes[1].set_ylabel(r"$v_k-v_0$")
+    axes[1].legend()
+
+    ratio = np.divide(
+        discount_array[:, 5],
+        discount_array[:, 4],
+        out=np.full_like(gamma, np.nan),
+        where=np.abs(discount_array[:, 4]) > 1e-12,
+    )
+    axes[2].plot(gamma, ratio, color="C2")
+    axes[2].axhline(SQRT2, color="k", ls="--", lw=1, label=r"Euclidean $\sqrt{2}$")
+    for threshold in (0.5, DISCOUNT_POLICY_THRESHOLD):
+        axes[2].axvline(threshold, color="0.5", ls=":", lw=1)
+    axes[2].set_ylim(0.95, 1.47)
+    axes[2].set_title("Policy phases and square aspect")
+    axes[2].set_xlabel(r"discount $\gamma$")
+    axes[2].set_ylabel("diagonal excess / edge excess")
+    axes[2].legend()
+    fig.savefig(figures / "sic_discounting.png", dpi=180)
     plt.close(fig)
     return summary
 

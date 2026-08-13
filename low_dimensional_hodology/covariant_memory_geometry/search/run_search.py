@@ -29,7 +29,7 @@ SEED = 20260812
 def write_csv(name: str, rows: list[dict]) -> None:
     with (RESULTS / name).open("w", newline="", encoding="utf-8") as handle:
         fieldnames = list(dict.fromkeys(key for row in rows for key in row))
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer = csv.DictWriter(handle, fieldnames=fieldnames, lineterminator="\n")
         writer.writeheader(); writer.writerows(rows)
 
 

@@ -15,6 +15,7 @@
 \graphicspath{{search/results/figures/}{learning/figures/}}
 \hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=green!35!black,urlcolor=blue!55!black}
 \setlist{nosep}
+\raggedbottom
 \newtheorem{theorem}{Theorem}[section]
 \newtheorem{proposition}[theorem]{Proposition}
 \newtheorem{corollary}[theorem]{Corollary}
@@ -75,9 +76,10 @@ exact torus word metric. The analytic value
 A deterministic 380-point search selects \((\mu,\xi)=(0.8,1)\) as a
 high-memory compromise: \(0.050326\) bits of immediate information, shells
 \((0,1.234568,2.283951)\), and \(3.33\%\) scaled distortion from torus word
-distance. Oracle-labelled trials identify this exact family's finite action
-maps; a separate opaque Lüders experiment recovers the order-nine commuting
-translation group from emitted strings.
+distance. An observable common-probe protocol identifies this exact family's
+action maps using only opaque anchor/action/future-report triples and recovers
+the order-nine commuting translation group. A separate opaque Lüders
+experiment recovers the same token topology from unsegmented histories.
 
 For the outcome-discarded channel, equal-length paths with the same displacement
 close exactly, while cancelling detours accumulate different noise. That noise
@@ -131,6 +133,184 @@ memory/reset family and a Lüders-like latent-memory family.
 \item Closed-form Bellman values, an analytic local-square point, numerical
 search, opaque learning, controls, and a larger-torus program.
 \end{itemize}
+
+\section{Concrete operational specification: actions, starts, and goals}
+\label{sec:protocol}
+
+This section states the experimental interface before developing its theory.
+There are three related protocols in the paper, and they intentionally use
+different initialization procedures.  The exact Bellman experiment defines
+the goal geometry; the common-probe experiment learns the meanings of its
+opaque actions; and the Lüders experiment asks whether longer histories carry
+predictive memory.  They should not be conflated.
+
+\subsection{The qutrit and its nine candidate places}
+
+In every quantum protocol the physical Hilbert space is
+\(\mathcal H=\mathbb C^3\).  The nine candidate place states are the Hesse SIC
+projectors
+\[
+ \Pi_{mn}=|\psi_{mn}\rangle\langle\psi_{mn}|,
+ \qquad (m,n)\in\mathbb Z_3^2,
+\]
+defined explicitly in \cref{sec:hesse}.  They are nonorthogonal: different
+places have overlap \(\operatorname{Tr}(\Pi_s\Pi_t)=1/4\).  The coordinate
+pair \((m,n)\) is used by the theorist and by offline scoring only.  The agent
+receives persistent but otherwise arbitrary integer tokens.
+
+\subsection{Exact state-hitting navigation experiment}
+\label{sec:exact-protocol}
+
+The navigation action alphabet contains exactly five choices,
+\begin{equation}
+ \mathcal A=\{a_0,a_{+x},a_{-x},a_{+y},a_{-y}\},
+ \qquad
+ U_a\in\{I,X,X^\dagger,Z,Z^\dagger\}.
+ \label{eq:action-alphabet}
+\end{equation}
+The symbols \(\pm x,\pm y\) are privileged explanatory names.  In the opaque
+experiment the agent sees only five shuffled button IDs.  Pressing a button
+does \emph{not} let the agent choose a Kraus branch.  It invokes the complete
+instrument associated with that button, Nature samples an observed outcome,
+and the agent sees that outcome.
+
+For the principal memory/reset family, button \(a\) has ten possible observed
+outcomes:
+\[
+ \mathcal O=\{r,q_0,q_1,\ldots,q_8\}.
+\]
+Outcome \(r\) occurs with probability \(\mu\) and applies the full-rank memory
+map \(\rho\mapsto U_a\rho U_a^\dagger\).  Outcome \(q_o\) applies the reset
+branch of \cref{eq:reset}, reports token \(o\), and prepares \(\Pi_o\).
+For a current Hesse class \(s\), the operational update rule is therefore
+\begin{equation}
+ s\xrightarrow{a,r}s+a,
+ \qquad
+ s\xrightarrow{a,q_o}o.
+ \label{eq:token-update}
+\end{equation}
+Each button press costs one unit, irrespective of its outcome.  There is no
+separate free move, free measurement, or hidden coordinate update.
+
+The initial state for an individual navigation episode is one known Hesse
+state,
+\begin{equation}
+ \rho_0=\Pi_{s_0},\qquad s_0\in\mathbb Z_3^2.
+ \label{eq:navigation-start}
+\end{equation}
+One may take \(s_0=(0,0)\) as a canonical example.  The reported distance
+matrix does not privilege that choice: it solves all \(9\times9\) ordered
+start--goal problems, so \(s_0\) ranges over all nine projectors.  Translation
+covariance makes different origins equivalent.  Operationally, a known start
+can be established by the anchor preparation described below; no coordinate
+pair is then revealed to the agent.
+
+There are exactly nine place goals, one for each predictive class:
+\begin{equation}
+ G_g=\{\text{the current predictive state is }\Pi_g\},
+ \qquad g\in\mathbb Z_3^2.
+ \label{eq:place-goals}
+\end{equation}
+Goal \(G_g\) is completed at the first hitting time
+\[
+ \tau_g=\inf\{t\geq0:S_t=g\}.
+\]
+The objective is to minimize \(\mathbb E[\tau_g\mid S_0=s_0]\).  Consequently
+an episode initialized at its goal ends immediately and costs zero:
+\(V_g(g)=0\).  The goal is \emph{not} a requested action sequence and is not
+the event of seeing one more report token.  The agent is supplied the desired
+opaque goal token and may condition its policy on that token.
+
+At \(\mu=\mu_\square\), the phrase ``exact Euclidean square'' refers to the
+four-goal metric subspace
+\[
+ \{G_{00},G_{10},G_{01},G_{11}\}.
+\]
+It does not add diagonal buttons or change the goals.  It says that the
+optimal costs among these four existing goals have edge/diagonal ratio
+\(1:\sqrt2\).  The full collection of nine goals retains toroidal
+identifications.
+
+\subsection{The report-again comparison is a different goal}
+
+For the baseline integrated Hesse instrument of \cref{eq:hesse-inst}, the
+available buttons are still precisely the five in
+\cref{eq:action-alphabet}, but each press has nine observed outcomes
+\(o\in\{0,\ldots,8\}\) and prepares \(\Pi_o\).  Its navigation start is again
+\(\Pi_{s_0}\).
+
+The comparison task called ``report again'' does not terminate merely because
+\(S_t=g\).  Its terminal event is
+\begin{equation}
+ G_g^{\rm report}=\{\text{after another chosen button press, the observed
+ outcome token is }g\}.
+ \label{eq:report-goal}
+\end{equation}
+Thus an agent beginning in \(\Pi_g\) must still pay for at least one
+intervention.  This event goal gives shells \((4,4,5)\), whereas the place goal
+in \cref{eq:place-goals} gives \((0,4,5)\).  Nothing about the instrument or
+initial density operator changes; only the success event changes.
+
+\subsection{Observable action-calibration protocol}
+\label{sec:probe-protocol}
+
+The common-probe study is a calibration experiment, not an extra navigation
+policy.  In each trial:
+\begin{enumerate}
+\item A common sharp Hesse anchor instrument produces an opaque token \(s\)
+and thereby prepares \(\Pi_s\).  Across the dataset, all nine anchors and all
+five buttons are sampled equally often.
+\item The agent presses one of the same five opaque navigation buttons in
+\cref{eq:action-alphabet}.  The trial is retained when the publicly observed
+branch token is \(r\); no hidden branch selection is given to the learner.
+\item The same sharp Hesse instrument, with identity control, is applied as a
+common future probe and emits an opaque report token \(o\).
+\end{enumerate}
+The learning record is only \((s,a,o)\).  It contains neither a density matrix
+nor a translated-state label.  The physical initial state is freshly prepared
+as \(\Pi_s\) on each trial rather than fixed to one projector.  Hidden
+coordinates enter only after learning, to score the inferred permutations up
+to a persistent token gauge.
+
+Operationally, the balanced anchor design can be implemented by beginning
+anchor trials at \(I/3\), for which the sharp Hesse outcomes are uniform, and
+collecting an equal number of trials in each observed anchor/button stratum.
+The simulation directly conditions on those nine observed anchor strata; it
+does not expose their hidden \((m,n)\) coordinates to the learner.
+
+\subsection{Opaque Lüders sequence-learning protocol}
+\label{sec:luders-protocol}
+
+The independent history-learning experiment uses the same five unitary parts
+\(I,X,X^\dagger,Z,Z^\dagger\), but each button invokes the nine-outcome
+Lüders instrument \(K_{a,o}^\eta=\sqrt{E_o^\eta}U_a\) of
+\cref{sec:luders}.  The agent observes one of nine shuffled outcome tokens;
+there is no separately observed memory token.  Every seven-step sequence is
+initialized at
+\begin{equation}
+ \rho_0=I/3.
+ \label{eq:luders-start}
+\end{equation}
+During data collection, opaque buttons are sampled uniformly in order to learn
+controlled future laws.  No goal reward is used to fit the predictive model.
+After fitting, each of the nine learned outcome/predictive tokens is in turn
+declared a state-hitting goal, with zero terminal value at that token, and the
+learned token kernel is used to solve nine goal-conditioned Bellman problems.
+For \(0<\eta<1\) this token-level planner is approximate because the last token
+is not the full predictive state.  The density-matrix filter is used only as an
+offline prediction oracle.
+
+\paragraph{Protocol summary.}
+In exact navigation, the agent chooses among five memory/reset instruments,
+starts in a known \(\Pi_{s_0}\), and tries to hit one of nine place goals.  In
+common-probe calibration, an anchor prepares a fresh \(\Pi_s\), one of those
+same five buttons is tested, and a common future probe supplies the response;
+there is no navigation reward.  In Lüders history learning, every string
+starts at \(I/3\), the agent samples five nine-outcome Lüders instruments, and
+the immediate task is held-out prediction; nine approximate token-hitting
+goals are solved only after learning.  In all three cases, ``five'' means the
+identity and four cardinal Weyl controls, presented under opaque IDs whenever
+action meaning is being learned.
 
 \section{Controlled quantum processes}
 
@@ -285,6 +465,7 @@ Zero is path closure on the tested predictive quotient. Equal-length and
 all-length residuals must be reported separately.
 
 \section{The Hesse SIC and Weyl translations}
+\label{sec:hesse}
 
 \subsection{Nine nonorthogonal landmarks in a qutrit}
 
@@ -370,7 +551,9 @@ H\left(\frac13,\underbrace{\frac1{12},\ldots,\frac1{12}}_8\right)
 
 Reinforcement learning assigns meaning to states only relative to rewards,
 costs, and termination \cite{SuttonBarto2018,Puterman1994}. Here each
-nonterminal intervention costs one. Two superficially similar tasks differ:
+nonterminal intervention costs one. The complete action, initial-state, and
+goal specification is in \cref{sec:exact-protocol}. Two superficially similar
+tasks differ:
 \begin{description}
 \item[Report again.] Even at \(g\), the agent must act and obtain outcome
 \(g\). This asks for external recertification and gives shells \((4,4,5)\).
@@ -512,6 +695,10 @@ compatible higher-point constraints.
 
 \subsection{Observed memory/reset family: finite and exactly soluble}
 \label{sec:observed}
+
+The selectable buttons and ten observed branch tokens are summarized in
+\cref{sec:exact-protocol}; in particular, the agent selects (a), not the
+branch below.
 
 The principal search family has ten observed outcomes: one token \(r\) means
 that the memory branch occurred, and nine tokens \((q,o)\) mean reset to Hesse
@@ -747,12 +934,27 @@ numbers show length dependence of the outcome-discarded ensemble channel. They
 do not establish a noise-age coordinate for the fully observing agent, whose
 conditional branches close on pure Hesse rays.
 
-\subsection{Finite-string validation}
+\subsection{Observable action learning and labelled string validation}
 
-With oracle-labelled Hesse source and successor classes, \(500\) trials per
-state/action recovered all five memory-branch permutations. This is a
-finite-state structural-identifiability audit, not opaque learning from the
-instrument's emitted strings. A transition table trained on
+The primary action-learning protocol supplies no successor-state labels. Each
+trial first uses a sharp Hesse anchor instrument, whose opaque token physically
+prepares the corresponding ray. The agent applies an opaque action and retains
+trials on which the observed memory branch occurs. It then applies the same
+sharp Hesse instrument as a common future probe. The learner's entire record is
+therefore
+\[
+(\text{opaque anchor token},\ \text{opaque action token},\
+  \text{opaque future-report token}).
+\]
+At \((\mu,\xi)=(0.8,1)\), 17,982 of 22,500 attempts had the memory outcome.
+Maximum-likelihood response maps are all bijections, commute, generate a group
+and orbit of order nine, and agree with the hidden physical maps with 100\%
+accuracy when scored only after learning. The anchor and probe define an
+operational frame; their arbitrary token permutation remains gauge.
+
+For comparison, a separate labelled benchmark tests finite-state estimation:
+
+With oracle-labelled Hesse source and successor classes, a transition table trained on
 \(400\) samples per pair was evaluated on \(2{,}000\) independent
 length-eight strings:
 \[
@@ -769,6 +971,9 @@ generalize beyond one-step fitting.
 \section{Opaque predictive learning}
 
 \subsection{Experimental design}
+
+The initialization and downstream goal convention are stated explicitly in
+\cref{sec:luders-protocol}.
 
 The second experiment receives only shuffled action IDs and shuffled outcome
 tokens. It receives no coordinates, density matrices, Kraus operators, or
@@ -870,9 +1075,10 @@ last-token predictive quotient but no retained branch.
 argmax maps are nonbijective.
 \item[Haar Lüders.] Actions can affect future predictions but do not close
 into the required commuting translation group.
-\item[External DFA.] A nine-node classical counter has hand-coded goal
-geometry while quantum outcomes remain null. The quantum predictive orbit is
-one.
+\item[External DFA.] A genuine nine-node classical register undergoes exact
+\(\Z_3^2\) transitions while quantum tokens remain i.i.d. uniform. The
+token-only interface rejects geometry; explicitly exposing the register
+recovers its hand-coded group and records its classical provenance.
 \item[Memory only.] The exact word metric \(0,1,2\) and perfect path closure
 coexist with zero immediate information.
 \item[Permutation gauge.] Persistent shuffling changes names, not group order,
@@ -976,8 +1182,9 @@ the entire sharp family.
 \begin{enumerate}
 \item The constrained grid search selects a positive-information candidate
 with \(3.33\%\) scaled torus distortion.
-\item Oracle-labelled trials identify the exact family's finite action maps
-and validate held-out length-eight tables; this is not opaque-string learning.
+\item An observable anchor/action/future-probe protocol recovers the exact
+family's five maps and order-nine group without successor-state labels.
+Oracle-labelled trials separately validate held-out length-eight tables.
 \item Opaque Lüders experiments recover a commuting order-nine group and
 strict token-level hitting shells.
 \item Exact quantum-filter likelihood exposes latent memory not captured by
@@ -1079,9 +1286,9 @@ Retained memory then supplies a controlled interpolation. The observed
 memory/reset family joins positive immediate information, exact finite
 conditional states, covariant translations, and analytic Bellman geometry.
 One parameter value gives exact local squares; another gives a high-memory
-torus approximation selected by a transparent rule. Oracle-labelled trials
-verify its finite maps, while a separate opaque Lüders experiment recovers the
-torus action group from emitted strings.
+torus approximation selected by a transparent rule. A common future probe
+recovers its action group from opaque observed tokens, and a separate opaque
+Lüders experiment recovers the same torus topology from histories.
 
 The Lüders oracle gap identifies latent predictive memory over the spatial
 token base, but the present learner does not yet reconstruct that candidate

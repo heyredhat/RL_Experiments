@@ -14,6 +14,16 @@ closed forms reproduce the full Bellman solution.  I independently checked all
 was `6.83e-13`, every distance matrix passed the implemented metric tests, and
 all fourteen existing unit tests pass.
 
+> **Resolution note (post-audit).** This file intentionally preserves the
+> issues found at audit time. The release-blocking findings were subsequently
+> addressed: the manuscript is complete and builds; the exact search now has an
+> observable anchor/action/future-probe learner with no successor labels; the
+> labelled NLL routine is explicitly an oracle benchmark; noise age is limited
+> to the outcome-discarded ensemble; a genuine external register has both
+> token-only and register-exposed controls; branch-rank tests and an exhaustive
+> 380-point Bellman artifact were added. The current source and reports, rather
+> than the historical line references below, define the final claims.
+
 The miniproject nevertheless needs scientific corrections before publication.
 Most importantly, the search strand's claims of opaque learning and a
 predictive memory fiber are stronger than its actual observation model

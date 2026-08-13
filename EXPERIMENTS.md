@@ -791,6 +791,14 @@ closure residual is at that scale and the different-length residual is
 family remains on pure Hesse rays. The separate Lüders oracle gap, not this
 nonselective residual, is the evidence for a candidate predictive fiber.
 
+The selected exact family also passes an observable action-semantic test. A
+sharp Hesse anchor prepares an opaque token, the unknown action is applied,
+and a common future Hesse report probes the state after an observed memory
+branch. From 17,982 accepted events in 22,500 attempts, a learner using only
+the three opaque tokens recovers five bijections, a commuting group and orbit
+of order nine, and 100% offline gauge-scored map accuracy. No successor-state
+label enters the learner.
+
 ### Opaque learning
 
 The production study uses six models, 12,000 training and 3,000 held-out

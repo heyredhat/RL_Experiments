@@ -61,7 +61,11 @@ calculation showing that \(D\) is exactly the Euclidean metric of a unit
 square. Finally, it removes the assumption that the agent is handed its group
 label: a tetrahedral SIC outcome prepares and reports the current operational
 anchor, and SIC-outcome goals retain the same square geometry after subtraction
-of a derived common reporting overhead.
+of a derived common reporting overhead. The expanded control analysis makes
+the reward convention explicit, evaluates all four actions in every state,
+and solves the discounted problem in closed form. It shows that the square is
+specifically an undiscounted expected-hitting-time geometry: discounting can
+change the optimal policy and collapse its spatial distinctions.
 \end{abstract}
 
 \tableofcontents
@@ -543,15 +547,367 @@ goal, the process terminates with value zero.  The other goal columns follow
 by translation symmetry.  This explicitly verifies the stochastic-shortest-
 path Bellman equations whose solution is \eqref{eq:D}.
 
-\section{The stronger operational goal: obtain a SIC outcome}
+\section{The complete reinforcement-learning specification}
+\label{sec:complete-mdp}
+
+The phrase ``one-step cost'' can obscure several choices that must be made to
+define a reinforcement-learning problem. This section spells out the entire
+model: what a state means operationally, what counts as one time step, what
+outcomes are observed, when an episode ends, what reward is paid, and whether
+future rewards are discounted.
+
+\subsection{Decision epochs and operational states}
+
+A \emph{decision epoch} occurs whenever the agent chooses one quantum
+instrument. One use of the \(X\) channel, one use of the \(Z\) channel, one
+attempt of the random-\(Y\) instrument, and one use of the SIC instrument each
+count as exactly one step. A step is therefore an intervention, not a
+successful displacement and not an elapsed laboratory time chosen after the
+outcome is known.
+
+After at least one SIC use, the state supplied to the controller is the most
+recent SIC token
+\[
+ \mathcal S=\{00,10,01,11\}.
+\]
+This is not a hidden ontic label inferred from the premeasurement state. By
+\eqref{eq:sic-prepares}, observing token \(x\) prepares \(\Pi_x\), so \(x\)
+is a sufficient classical record of the known \emph{postmeasurement} state.
+The bit strings are merely convenient names for four observable tokens. The
+permutations induced by the movement buttons can be learned from
+anchor--action--SIC experiments as described in \cref{sec:sic-anchor}.
+
+For a requested goal token \(g\), append one absorbing terminal state
+\[
+ \dagger_g=\text{the SIC instrument has just reported }g.
+\]
+Notice the distinction between \(x=g\) and \(\dagger_g\). At \(x=g\), the
+last SIC outcome was \(g\), but the new task has not yet been certified by a
+fresh goal outcome. The value at \(x=g\) is consequently nonzero. This
+stronger goal avoids declaring success merely because a theorist says that
+the system occupies a named state.
+
+\subsection{The four actions and all transition probabilities}
+
+The action set is
+\[
+ \mathcal A=\{X,Z,\widetilde Y,\mathsf S\},
+\]
+where \(\widetilde Y\) denotes the two-outcome retry instrument and
+\(\mathsf S\) the four-outcome SIC instrument. Writing \(\oplus\) for bitwise
+addition modulo two and \(p=1/\sqrt2\), their controlled transitions are:
+
+\begin{center}
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.25cm}
+ >{\raggedright\arraybackslash}p{2.25cm}
+ >{\raggedright\arraybackslash}p{3.4cm}X}
+\toprule
+action & observed outcome & next operational state and probability\\
+\midrule
+\(X\) & one deterministic acknowledgement
+ & \(x\mapsto x\oplus10\) with probability \(1\)\\
+\(Z\) & one deterministic acknowledgement
+ & \(x\mapsto x\oplus01\) with probability \(1\)\\
+\(\widetilde Y\) & success \(\mathrm s\) or failure \(\mathrm f\)
+ & \(x\mapsto x\oplus11\) with probability \(p=1/\sqrt2\);
+   \(x\mapsto x\) with probability \(1-p\)\\
+\(\mathsf S\) & token \(o\in\mathcal S\)
+ & \(x\mapsto\dagger_g\) if \(o=g\); otherwise \(x\mapsto o\), with
+ \(P(o\mid x)=1/2\) for \(o=x\) and \(1/6\) for \(o\ne x\)\\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+The deterministic acknowledgement of \(X\) or \(Z\) is not itself a location
+measurement. Rather, the controller propagates its last measured anchor
+through an empirically calibrated response permutation. The random-\(Y\)
+outcome says whether that calibrated permutation occurred. The SIC action is
+the action that creates a new directly observed anchor. Thus the model uses
+both controlled prediction and occasional measurement, much as a robot uses
+odometry between landmark observations. It assumes that the learned
+instrument laws remain stable during an episode; without such stationarity,
+no controller can propagate any predictive state.
+
+\subsection{Reward, cost, stopping time, and the absence of shaping}
+
+Let
+\[
+ \tau_g=\min\{n\ge1:\text{the \(n\)-th chosen instrument is
+ \(\mathsf S\) and reports \(g\)}\}
+\]
+be the number of interventions up to and including the successful SIC use.
+Every chosen action has immediate cost
+\begin{equation}
+ c_t=1.
+ \label{eq:unit-intervention-cost}
+\end{equation}
+Equivalently, every action has reward \(r_t=-1\). There is no extra reward
+for applying the ``correct'' Pauli, no reward for decreasing a supplied
+coordinate distance, and no terminal bonus. The only special event is that
+the successful SIC branch ends the episode and therefore eliminates all
+future costs. With no discounting, the return is
+\begin{equation}
+ G_0=\sum_{t=0}^{\tau_g-1}r_t=-\tau_g.
+ \label{eq:undiscounted-return}
+\end{equation}
+Maximizing expected return is exactly the same problem as minimizing the
+expected number of physical instrument uses:
+\begin{equation}
+ V_g(x)=\inf_\pi\E_x^\pi[\tau_g].
+ \label{eq:hitting-value}
+\end{equation}
+
+The unit cost is a modeling choice, albeit a transparent one. If laboratory
+time, energy, or information acquisition differs by instrument, replace
+\(c_t=1\) by action-dependent costs \(c_a>0\). The Bellman proof and the
+resulting geometry must then be recomputed. In particular, calling the SIC
+measurement ``free'' would change the geometry.
+
+\subsection{The undiscounted Bellman equation}
+
+The hodological construction uses the stochastic-shortest-path convention
+\begin{equation}
+ \boxed{\gamma=1.}
+ \label{eq:gamma-one}
+\end{equation}
+For any nonterminal anchor \(x\), define
+\begin{equation}
+ Q_g(x,a)=1+\sum_{y\in\mathcal S}P_a(y\mid x)V_g(y).
+ \label{eq:undiscounted-q}
+\end{equation}
+The terminal transition has no continuation term. The optimality equation is
+\begin{equation}
+ \boxed{V_g(x)=\min_{a\in\mathcal A}Q_g(x,a).}
+ \label{eq:full-bellman}
+\end{equation}
+Using \(\gamma=1\) is legitimate here even though many introductory RL
+algorithms emphasize \(\gamma<1\). This is an episodic proper
+stochastic-shortest-path problem: the policy ``repeat the SIC'' terminates
+with positive probability on each attempt, all costs are positive, and the
+optimal expected stopping time is finite. Discounting is therefore not
+needed to make the objective well defined. More importantly, expected
+hitting time is the quantity being interpreted as spatial distance.
+
+\section{Full exact action analysis at \texorpdfstring{\(\gamma=1\)}{gamma=1}}
+\label{sec:full-action-analysis}
+
+Choose \(g=00\); all other goals follow by symmetry. There are three distance
+shells: \(0\) for \(00\), \(1\) for \(10,01\), and \(2\) for \(11\). Write
+\[
+ c=\frac{8+\sqrt2}{3},\qquad
+ v_0=c,\qquad v_1=c+1,\qquad v_2=c+\sqrt2.
+\]
+The following table evaluates \emph{every} action, not only the optimal one.
+Within the edge row, ``toward'' is \(X\) from \(10\) and \(Z\) from \(01\);
+``away'' is the other axial action.
+
+\begin{center}
+\small
+\begin{tabular}{c c c c}
+\toprule
+current shell & action & exact \(Q\)-value & optimal?\\
+\midrule
+self & \(X\) or \(Z\) & \(c+2\) & no\\
+self & \(\widetilde Y\) & \(c+2\) & no\\
+self & SIC & \(c\) & yes\\
+\midrule
+edge & axial toward goal & \(c+1\) & yes\\
+edge & axial away from goal & \(c+1+\sqrt2\) & no\\
+edge & \(\widetilde Y\) & \(c+2\) & no\\
+edge & SIC & \(c+1+(2+\sqrt2)/9\) & no\\
+\midrule
+diagonal & \(X\) or \(Z\) & \(c+2\) & no\\
+diagonal & \(\widetilde Y\) & \(c+\sqrt2\) & yes\\
+diagonal & SIC & \(c+\sqrt2+(8-5\sqrt2)/9\) & no\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Here are the calculations behind the table. At the self anchor, either
+axial action reaches an edge, so \(Q_X=Q_Z=1+v_1=c+2\). Random \(Y\) fails at
+self with probability \(1-p\) and succeeds to the diagonal with probability
+\(p\), whence
+\[
+ Q_{\widetilde Y}=1+(1-p)v_0+pv_2
+ =1+c+p\sqrt2=c+2.
+\]
+The SIC terminates with probability \(1/2\), sends the system to either edge
+with total probability \(1/3\), and to the diagonal with probability \(1/6\):
+\[
+ Q_{\mathsf S}=1+\frac13v_1+\frac16v_2=c.
+\]
+
+At an edge, the correct axial action incurs one step and reaches self, giving
+\(1+v_0=v_1\). The other axial action reaches the diagonal. Random \(Y\)
+either stays at the same edge or reaches the other edge, so its continuation
+value is always \(v_1\). A SIC use terminates with probability \(1/6\), has
+an edge continuation with total probability \(2/3\), and a diagonal
+continuation with probability \(1/6\). Therefore
+\begin{align*}
+ Q_{\mathsf S}(\text{edge})
+ &=1+\frac23v_1+\frac16v_2\\
+ &=v_1+\frac{2+\sqrt2}{9}>v_1.
+\end{align*}
+
+At the diagonal, either axial action reaches an edge and costs \(1+v_1=c+2\).
+Random \(Y\) succeeds to self with probability \(p\) and otherwise remains at
+the diagonal:
+\begin{align*}
+ Q_{\widetilde Y}(\text{diagonal})
+ &=1+(1-p)v_2+pv_0\\
+ &=v_2,
+\end{align*}
+where the last equality is exactly the geometric-retry identity
+\(p(v_2-v_0)=p\sqrt2=1\). Finally,
+\begin{align*}
+ Q_{\mathsf S}(\text{diagonal})
+ &=1+\frac13v_1+\frac12v_2\\
+ &=v_2+\frac{8-5\sqrt2}{9}>v_2.
+\end{align*}
+Both strict gaps are positive. The complete optimal policy is consequently
+\begin{equation}
+ \pi_g^*(x)=
+ \begin{cases}
+ \mathsf S,&x=g,\\
+ \text{the axial action taking \(x\) to \(g\)},&d(x,g)=1,\\
+ \widetilde Y,&d(x,g)=\sqrt2.
+ \end{cases}
+ \label{eq:complete-optimal-policy}
+\end{equation}
+Numerically, \(c\simeq3.138071\). The self, edge, and diagonal values are,
+respectively, \(3.138071\), \(4.138071\), and \(4.552285\). Subtracting the unavoidable
+goal-reporting cost \(v_0\) gives \(0,1,\sqrt2\), the desired square radii.
+
+\section{What discounting would change}
+\label{sec:discounting}
+
+For \(0\le\gamma<1\), the discounted step-cost objective would instead be
+\begin{equation}
+ V_g^{(\gamma)}(x)
+ =\inf_\pi\E_x^\pi\left[\sum_{t=0}^{\tau_g-1}\gamma^t\right]
+ =\inf_\pi\frac{1-\E_x^\pi[\gamma^{\tau_g}]}{1-\gamma}.
+ \label{eq:discounted-cost}
+\end{equation}
+It has Bellman equation
+\begin{equation}
+ V_g^{(\gamma)}(x)=
+ \min_a\left\{1+\gamma\sum_{y\in\mathcal S}
+ P_a(y\mid x)V_g^{(\gamma)}(y)\right\}.
+ \label{eq:discounted-bellman}
+\end{equation}
+For a deterministic stopping time, \eqref{eq:discounted-cost} is a monotone
+transform of the number of steps. For a random stopping time it depends on
+the entire distribution of \(\tau_g\), not only its mean. It preferentially
+weights chances of very early completion. A common alternative reward,
+zero on ordinary transitions and \(+1\) on the terminal SIC outcome, maximizes
+\(\E[\gamma^{\tau_g-1}]\). For \(0<\gamma<1\) this selects the same policies
+as minimizing \eqref{eq:discounted-cost}, but neither objective is the
+expected hitting time that defines the present hodological metric.
+
+The distinction can be solved exactly in this four-state example. Again let
+\(v_0,v_1,v_2\) denote the self, edge, and diagonal discounted costs. There
+are three policy regimes. Define
+\begin{equation}
+ \gamma_*=\frac{3+3\sqrt2-\sqrt{15+12\sqrt2}}{2}
+ \simeq0.7941944732.
+ \label{eq:gamma-star}
+\end{equation}
+
+At \(\gamma=0\), every action has the same one-step discounted cost, so every
+first action ties. For \(0<\gamma\le1/2\), a SIC use is optimal in all three
+shells. The following exact solution also extends continuously to \(\gamma=0\):
+\begin{equation}
+ v_0=\frac{6-2\gamma}{6-5\gamma},
+ \qquad
+ v_1=v_2=\frac6{6-5\gamma}.
+ \label{eq:discount-regime-one}
+\end{equation}
+The equality \(v_1=v_2\) shows that strong discounting erases the distinction
+between an edge and the diagonal. To derive these expressions, observe that
+from any non-goal anchor a SIC reports \(g\) with probability \(1/6\); under
+the symmetric all-SIC solution its total nonterminal continuation is
+\((5/6)v_1\). At self, the nonterminal probability is \(1/2\).
+
+For \(1/2\le\gamma\le\gamma_*\), SIC is optimal at self, an axial move is
+optimal at an edge, and SIC remains optimal at the diagonal. With
+\[
+ \Delta=2\gamma^3-6\gamma^2-9\gamma+18,
+\]
+the exact values are
+\begin{equation}
+ v_0=\frac{2(9-\gamma^2)}{\Delta},\qquad
+ v_1=\frac{3(-2\gamma^2+3\gamma+6)}{\Delta},\qquad
+ v_2=\frac{6(\gamma+3)}{\Delta}.
+ \label{eq:discount-regime-two}
+\end{equation}
+They follow by solving the three linear policy-evaluation equations
+\[
+ v_0=1+\gamma\left(\frac13v_1+\frac16v_2\right),\quad
+ v_1=1+\gamma v_0,\quad
+ v_2=1+\gamma\left(\frac13v_1+\frac12v_2\right).
+\]
+
+For \(\gamma_*\le\gamma\le1\), the undiscounted policy structure is restored:
+SIC at self, axial movement at an edge, and retry-\(Y\) at the diagonal. Put
+\[
+ a_\gamma=1-\gamma\left(1-\frac1{\sqrt2}\right).
+\]
+Then an economical exact form is
+\begin{align}
+ v_0&=
+ \frac{1+\gamma/3+\gamma/(6a_\gamma)}
+ {1-\gamma^2/3-\gamma^2/(6\sqrt2a_\gamma)},
+ \label{eq:discount-regime-three-a}\\
+ v_1&=1+\gamma v_0,\qquad
+ v_2=\frac{1+\gamma v_0/\sqrt2}{a_\gamma}.
+ \label{eq:discount-regime-three-b}
+\end{align}
+
+The first transition occurs when the edge is indifferent between reporting
+and moving, which reduces exactly to \(\gamma=1/2\). The second occurs when
+the diagonal is indifferent between reporting and retrying \(Y\). Substituting
+\eqref{eq:discount-regime-two} gives
+\[
+ \gamma^2-3(1+\sqrt2)\gamma+3+\frac{3\sqrt2}{2}=0,
+\]
+whose only root in \([0,1]\) is \eqref{eq:gamma-star}. Direct substitution
+checks that all unselected actions have no smaller \(Q\)-value in their stated
+intervals. At a boundary the adjacent policies tie.
+
+At \(\gamma=1\), \eqref{eq:discount-regime-three-a}--
+\eqref{eq:discount-regime-three-b} reduce to
+\[
+ (v_0,v_1,v_2)=(c,c+1,c+\sqrt2).
+\]
+Thus the Euclidean square is not invariant under arbitrary discounting. It
+is specifically a geometry of expected undiscounted intervention count. The
+computed phase diagram in \cref{fig:sic-discounting} shows the approach to
+that limit.
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=\textwidth]{sic_discounting.png}
+\caption{\textbf{Discounting changes both value and geometry.} Left: exact
+discounted self, edge, and diagonal intervention costs. Center: after
+subtracting the self reporting baseline, the edge and diagonal separations
+reach \(1\) and \(\sqrt2\) only at \(\gamma=1\). Right: the diagonal-to-edge
+ratio and the two exact policy thresholds \(\gamma=1/2\) and
+\(\gamma=\gamma_*\). Strong discounting makes all non-goal SIC-report policies
+optimal and collapses edge and diagonal into one shell.}
+\label{fig:sic-discounting}
+\end{figure}
+
+\section{A compact derivation of the SIC reporting baseline}
 \label{sec:reported-goal}
 
-We can now eliminate even the assumption that a goal means occupying a hidden
-group label. Let goal \(g\) mean: perform the SIC action and observe outcome
-token \(g\). Every movement and every SIC report costs one intervention. If a
-SIC outcome is not \(g\), the episode continues from the newly prepared state
-\(\Pi_o\). After the first SIC outcome this is a fully observed finite MDP,
-because the most recent token is a sufficient operational state.
+For reference, we can derive the common baseline in a compact three-shell
+form. As specified in \cref{sec:complete-mdp}, goal \(g\) means: perform the
+SIC action and observe outcome token \(g\). Every movement and every SIC report
+costs one intervention. If a SIC outcome is not \(g\), the episode continues
+from the newly prepared state \(\Pi_o\). After the first SIC outcome this is a
+fully observed finite MDP, because the most recent token is a sufficient
+operational state.
 
 By square symmetry, write \(v_0,v_1,v_2\) for optimal cost when the current
 anchor is respectively the goal, an axial neighbor, or the opposite corner.
@@ -617,9 +973,10 @@ events; the policy needs no concealed binary-coordinate variable.
 The companion program \texttt{sic\_anchored\_square.py} constructs all density
 matrices and Kraus operators, solves the four stochastic-shortest-path
 problems, runs Monte Carlo navigation, and learns randomly renamed Pauli
-permutations from anchor--action--SIC experiments. Five focused tests verify
+permutations from anchor--action--SIC experiments. Eight focused tests verify
 Kraus completeness, branch preparation, the \(1/2,1/6\) response kernel, the
-analytic Bellman solution, and optimal-policy structure.
+analytic Bellman solution, every undiscounted action value, the three
+discounted policy regimes, and optimal-policy structure.
 
 At seed 20260813, exact value iteration gives
 \[
@@ -629,7 +986,9 @@ and baseline subtraction recovers \(D\) to \(9.10\times10^{-15}\). Across
 50,000 Monte Carlo episodes for each of the 16 ordered pairs, maximum mean-cost
 error is \(0.02831\). In 500 independent opaque-label trials per sample size,
 the complete four-action response permutations are recovered in every trial
-at 100 samples per anchor/action pair.
+at 100 samples per anchor/action pair. Across a 503-point discount scan, the
+closed forms in \cref{sec:discounting} agree with numerical Bellman iteration
+to \(3.02\times10^{-14}\).
 
 \begin{figure}[p]
 \centering

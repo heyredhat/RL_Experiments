@@ -7,5 +7,7 @@
   "monte_carlo_max_error": 0.02830881254232409,
   "monte_carlo_episodes_per_pair": 50000,
   "opaque_recovery_at_100": 1.0,
+  "discount_policy_threshold": 0.7941944731535715,
+  "discount_closed_form_max_error": 3.019806626980426e-14,
   "seed": 20260813
 }

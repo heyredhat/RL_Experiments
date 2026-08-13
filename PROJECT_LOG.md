@@ -759,13 +759,15 @@ with 0.196535 bits of immediate information. A deterministic 380-candidate
 search selected \((\mu,\xi)=(0.8,1)\) as the best torus approximation above a
 0.05-bit information floor; its scaled torus RMSE is 3.33%.
 
-An initial oracle-labelled finite-state audit recovers all five translations;
-it is structural validation, not opaque-string learning. A separate
-90,000-sequence full-matrix-rank Lüders study uses only shuffled
-action/outcome histories and recovers the token-level commuting order-nine
-torus. Quantum-filter held-out likelihood detects retained memory beyond the
-last token, but a finite-suffix learner fails to exploit it. This negative
-result motivates a controlled spectral PSR.
+An observable common-probe experiment recovers all five translations from
+opaque anchor/action/future-report triples, without successor-state labels:
+17,982 accepted memory events yield bijective commuting maps, group and orbit
+order nine, and 100% offline gauge-scored accuracy. An oracle-labelled NLL
+benchmark remains explicitly separate. A 90,000-sequence full-matrix-rank
+Lüders study uses only shuffled action/outcome histories and likewise recovers
+the token-level torus. Quantum-filter held-out likelihood detects retained
+memory beyond the last token, but a finite-suffix learner fails to exploit it.
+This negative result motivates a controlled spectral PSR.
 
 For the exact family's nonselective channel, equal-length same-displacement
 words close to \(10^{-15}\); different-length detours differ by 0.31866. This
