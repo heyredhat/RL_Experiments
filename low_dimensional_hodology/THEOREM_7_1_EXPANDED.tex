@@ -58,14 +58,18 @@ for the abelian examples in the paper but matters for nonabelian groups.
 Finally, it derives every entry of the four-by-four matrix \(D\) in Eq.~(43),
 checks the Bellman equations directly, and performs the complete Schoenberg
 calculation showing that \(D\) is exactly the Euclidean metric of a unit
-square. Finally, it removes the assumption that the agent is handed its group
-label: a tetrahedral SIC outcome prepares and reports the current operational
-anchor, and SIC-outcome goals retain the same square geometry after subtraction
-of a derived common reporting overhead. The expanded control analysis makes
-the reward convention explicit, evaluates all four actions in every state,
+square. Finally, it removes the assumption that the agent is handed or updates
+a group label: the controller receives only its raw action--outcome history,
+and SIC-outcome goals retain the same square geometry after subtraction of a
+derived common reporting overhead. The expanded control analysis makes
+the reward convention explicit, evaluates all four actions in every
+predictive history class,
 and solves the discounted problem in closed form. It shows that the square is
 specifically an undiscounted expected-hitting-time geometry: discounting can
-change the optimal policy and collapse its spatial distinctions.
+change the optimal policy and collapse its spatial distinctions.  The finite
+Bellman calculation is justified by proving that future SIC statistics induce
+four causal equivalence classes of histories, not by supplying a hidden binary
+location variable.
 \end{abstract}
 
 \tableofcontents
@@ -547,16 +551,16 @@ goal, the process terminates with value zero.  The other goal columns follow
 by translation symmetry.  This explicitly verifies the stochastic-shortest-
 path Bellman equations whose solution is \eqref{eq:D}.
 
-\section{The complete reinforcement-learning specification}
+\section{The complete history-only reinforcement-learning specification}
 \label{sec:complete-mdp}
 
 The phrase ``one-step cost'' can obscure several choices that must be made to
 define a reinforcement-learning problem. This section spells out the entire
-model: what a state means operationally, what counts as one time step, what
-outcomes are observed, when an episode ends, what reward is paid, and whether
-future rewards are discounted.
+model without giving the agent a location variable: what it observes, what
+counts as one time step, when an episode ends, what reward is paid, and why an
+exact calculation need not enumerate infinitely many histories.
 
-\subsection{Decision epochs and operational states}
+\subsection{The agent receives only an action--outcome history}
 
 A \emph{decision epoch} occurs whenever the agent chooses one quantum
 instrument. One use of the \(X\) channel, one use of the \(Z\) channel, one
@@ -565,69 +569,54 @@ count as exactly one step. A step is therefore an intervention, not a
 successful displacement and not an elapsed laboratory time chosen after the
 outcome is known.
 
-After at least one SIC use, the state supplied to the controller is the most
-recent SIC token
+The controller is \emph{not} supplied a variable called ``current position.''
+Its information at time \(t\) is the literal record
 \[
- \mathcal S=\{00,10,01,11\}.
+ h_t=(a_0,o_1,a_1,o_2,\ldots,a_{t-1},o_t),
 \]
-This is not a hidden ontic label inferred from the premeasurement state. By
-\eqref{eq:sic-prepares}, observing token \(x\) prepares \(\Pi_x\), so \(x\)
-is a sufficient classical record of the known \emph{postmeasurement} state.
-The bit strings are merely convenient names for four observable tokens. The
-permutations induced by the movement buttons can be learned from
-anchor--action--SIC experiments as described in \cref{sec:sic-anchor}.
+consisting only of its chosen actions and their observed outcomes.  A policy
+is therefore a map \(\pi(a\mid h_t,g)\), where \(g\) is the requested SIC
+outcome token.  The four SIC outcomes form an arbitrary alphabet
+\(\Omega=\{\omega_1,\omega_2,\omega_3,\omega_4\}\).  They need not be called
+\(00,01,10,11\), and the agent never updates such a binary label after
+pressing a movement button.
 
-For a requested goal token \(g\), append one absorbing terminal state
-\[
- \dagger_g=\text{the SIC instrument has just reported }g.
-\]
-Notice the distinction between \(x=g\) and \(\dagger_g\). At \(x=g\), the
-last SIC outcome was \(g\), but the new task has not yet been certified by a
-fresh goal outcome. The value at \(x=g\) is consequently nonzero. This
-stronger goal avoids declaring success merely because a theorist says that
-the system occupies a named state.
+The episode terminates when the agent chooses the SIC instrument and observes
+the requested token \(g\).  Merely having observed \(g\) earlier does not end
+a new episode.  Thus the goal itself is an observable event, not occupation
+of a theorist-supplied state.
 
-\subsection{The four actions and all transition probabilities}
+\subsection{The four instruments and their observable alphabets}
 
 The action set is
 \[
  \mathcal A=\{X,Z,\widetilde Y,\mathsf S\},
 \]
 where \(\widetilde Y\) denotes the two-outcome retry instrument and
-\(\mathsf S\) the four-outcome SIC instrument. Writing \(\oplus\) for bitwise
-addition modulo two and \(p=1/\sqrt2\), their controlled transitions are:
+\(\mathsf S\) the four-outcome SIC instrument.  The data available to the
+agent on one use are:
 
 \begin{center}
 \small
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{1.25cm}
- >{\raggedright\arraybackslash}p{2.25cm}
- >{\raggedright\arraybackslash}p{3.4cm}X}
+ >{\raggedright\arraybackslash}p{3.0cm}X}
 \toprule
-action & observed outcome & next operational state and probability\\
+chosen instrument & observed outcome\\
 \midrule
-\(X\) & one deterministic acknowledgement
- & \(x\mapsto x\oplus10\) with probability \(1\)\\
-\(Z\) & one deterministic acknowledgement
- & \(x\mapsto x\oplus01\) with probability \(1\)\\
-\(\widetilde Y\) & success \(\mathrm s\) or failure \(\mathrm f\)
- & \(x\mapsto x\oplus11\) with probability \(p=1/\sqrt2\);
-   \(x\mapsto x\) with probability \(1-p\)\\
-\(\mathsf S\) & token \(o\in\mathcal S\)
- & \(x\mapsto\dagger_g\) if \(o=g\); otherwise \(x\mapsto o\), with
- \(P(o\mid x)=1/2\) for \(o=x\) and \(1/6\) for \(o\ne x\)\\
+\(X\) & one acknowledgement symbol \(\bullet_X\)\\
+\(Z\) & one acknowledgement symbol \(\bullet_Z\)\\
+\(\widetilde Y\) & success \(\mathrm s\) or failure \(\mathrm f\), with
+success probability \(p=1/\sqrt2\)\\
+\(\mathsf S\) & one token \(o\in\Omega\)\\
 \bottomrule
 \end{tabularx}
 \end{center}
 
-The deterministic acknowledgement of \(X\) or \(Z\) is not itself a location
-measurement. Rather, the controller propagates its last measured anchor
-through an empirically calibrated response permutation. The random-\(Y\)
-outcome says whether that calibrated permutation occurred. The SIC action is
-the action that creates a new directly observed anchor. Thus the model uses
-both controlled prediction and occasional measurement, much as a robot uses
-odometry between landmark observations. It assumes that the learned
-instrument laws remain stable during an episode; without such stationarity,
-no controller can propagate any predictive state.
+In particular, the acknowledgement from \(X\) or \(Z\) does not say where the
+system went.  The controller may condition its next action on the string
+\((\mathsf S,o), (X,\bullet_X)\), but it is not told to replace \(o\) by some
+other location label.  The physical consequences of a button are accessible
+only through distributions of later outcomes, especially a later SIC test.
 
 \subsection{Reward, cost, stopping time, and the absence of shaping}
 
@@ -652,9 +641,9 @@ future costs. With no discounting, the return is
  \label{eq:undiscounted-return}
 \end{equation}
 Maximizing expected return is exactly the same problem as minimizing the
-expected number of physical instrument uses:
+expected number of physical instrument uses from an observed history:
 \begin{equation}
- V_g(x)=\inf_\pi\E_x^\pi[\tau_g].
+ J_g(h)=\inf_\pi\E_h^\pi[\tau_g].
  \label{eq:hitting-value}
 \end{equation}
 
@@ -664,6 +653,83 @@ time, energy, or information acquisition differs by instrument, replace
 resulting geometry must then be recomputed. In particular, calling the SIC
 measurement ``free'' would change the geometry.
 
+\subsection{The exact Bellman equation really lives on histories}
+
+Without any compression, the first-action recursion is
+\[
+ J_g(h)=\min_{a\in\mathcal A}\left[
+  1+\sum_{o:\,hao\ \mathrm{nonterminal}}
+ P(o\mid h,a)J_g(hao)
+ \right].
+\]
+This equation is conceptually exact and uses only action--outcome strings.
+It appears to require an infinite tree, because every different \(h\) is a
+different argument.  The reason we can solve it finitely is not that the
+agent is handed a coordinate.  It is that the quantum instrument itself has
+only four distinct \emph{predictive} kinds of reachable history.
+
+For any history \(h\), define its experimentally meaningful next-SIC response
+vector
+\[
+ \bm q(h)=\big(P(\omega_1\mid h,\mathsf S),\ldots,
+ P(\omega_4\mid h,\mathsf S)\big).
+\]
+An experimenter estimates this vector by reproducing the same preparation
+procedure \(h\) many times and appending the common SIC test.  It contains no
+position coordinate.  More generally, call two histories \emph{causally
+equivalent}, written \(h\sim h'\), when every possible future adaptive
+action--outcome experiment has the same distribution after \(h\) and \(h'\).
+
+\begin{proposition}[The finite predictive quotient]
+\label{prop:predictive-quotient}
+After an observed SIC outcome, every reachable raw history belongs to exactly
+one of four causal equivalence classes.  Moreover,
+\[
+ h\sim h'\quad\Longleftrightarrow\quad \bm q(h)=\bm q(h').
+\]
+The four possible response vectors have one component equal to \(1/2\) and
+the other three equal to \(1/6\).
+\end{proposition}
+
+\begin{proof}
+This is an analyst's proof from observable probabilities, not an update rule
+given to the agent.  Conditional on a raw history \(h\), let \(\rho_h\) denote
+the normalized quantum state obtained by multiplying the Kraus operators
+recorded in that history.  The next-SIC probabilities are
+\[
+ q_o(h)=\frac12\Tr(\Pi_o\rho_h).
+\]
+The four tetrahedral SIC effects \(\Pi_o/2\) are linearly independent in the
+four-dimensional real vector space of Hermitian qubit operators.  Therefore
+\(\bm q(h)\) determines \(\rho_h\) uniquely.  Equal response vectors imply
+equal conditional density matrices, which in turn imply equal probabilities
+for every future sequence of instruments and outcomes.  Conversely, causal
+equivalence includes the next-SIC experiment, so it implies equal response
+vectors.
+
+Immediately after SIC outcome \(o\), \eqref{eq:sic-prepares} gives
+\(\rho_h=\Pi_o\).  Each of the four instruments preserves the set
+\(\{\Pi_o:o\in\Omega\}\) on every observed branch: \(X\) and \(Z\) permute
+it; success of \(\widetilde Y\) permutes it while failure leaves it unchanged;
+and a SIC outcome prepares one member of it.  Induction on the length of the
+raw history proves that there are no other reachable conditional states.
+Equation~\eqref{eq:sic-kernel} gives the stated four response vectors, which
+are distinct because their \(1/2\) peaks occur at different observed tokens.
+\end{proof}
+
+The density matrix appears only in this proof that the observable relation is
+finite.  Neither \(\rho_h\) nor a binary coordinate is an observation supplied
+to the controller.  An agent may retain the full string \(h\); the theorem
+says that histories with the same future-test statistics have the same
+optimal continuation value.  If \(h\sim h'\), then every policy tree available
+after \(h\) has an identically distributed copy after \(h'\), and hence
+\[
+ J_g(h)=J_g(h').
+\]
+We may consequently write \([h]\) for a predictive class and solve on the
+four classes without assuming that the agent ever represents or updates that
+class online.
+
 \subsection{The undiscounted Bellman equation}
 
 The hodological construction uses the stochastic-shortest-path convention
@@ -671,14 +737,17 @@ The hodological construction uses the stochastic-shortest-path convention
  \boxed{\gamma=1.}
  \label{eq:gamma-one}
 \end{equation}
-For any nonterminal anchor \(x\), define
+For any nonterminal predictive history class \(\xi=[h]\), define
 \begin{equation}
- Q_g(x,a)=1+\sum_{y\in\mathcal S}P_a(y\mid x)V_g(y).
+ Q_g(\xi,a)=1+\sum_{o:\,hao\ \mathrm{nonterminal}}
+ P(o\mid h,a)V_g([hao]).
  \label{eq:undiscounted-q}
 \end{equation}
-The terminal transition has no continuation term. The optimality equation is
+This is well defined because causally equivalent histories have identical
+future distributions. The terminal transition has no continuation term. The
+optimality equation is
 \begin{equation}
- \boxed{V_g(x)=\min_{a\in\mathcal A}Q_g(x,a).}
+ \boxed{V_g(\xi)=\min_{a\in\mathcal A}Q_g(\xi,a).}
  \label{eq:full-bellman}
 \end{equation}
 Using \(\gamma=1\) is legitimate here even though many introductory RL
@@ -689,59 +758,195 @@ optimal expected stopping time is finite. Discounting is therefore not
 needed to make the objective well defined. More importantly, expected
 hitting time is the quantity being interpreted as spatial distance.
 
-\section{Full exact action analysis at \texorpdfstring{\(\gamma=1\)}{gamma=1}}
+Equation~\eqref{eq:full-bellman} does not itself magically produce the
+numbers.  The calculation has two steps: evaluate a candidate history policy
+by solving its linear recurrence, and then insert the resulting values into
+\emph{every} action expression to certify that none is smaller.  The next
+section performs both steps.  The verification covers arbitrary
+history-dependent policies, because any extra dependence on the past can only
+choose or randomize among the same four actions from a predictive class; it
+cannot alter their future outcome laws.
+
+\section{Full exact history-quotient analysis at
+\texorpdfstring{\(\gamma=1\)}{gamma=1}}
 \label{sec:full-action-analysis}
 
-Choose \(g=00\); all other goals follow by symmetry. There are three distance
-shells: \(0\) for \(00\), \(1\) for \(10,01\), and \(2\) for \(11\). Write
+Fix one observed SIC token \(g\) as the goal.  Do not assign coordinates to the
+other tokens.  For a raw history \(h\), introduce the observable continuation
+probabilities
+\begin{align*}
+ r_g(h)&:=P(g\mid h,\mathsf S),\\
+ r_g^X(h)&:=P(g\mid h,X,\bullet_X,\mathsf S),\\
+ r_g^Z(h)&:=P(g\mid h,Z,\bullet_Z,\mathsf S),\\
+ r_g^{Y\mathrm s}(h)&:=P(g\mid h,\widetilde Y,
+              \mathrm s,\mathsf S).
+\end{align*}
+For example, \(r_g^X(h)\) is measured by reproducing the preparation history
+\(h\), pressing the opaque button called \(X\), observing its acknowledgement,
+then applying the SIC and recording how often token \(g\) occurs.  It does not
+mean that the agent calculates a new position after pressing \(X\).
+
+\begin{definition}[Predictive-class terminology relative to a goal]
+\label{def:edge-class}
+Among the four reachable causal classes of
+\cref{prop:predictive-quotient}, define
+\begin{align*}
+ G&:=\{[h]:r_g(h)=1/2\},\\
+ E_X&:=\{[h]:r_g(h)=1/6,\ r_g^X(h)=1/2,\ r_g^Z(h)=1/6\},\\
+ E_Z&:=\{[h]:r_g(h)=1/6,\ r_g^Z(h)=1/2,\ r_g^X(h)=1/6\},\\
+ D&:=\{[h]:r_g(h)=r_g^X(h)=r_g^Z(h)=1/6,
+                 \ r_g^{Y\mathrm s}(h)=1/2\}.
+\end{align*}
+The class \(G\) is the \emph{goal-response class}.  The classes \(E_X\) and
+\(E_Z\) are called the two \emph{edge classes}: operationally, an edge class
+means exactly ``one empirically identified deterministic intervention away
+from the goal-response profile.''  In \(E_X\), \(X\) is the \emph{selected
+deterministic button}; in \(E_Z\), it is \(Z\).  The symbol \(D\) denotes the
+remaining or \emph{retry class} at this stage.
+\end{definition}
+
+The words ``edge'' and, later, ``diagonal'' are retrospective geometric names.
+They are justified only after the excess costs are found to be \(1\) and
+\(\sqrt2\).  They are not assumptions used to obtain those costs.  All four
+definitions concern distributions of future observed outcomes.  An agent can
+learn them from repeated history--test experiments without being told a square,
+an origin, a bit string, or an action-permutation table.  The symbols
+\(G,E_X,E_Z,D\) are analyst names for equivalence classes of whole histories;
+they are not a location register maintained during a trajectory.
+
+The empirically testable class-transition facts are:
+\begin{center}
+\scriptsize
+\begin{tabularx}{\textwidth}{c X X X}
+\toprule
+history class & deterministic buttons & \(\widetilde Y\) branches
+ & next SIC outcomes\\
+\midrule
+\(G\) & each leads to an edge class & \(\mathrm f:G,\ \mathrm s:D\)
+ & terminal \(g:1/2\), edges total \(1/3\), \(D:1/6\)\\
+\(E_i\), \(i\in\{X,Z\}\) & button \(i\) leads to \(G\), the other to \(D\)
+ & both branches are edge classes
+ & terminal \(g:1/6\), edges total \(2/3\), \(D:1/6\)\\
+\(D\) & each leads to an edge class & \(\mathrm f:D,\ \mathrm s:G\)
+ & terminal \(g:1/6\), edges total \(1/3\), \(D:1/2\)\\
+\bottomrule
+\end{tabularx}
+\end{center}
+Here ``leads to class \(C\)'' means that appending the displayed action and
+outcome produces a longer history causally equivalent to histories in \(C\).
+It is a statement about continuation distributions, not an instruction to
+update a hidden label.  For example, the history-only policy can literally
+use the rules
+\[
+ \begin{array}{ll}
+ \text{the raw history belongs to }G:&\text{choose SIC};\\
+ \text{the raw history belongs to }E_i:&
+   \text{choose the empirically selected deterministic button, then SIC};\\
+ \text{the raw history belongs to }D:&
+   \text{choose \(\widetilde Y\) until outcome \(\mathrm s\), then SIC}.
+ \end{array}
+\]
+After a non-goal SIC result, the observed new token begins a new rule.  Between
+the button press and the SIC test, the policy conditions on the literal
+acknowledgement or success/failure string; it never asserts ``my position is
+now such-and-such.''
+
+\subsection{Step 1: evaluate the candidate history policy}
+
+By symmetry the two edge classes have the same value.  Let \(v_0,v_1,v_2\)
+be the expected remaining intervention counts of the displayed history policy
+from classes \(G,E_i,D\), respectively.  These are not guessed distances; they
+are unknowns in three elementary waiting-time recurrences.
+
+From an edge history, the selected deterministic button costs one
+intervention.  The policy then has the same future outcome statistics as a
+goal-profile history, so
+\[
+ v_1=1+v_0.
+\]
+From a \(D\)-history, one \(\widetilde Y\) attempt costs one.  Failure, of
+probability \(1-p\), gives a causally equivalent \(D\)-history; success, of
+probability \(p=1/\sqrt2\), gives the goal response profile.  Hence
+\[
+ v_2=1+(1-p)v_2+pv_0,
+ \qquad\text{so}\qquad
+ v_2=v_0+\frac1p=v_0+\sqrt2.
+\]
+Finally, from a \(G\)-history the policy chooses SIC and pays one.  Outcome
+\(g\), of probability \(1/2\), terminates and contributes no continuation.
+The two edge tokens have total probability \(1/3\), and the remaining token
+has probability \(1/6\).  Therefore
+\[
+ v_0=1+\frac13v_1+\frac16v_2.
+\]
+Substitution gives
+\begin{align*}
+ v_0
+ &=1+\frac13(v_0+1)+\frac16(v_0+\sqrt2),\\
+ \frac12v_0&=\frac43+\frac{\sqrt2}{6},\\
+ v_0&=\frac{8+\sqrt2}{3}.
+\end{align*}
+Thus policy evaluation, using only the observable transition frequencies in
+the preceding table, yields
 \[
  c=\frac{8+\sqrt2}{3},\qquad
  v_0=c,\qquad v_1=c+1,\qquad v_2=c+\sqrt2.
 \]
+
+\subsection{Step 2: verify optimality against every first action}
+
+Solving the recurrences evaluates one candidate policy; it does not yet prove
+optimality.  We now compute the cost of every possible first instrument,
+followed by the candidate continuation.  If their minimum reproduces
+\((v_0,v_1,v_2)\), the Bellman verification theorem proves global optimality.
 The following table evaluates \emph{every} action, not only the optimal one.
-Within the edge row, ``toward'' is \(X\) from \(10\) and \(Z\) from \(01\);
-``away'' is the other axial action.
+At an edge, ``selected deterministic'' means whichever opaque button repeated
+future-SIC tests show to lead to the goal response profile; the other is
+``unselected.''
 
 \begin{center}
 \small
 \begin{tabular}{c c c c}
 \toprule
-current shell & action & exact \(Q\)-value & optimal?\\
+predictive class & action & exact \(Q\)-value & optimal?\\
 \midrule
-self & \(X\) or \(Z\) & \(c+2\) & no\\
-self & \(\widetilde Y\) & \(c+2\) & no\\
-self & SIC & \(c\) & yes\\
+\(G\) & either deterministic button & \(c+2\) & no\\
+\(G\) & \(\widetilde Y\) & \(c+2\) & no\\
+\(G\) & SIC & \(c\) & yes\\
 \midrule
-edge & axial toward goal & \(c+1\) & yes\\
-edge & axial away from goal & \(c+1+\sqrt2\) & no\\
-edge & \(\widetilde Y\) & \(c+2\) & no\\
-edge & SIC & \(c+1+(2+\sqrt2)/9\) & no\\
+\(E_i\) & selected deterministic button & \(c+1\) & yes\\
+\(E_i\) & unselected deterministic button & \(c+1+\sqrt2\) & no\\
+\(E_i\) & \(\widetilde Y\) & \(c+2\) & no\\
+\(E_i\) & SIC & \(c+1+(2+\sqrt2)/9\) & no\\
 \midrule
-diagonal & \(X\) or \(Z\) & \(c+2\) & no\\
-diagonal & \(\widetilde Y\) & \(c+\sqrt2\) & yes\\
-diagonal & SIC & \(c+\sqrt2+(8-5\sqrt2)/9\) & no\\
+\(D\) & either deterministic button & \(c+2\) & no\\
+\(D\) & \(\widetilde Y\) & \(c+\sqrt2\) & yes\\
+\(D\) & SIC & \(c+\sqrt2+(8-5\sqrt2)/9\) & no\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Here are the calculations behind the table. At the self anchor, either
-axial action reaches an edge, so \(Q_X=Q_Z=1+v_1=c+2\). Random \(Y\) fails at
-self with probability \(1-p\) and succeeds to the diagonal with probability
+Here are the calculations behind the table. From class \(G\), either
+deterministic button has edge-profile continuation, so its value is
+\(1+v_1=c+2\). Random \(Y\) fails back to an equivalent \(G\)-history with
+probability \(1-p\) and succeeds to class \(D\) with probability
 \(p\), whence
 \[
  Q_{\widetilde Y}=1+(1-p)v_0+pv_2
  =1+c+p\sqrt2=c+2.
 \]
-The SIC terminates with probability \(1/2\), sends the system to either edge
-with total probability \(1/3\), and to the diagonal with probability \(1/6\):
+The SIC terminates with probability \(1/2\), produces an edge-profile history
+with total probability \(1/3\), and a \(D\)-profile history with probability
+\(1/6\):
 \[
  Q_{\mathsf S}=1+\frac13v_1+\frac16v_2=c.
 \]
 
-At an edge, the correct axial action incurs one step and reaches self, giving
-\(1+v_0=v_1\). The other axial action reaches the diagonal. Random \(Y\)
-either stays at the same edge or reaches the other edge, so its continuation
-value is always \(v_1\). A SIC use terminates with probability \(1/6\), has
+From \(E_i\), the empirically selected deterministic button incurs one step
+and has \(G\)-profile continuation, giving \(1+v_0=v_1\). The unselected
+button has \(D\)-profile continuation. Random \(Y\) has an edge-profile
+continuation on either branch, so its continuation value is always \(v_1\).
+A SIC use terminates with probability \(1/6\), has
 an edge continuation with total probability \(2/3\), and a diagonal
 continuation with probability \(1/6\). Therefore
 \begin{align*}
@@ -750,9 +955,9 @@ continuation with probability \(1/6\). Therefore
  &=v_1+\frac{2+\sqrt2}{9}>v_1.
 \end{align*}
 
-At the diagonal, either axial action reaches an edge and costs \(1+v_1=c+2\).
-Random \(Y\) succeeds to self with probability \(p\) and otherwise remains at
-the diagonal:
+From \(D\), either deterministic button has edge-profile continuation and
+costs \(1+v_1=c+2\). Random \(Y\) has \(G\)-profile continuation upon success
+and an equivalent \(D\)-history upon failure:
 \begin{align*}
  Q_{\widetilde Y}(\text{diagonal})
  &=1+(1-p)v_2+pv_0\\
@@ -765,13 +970,14 @@ where the last equality is exactly the geometric-retry identity
  &=1+\frac13v_1+\frac12v_2\\
  &=v_2+\frac{8-5\sqrt2}{9}>v_2.
 \end{align*}
-Both strict gaps are positive. The complete optimal policy is consequently
+Both strict gaps are positive. The complete optimal rule on history classes is
+consequently
 \begin{equation}
- \pi_g^*(x)=
+ \pi_g^*([h])=
  \begin{cases}
- \mathsf S,&x=g,\\
- \text{the axial action taking \(x\) to \(g\)},&d(x,g)=1,\\
- \widetilde Y,&d(x,g)=\sqrt2.
+ \mathsf S,&[h]=G,\\
+ \text{the empirically selected deterministic button},&[h]=E_i,\\
+ \widetilde Y,&[h]=D.
  \end{cases}
  \label{eq:complete-optimal-policy}
 \end{equation}
@@ -779,21 +985,45 @@ Numerically, \(c\simeq3.138071\). The self, edge, and diagonal values are,
 respectively, \(3.138071\), \(4.138071\), and \(4.552285\). Subtracting the unavoidable
 goal-reporting cost \(v_0\) gives \(0,1,\sqrt2\), the desired square radii.
 
+\subsection{Why this proves optimality over all histories}
+
+The table shows that the candidate vector \(V=(v_0,v_1,v_1,v_2)\) satisfies
+the minimum equation \eqref{eq:full-bellman}; the displayed history policy
+attains equality.  For any other possibly randomized, time-dependent, or
+full-history policy, the Bellman inequalities give at every nonterminal time
+\[
+ V([h_t])\le 1+\E\!\left[V([h_{t+1}])\mid h_t,a_t\right].
+\]
+Iterating to the stopping time shows that its expected accumulated unit cost
+is at least \(V([h_0])\).  A policy that fails to terminate with positive
+probability has infinite undiscounted cost and cannot improve the result.  The
+candidate policy is proper and all its displayed recurrences are equalities,
+so its expected cost is exactly \(V([h_0])\).  This is the Bellman verification
+argument.
+
+This proof quantifies over every raw-history policy without listing its
+branches.  Histories are omitted only after
+\cref{prop:predictive-quotient} proves that they have identical future
+statistics.  A history-dependent controller can use its past as an internal
+clock or random seed, but from a fixed predictive class that merely selects a
+mixture of the four first-action costs in the table; a mixture cannot be less
+than their minimum.
+
 \section{What discounting would change}
 \label{sec:discounting}
 
 For \(0\le\gamma<1\), the discounted step-cost objective would instead be
 \begin{equation}
- V_g^{(\gamma)}(x)
- =\inf_\pi\E_x^\pi\left[\sum_{t=0}^{\tau_g-1}\gamma^t\right]
- =\inf_\pi\frac{1-\E_x^\pi[\gamma^{\tau_g}]}{1-\gamma}.
+ V_g^{(\gamma)}(\xi)
+ =\inf_\pi\E_\xi^\pi\left[\sum_{t=0}^{\tau_g-1}\gamma^t\right]
+ =\inf_\pi\frac{1-\E_\xi^\pi[\gamma^{\tau_g}]}{1-\gamma}.
  \label{eq:discounted-cost}
 \end{equation}
 It has Bellman equation
 \begin{equation}
- V_g^{(\gamma)}(x)=
- \min_a\left\{1+\gamma\sum_{y\in\mathcal S}
- P_a(y\mid x)V_g^{(\gamma)}(y)\right\}.
+ V_g^{(\gamma)}(\xi)=
+ \min_a\left\{1+\gamma\sum_{o:\,hao\ \mathrm{nonterminal}}
+ P(o\mid h,a)V_g^{(\gamma)}([hao])\right\},\qquad \xi=[h].
  \label{eq:discounted-bellman}
 \end{equation}
 For a deterministic stopping time, \eqref{eq:discounted-cost} is a monotone
@@ -805,9 +1035,9 @@ zero on ordinary transitions and \(+1\) on the terminal SIC outcome, maximizes
 as minimizing \eqref{eq:discounted-cost}, but neither objective is the
 expected hitting time that defines the present hodological metric.
 
-The distinction can be solved exactly in this four-state example. Again let
-\(v_0,v_1,v_2\) denote the self, edge, and diagonal discounted costs. There
-are three policy regimes. Define
+The distinction can be solved exactly on the four predictive history classes.
+Again let \(v_0,v_1,v_2\) denote the \(G\), edge-profile, and \(D\)-profile
+discounted costs. There are three policy regimes. Define
 \begin{equation}
  \gamma_*=\frac{3+3\sqrt2-\sqrt{15+12\sqrt2}}{2}
  \simeq0.7941944732.
@@ -825,9 +1055,10 @@ shells. The following exact solution also extends continuously to \(\gamma=0\):
 \end{equation}
 The equality \(v_1=v_2\) shows that strong discounting erases the distinction
 between an edge and the diagonal. To derive these expressions, observe that
-from any non-goal anchor a SIC reports \(g\) with probability \(1/6\); under
+from any non-goal response profile a SIC reports \(g\) with probability
+\(1/6\); under
 the symmetric all-SIC solution its total nonterminal continuation is
-\((5/6)v_1\). At self, the nonterminal probability is \(1/2\).
+\((5/6)v_1\). In class \(G\), the nonterminal probability is \(1/2\).
 
 For \(1/2\le\gamma\le\gamma_*\), SIC is optimal at self, an axial move is
 optimal at an edge, and SIC remains optimal at the diagonal. With
@@ -901,18 +1132,18 @@ optimal and collapses edge and diagonal into one shell.}
 \section{A compact derivation of the SIC reporting baseline}
 \label{sec:reported-goal}
 
-For reference, we can derive the common baseline in a compact three-shell
+For reference, we restate the common baseline in compact predictive-class
 form. As specified in \cref{sec:complete-mdp}, goal \(g\) means: perform the
 SIC action and observe outcome token \(g\). Every movement and every SIC report
 costs one intervention. If a SIC outcome is not \(g\), the episode continues
-from the newly prepared state \(\Pi_o\). After the first SIC outcome this is a
-fully observed finite MDP, because the most recent token is a sufficient
-operational state.
+from a raw history ending in the newly observed token.  The finite equations
+below are licensed by \cref{prop:predictive-quotient}, not by supplying the
+agent a location variable.
 
-By square symmetry, write \(v_0,v_1,v_2\) for optimal cost when the current
-anchor is respectively the goal, an axial neighbor, or the opposite corner.
-The proposed policy reports at the goal, moves deterministically from an edge
-to the goal, and retries the diagonal displacement from the opposite corner.
+By response symmetry, write \(v_0,v_1,v_2\) for optimal cost in predictive
+classes \(G,E_i,D\), respectively.  The proposed history rule reports in
+\(G\), uses the empirically selected deterministic button in \(E_i\), and
+retries \(\widetilde Y\) in \(D\).
 The two movement rules give
 \begin{equation}
  v_1=1+v_0,
@@ -920,7 +1151,7 @@ The two movement rules give
  v_2=\sqrt2+v_0.
  \label{eq:sic-shell-moves}
 \end{equation}
-At the goal state, the SIC reports \(g\) with probability \(1/2\), terminating
+In class \(G\), the SIC reports \(g\) with probability \(1/2\), terminating
 the episode. Its two edge outcomes have total probability \(1/3\), and its
 diagonal outcome has probability \(1/6\). Consequently
 \begin{align}
@@ -935,48 +1166,49 @@ so
 \end{equation}
 It follows that the full reported-goal value matrix is
 \begin{equation}
- \boxed{V_g(x)=c+D(x,g).}
+ \boxed{V_g(\omega)=c+D(\omega,g),\qquad \omega\in\Omega.}
  \label{eq:sic-value}
 \end{equation}
 
-The remaining Bellman inequalities confirm optimality. At the goal, moving
-first costs \(c+2>c\). At an edge, reporting immediately costs
+The remaining Bellman inequalities confirm optimality. In \(G\), choosing a
+movement instrument first costs \(c+2>c\). In \(E_i\), reporting immediately costs
 \[
  1+\frac23v_1+\frac16v_2>v_1,
 \]
-while the axial move attains \(v_1\). At the diagonal, reporting costs
+while the selected deterministic button attains \(v_1\). In \(D\), reporting costs
 \[
  1+\frac13v_1+\frac12v_2>v_2,
 \]
-and an axial two-step route costs \(c+2>c+\sqrt2\); diagonal retry attains
+and a two-deterministic-button route costs \(c+2>c+\sqrt2\); retry attains
 \(v_2\). Thus \eqref{eq:sic-value} is the optimal Bellman solution, not merely
 the value of a selected policy.
 
-The nonzero self-value \(V_g(g)=c\) is the common overhead of requesting a
+The nonzero repeated-token value \(V_g(g)=c\) is the common overhead of requesting a
 stochastic SIC report. Hodological separation is obtained by subtracting this
 goal-specific self baseline:
 \begin{equation}
- V_g(x)-V_g(g)=D(x,g).
+ V_g(\omega)-V_g(g)=D(\omega,g).
  \label{eq:baseline-subtraction}
 \end{equation}
 The exact Euclidean square therefore survives when places and goals are both
 defined entirely by experienced SIC outcomes.
 
 Before the first SIC action, an agent with an unknown preparation occupies an
-epistemic initial condition rather than one of four known anchors. Its first
-SIC outcome both reports a token and prepares the associated state. Subsequent
-tracking uses only that token, chosen actions, and observed success/failure
-events; the policy needs no concealed binary-coordinate variable.
+epistemic initial condition. Its first SIC outcome supplies the first token in
+the recorded history. Subsequent control uses only that token, chosen actions,
+and observed acknowledgements or success/failure events; the policy neither
+receives nor updates a concealed binary-coordinate variable.
 
 \section{Exact computation and finite-sample simulation}
 
 The companion program \texttt{sic\_anchored\_square.py} constructs all density
 matrices and Kraus operators, solves the four stochastic-shortest-path
 problems, runs Monte Carlo navigation, and learns randomly renamed Pauli
-permutations from anchor--action--SIC experiments. Eight focused tests verify
+permutations from anchor--action--SIC experiments. Nine focused tests verify
 Kraus completeness, branch preparation, the \(1/2,1/6\) response kernel, the
 analytic Bellman solution, every undiscounted action value, the three
-discounted policy regimes, and optimal-policy structure.
+discounted policy regimes, the raw-history predictive quotient, and
+optimal-policy structure.
 
 At seed 20260813, exact value iteration gives
 \[
@@ -989,6 +1221,21 @@ the complete four-action response permutations are recovered in every trial
 at 100 samples per anchor/action pair. Across a 503-point discount scan, the
 closed forms in \cref{sec:discounting} agree with numerical Bellman iteration
 to \(3.02\times10^{-14}\).
+
+As a direct audit of \cref{prop:predictive-quotient}, the program enumerates
+every action--outcome extension through depth five without propagating a
+location label.  There are
+\[
+ 4\times 8^5=131{,}072
+\]
+distinct raw histories at that depth: four choices of initial observed SIC
+token and eight possible chosen-action/outcome pairs per extension
+\((4+1+2+1)\).  Computing the distribution of a future SIC test from each
+history yields exactly four distinct response vectors, with maximum deviation
+from the analytic \((1/2,1/6,1/6,1/6)\) permutations below numerical
+precision.  The table is saved as
+\texttt{history\_predictive\_quotient.csv}.  This enumeration is a check of
+the quotient theorem, not the method used to solve the Bellman equations.
 
 \begin{figure}[p]
 \centering
@@ -1080,13 +1327,15 @@ optimal costs form a square.  This separation is intentional: hodological
 distance measures difficulty of controlled goal achievement, not quantum
 state overlap.
 
-The SIC extension in \cref{sec:sic-anchor,sec:reported-goal} repairs the
-location-token problem in a precise sense: an outcome prepares and therefore
-identifies the \emph{postmeasurement} anchor, and place goals are future SIC
-outcomes. It does not retrospectively identify the unknown premeasurement
-state, nor make the retry movement outcome itself location-informative. Its
-virtue is that the agent's current-state token and its goal tokens now arise
-from one actual measurement alphabet.
+The SIC extension in \cref{sec:sic-anchor,sec:complete-mdp,sec:reported-goal}
+repairs the location-token problem in a precise, history-only sense: place
+goals are future SIC outcomes, and the controller is given only its action and
+outcome record. It does not retrospectively identify the unknown
+premeasurement state, nor make a deterministic movement acknowledgement
+location-informative.  The exact finite calculation is possible because
+future SIC response distributions induce four causal equivalence classes of
+raw histories.  Those classes are derived from observable consequences; they
+are not coordinates supplied to or updated by the agent.
 
 \section{A compact checklist for using the theorem}
 

@@ -9,5 +9,8 @@
   "opaque_recovery_at_100": 1.0,
   "discount_policy_threshold": 0.7941944731535715,
   "discount_closed_form_max_error": 3.019806626980426e-14,
+  "raw_histories_at_audit_depth": 131072,
+  "predictive_classes_at_audit_depth": 4,
+  "history_quotient_max_signature_error": 2.220446049250313e-16,
   "seed": 20260813
 }

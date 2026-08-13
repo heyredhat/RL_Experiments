@@ -39,6 +39,13 @@ generally changes the geometry. The accompanying exact solver, Monte Carlo
 validation, opaque-action learning experiment, eight focused tests, action
 table, discount scan, and two figures are implemented in
 [`sic_anchored_square.py`](sic_anchored_square.py).
+The exact control proof is now history-only: the agent is given no binary
+position and does not update a location label after pressing a button.  The
+paper first writes Bellman's equation on raw action--outcome histories, then
+proves that equality of future SIC response distributions defines four causal
+equivalence classes.  An exhaustive audit maps all 131,072 raw histories at
+depth five to exactly four such predictive classes; see
+`results/sic-anchored-square/history_predictive_quotient.csv`.
 
 Run everything from this directory:
 

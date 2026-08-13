@@ -15,6 +15,7 @@ from sic_anchored_square import (
     sic_kraus,
     square_distance,
     tetrahedral_states,
+    raw_history_predictive_audit,
 )
 
 
@@ -86,6 +87,13 @@ class SicAnchoredSquareTests(unittest.TestCase):
         shell, _ = analytic_discounted_shell_values(1.0)
         self.assertAlmostEqual(shell[1] - shell[0], 1.0)
         self.assertAlmostEqual(shell[2] - shell[0], np.sqrt(2))
+
+    def test_raw_histories_collapse_to_four_predictive_classes(self):
+        audit = raw_history_predictive_audit(max_depth=4)
+        for row in audit:
+            self.assertEqual(row["raw_histories"], 4 * 8 ** row["depth"])
+            self.assertEqual(row["predictive_classes"], 4)
+            self.assertLess(row["max_signature_error"], 2e-14)
 
 
 if __name__ == "__main__":

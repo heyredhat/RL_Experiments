@@ -230,6 +230,62 @@ def opaque_permutation_recovery(samples: int, trials: int, seed: int) -> float:
     return successes / trials
 
 
+def raw_history_predictive_audit(max_depth: int = 5) -> list[dict[str, float]]:
+    """Enumerate raw action--outcome histories and count predictive classes.
+
+    No location label is propagated in this audit.  A node stores only the
+    conditional density matrix obtained from its literal instrument history.
+    Its operational signature is the distribution of the *next* SIC outcome.
+    Informational completeness makes that signature a causal sufficient
+    statistic.  Starting after any observed SIC token, all reachable histories
+    have one of exactly four signatures even though their raw count is 4*8**d.
+    """
+    if max_depth < 0:
+        raise ValueError("max_depth must be nonnegative")
+    instruments = (
+        sic_kraus(),
+        np.array([X]),
+        np.array([np.sqrt(1.0 / SQRT2) * Y, np.sqrt(1.0 - 1.0 / SQRT2) * I2]),
+        np.array([Z]),
+    )
+    canonical = sic_kernel().T
+    frontier = [rho.copy() for rho in tetrahedral_states()]
+    rows: list[dict[str, float]] = []
+    for depth in range(max_depth + 1):
+        signatures = []
+        maximum_error = 0.0
+        for rho in frontier:
+            signature = np.array(
+                [0.5 * np.trace(projector @ rho).real for projector in tetrahedral_states()]
+            )
+            signatures.append(signature)
+            maximum_error = max(
+                maximum_error,
+                float(np.min(np.max(np.abs(canonical - signature[None, :]), axis=1))),
+            )
+        unique = np.unique(np.round(np.asarray(signatures), decimals=12), axis=0)
+        rows.append(
+            {
+                "depth": depth,
+                "raw_histories": len(frontier),
+                "predictive_classes": len(unique),
+                "max_signature_error": maximum_error,
+            }
+        )
+        if depth == max_depth:
+            break
+        next_frontier = []
+        for rho in frontier:
+            for instrument in instruments:
+                for kraus in instrument:
+                    branch = kraus @ rho @ kraus.conj().T
+                    probability = float(np.trace(branch).real)
+                    if probability > 1e-15:
+                        next_frontier.append(branch / probability)
+        frontier = next_frontier
+    return rows
+
+
 def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
     output.mkdir(parents=True, exist_ok=True)
     figures = output / "figures"
@@ -318,6 +374,12 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
         )
         writer.writerows(discount_rows)
 
+    history_audit = raw_history_predictive_audit()
+    with (output / "history_predictive_quotient.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=history_audit[0].keys())
+        writer.writeheader()
+        writer.writerows(history_audit)
+
     summary = {
         "sic_completeness_error": float(
             np.max(np.abs(np.sum([k.conj().T @ k for k in sic_kraus()], axis=0) - I2))
@@ -333,6 +395,11 @@ def write_outputs(output: Path, episodes: int, seed: int) -> dict[str, float]:
         "opaque_recovery_at_100": float(recovery[4]),
         "discount_policy_threshold": DISCOUNT_POLICY_THRESHOLD,
         "discount_closed_form_max_error": float(max(row[-1] for row in discount_rows)),
+        "raw_histories_at_audit_depth": int(history_audit[-1]["raw_histories"]),
+        "predictive_classes_at_audit_depth": int(history_audit[-1]["predictive_classes"]),
+        "history_quotient_max_signature_error": float(
+            max(row["max_signature_error"] for row in history_audit)
+        ),
         "seed": seed,
     }
     (output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
